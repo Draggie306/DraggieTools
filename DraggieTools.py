@@ -5,8 +5,8 @@ from os import path, startfile
 from time import monotonic
 import shutil
 
-build = 7
-version = "0.1.2"
+build = 8
+version = "0.1.3"
 build_date = 1650039706
 
 current_directory = path.dirname(path.realpath(__file__))
@@ -14,7 +14,8 @@ print(f"running CLI from {current_directory}")
 
 current_build_version = int((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt")).content)
 
-class bcolors:
+
+class BColours:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
@@ -24,6 +25,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
 
 def download_update():
     r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true', stream=True)
@@ -40,12 +42,13 @@ def download_update():
                 print(f'Downloading. {pct_done}% done, avg speed {speed} kbps')
                 last_print = now
 
+
 def check_for_update():
     print("Checking for update...")
     if build < current_build_version:
-        update_choice = input(f"{bcolors.WARNING}Update available! You are on version {version} which is build {build}. The newest version is build {current_build_version}\n\n{bcolors.ENDC}Type 1 to download update, else not\n\n>>> ")
+        update_choice = input(f"{BColours.WARNING}Update available! You are on version {version} which is build {build}. The newest version is build {current_build_version}\n\n{BColours.ENDC}Type 1 to download update, else not\n\n>>> ")
         if update_choice == "1":
-            print("Downloading update...")
+            print(f"{BColours.OKBLUE}Downloading update...")
             download_update()
             print("Update downloaded. Launching new version...")
             startfile(f'{current_directory}\\DraggieTools-{current_build_version}.exe')
@@ -53,7 +56,7 @@ def check_for_update():
             print("Skipping update.")
             return
     else:
-        print(f"Your tools are up to date. Running version {version} - build {build} - built at {datetime.fromtimestamp(1650035010).strftime('%Y-%m-%d %H:%M:%S')}. The server says the newest build is {current_build_version}")
+        print(f"{BColours.OKGREEN}Your tools are up to date. Running version {version} - build {build} - built at {datetime.fromtimestamp(1650035010).strftime('%Y-%m-%d %H:%M:%S')}. The server says the newest build is {current_build_version}.{BColours.ENDC}")
 
 
 check_for_update()
@@ -61,7 +64,7 @@ check_for_update()
 
 def main():
     the_funny = ['Transfering sensitive files to The Criminal Network...', 'Your Computer Has Been FUCKED by the Trojan!', r'Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION', r'Problem opening the application running at executable "C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe". Would you like to scan this PC?']
-    print(random.choice(the_funny))
+    print(f"{BColours.WARNING}{random.choice(the_funny)}{BColours.ENDC}")
     print("\n\n\nWhat would you like to do, mon frère?")
 
     def choice1():
