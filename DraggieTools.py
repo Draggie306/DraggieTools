@@ -5,9 +5,9 @@ from os import path, startfile, mkdir
 from time import monotonic
 import shutil
 
-build = 11
-version = "0.1.6"
-build_date = 1650041014
+build = 12
+version = "0.1.7"
+build_date = 1650041026
 
 current_directory = path.dirname(path.realpath(__file__))
 print(f"running CLI from {current_directory}")
@@ -55,7 +55,7 @@ def main():
     print("\n\n\nWhat would you like to do, mon frère?")
 
     def choice1():
-        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n\n>>> ")
+        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n>>> ")
         if x == "1":
             print("Initialising.")
             directory = f"{current_directory}\\DraggieTools.exe"
@@ -79,6 +79,9 @@ def main():
                 choice1()
         if x == "3":
             print("lmao")
+        if x == "4":
+            check_for_update()
+            choice1()
         else:
             choice1()
     
