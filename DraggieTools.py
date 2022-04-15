@@ -6,8 +6,8 @@ from time import monotonic
 import shutil
 from colorama import Fore
 
-build = 9
-version = "0.1.4"
+build = 10
+version = "0.1.5"
 build_date = 1650040914
 
 current_directory = path.dirname(path.realpath(__file__))
@@ -44,16 +44,16 @@ def check_for_update():
             print("Skipping update.")
             return
     else:
-        print(Fore.LIGHTGREEN_EX + f"Your tools are up to date. Running version {version} - build {build} - built at {datetime.fromtimestamp(1650035010).strftime('%Y-%m-%d %H:%M:%S')}. The server says the newest build is {current_build_version}." + Fore.WHITE)
+        print(Fore.LIGHTGREEN_EX + f"Your tools are up to date. Running version {version} - build {build} - built at {datetime.fromtimestamp(1650035010).strftime('%Y-%m-%d %H:%M:%S')}. The server says the newest build is {current_build_version}." )
 
 
 check_for_update()
 
 
 def main():
-    the_funny = ['Transfering sensitive files to The Criminal Network...', 'Your Computer Has Been FUCKED by the Trojan!', r'Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION', r'Problem opening the application running at executable "C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe". Would you like to scan this PC?']
-    print({random.choice(the_funny)})
-    print("\n\n\nWhat would you like to do, mon frère?")
+    the_funny = ['Transfering sensitive files to The Criminal Network...', r'Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION', r'Problem opening the application running at executable "C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe". Would you like to scan this PC?']
+    print(Fore.RED + f"{random.choice(the_funny)}")
+    print(Fore.WHITE + "\n\n\nWhat would you like to do, mon frère?")
 
     def choice1():
         x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n\n>>> ")
@@ -62,17 +62,21 @@ def main():
             directory = f"{current_directory}\\{path.basename(__file__)}"
             print(f"Current directory: {directory}")
         if x == "2":
-            e = r"C:\Program Files"
-            c = r"C:\Program Files\Draggie"
-            y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
-            directory = f"{current_directory}\\{path.basename(__file__)}"
-            print(f"Current directory: {directory}")
             try:
-                mkdir(f"{y}\\Draggie\\")
+                e = r"C:\Program Files"
+                c = r"C:\Program Files\Draggie"
+                y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
+                directory = f"{current_directory}\\{path.basename(__file__)}"
+                print(f"Current directory: {directory}")
+                try:
+                    mkdir(f"{y}\\Draggie\\")
+                except Exception as e:
+                    pass
+                shutil.copyfile(directory, f"{y}\\Draggie\\{path.basename(__file__)}")
+                print(f"Successfully copied file to {y}\\Draggie\\{path.basename(__file__)}")
             except Exception as e:
-                pass
-            shutil.copyfile(directory, f"{y}\\Draggie\\{path.basename(__file__)}")
-            print(f"Successfully copied file to {y}\\Draggie\\{path.basename(__file__)}")
+                print(f"An error occured. {e}")
+                choice1()
         if x == "3":
             print("lmao")
         else:
