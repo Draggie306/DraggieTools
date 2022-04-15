@@ -5,9 +5,9 @@ from os import path, startfile, mkdir
 from time import monotonic
 import shutil
 
-build = 12
-version = "0.1.7"
-build_date = 1650041026
+build = 13
+version = "0.1.8"
+build_date = 1650041142
 
 current_directory = path.dirname(path.realpath(__file__))
 print(f"running CLI from {current_directory}")
