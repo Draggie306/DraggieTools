@@ -5,29 +5,34 @@ from os import path, startfile, mkdir
 from time import monotonic
 import shutil
 
-build = 13
+build = 14
 version = "0.1.8"
-build_date = 1650041142
+build_date = 1650041242
 
 current_directory = path.dirname(path.realpath(__file__))
 print(f"running CLI from {current_directory}")
 
 
 def download_update(current_build_version):
-    r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true', stream=True)
-    file_size = int(r.headers['content-length'])
-    downloaded = 0
-    start = last_print = monotonic()
-    with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
-            downloaded += f.write(chunk)
-            now = monotonic()
-            if now - last_print > 0.1:
-                pct_done = round(downloaded / file_size * 100)
-                speed = round(downloaded / (now - start) / 1024)
-                print(f'Downloading. {pct_done}% done, avg speed {speed} kbps')
-                last_print = now
-
+    try:
+        r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true', stream=True)
+        file_size = int(r.headers['content-length'])
+        downloaded = 0
+        start = last_print = monotonic()
+        with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024):
+                downloaded += f.write(chunk)
+                now = monotonic()
+                if now - last_print > 0.1:
+                    pct_done = round(downloaded / file_size * 100)
+                    speed = round(downloaded / (now - start) / 1024)
+                    print(f'Downloading. {pct_done}% done, avg speed {speed} kbps')
+                    last_print = now
+    except KeyError as e:
+        print(f"Key error occured: {e}\n\nResorting to backup")
+        r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
+        with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
+            f.write(r)
 
 def check_for_update():
     print("Checking for update...")
