@@ -3,7 +3,7 @@ from requests import get
 from datetime import datetime
 from os import path
 
-build = 2
+build = 1
 version = "0.0.2"
 build_date = 1650035323
 
