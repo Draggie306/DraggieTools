@@ -1,20 +1,20 @@
 import random
 from requests import get
 from datetime import datetime
-from os import path, startfile, mkdir
+from os import path, startfile, mkdir, environ
 from time import monotonic
 import shutil
 from sys import exit
 
-build = 17
-version = "0.2.1"
-build_date = 1650049785
+build = 18
+version = "0.2.3"
+build_date = 1650051197
 
 global language
 
-english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION", r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Your tools are up to date. Running version", "built at", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip"]# 19 -   ENGLISH
-french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "fini, vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE", r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Vos outils sont à jour. Version en cours d'exécution", "fait à", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer"]#     FRENCH
-
+english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION", r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Your tools are up to date. Running version", "built at", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20, if you see this then report as error."]# 19 -   ENGLISH
+french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "fini, vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE", r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Vos outils sont à jour. Version en cours d'exécution", "fait à", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20, if you see this then report as error."]#     FRENCH
+DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
 def change_language():
     global language
@@ -24,12 +24,36 @@ def change_language():
         if x == "2":
             print("La langue est maintenant francais.")
             language = french
+            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+")
+            x.close()
+            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w")
+            x.write("French")
+            x.close()
         else:
             print("Language updated to English.")
             language = english
+            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+")
+            x.close()
+            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w")
+            x.write("English")
+            x.close()
 
+if not path.exists(DraggieTools_AppData_Directory):
+    mkdir(DraggieTools_AppData_Directory)
+if path.exists:
+    try:
+        x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt")
+        language_read = x.read()
+        x.close
+        if language_read == "French":
+            language = french
+            print("Language set to French.")
+        else:
+            language = english
+            print("Language set to English.")
+    except Exception as e:
+        change_language()
 
-change_language()
 
 current_directory = path.dirname(path.realpath(__file__))
 print(f"{language[6]} {current_directory}")
@@ -61,7 +85,11 @@ def check_for_update():
     print(language[4])
     current_build_version = int((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt")).content)
     if build < current_build_version:
-        update_choice = input(f"{language[15]} {language[16]} {version} {language[17]} {build}. {language[18]} {current_build_version}\n\n{language[19]}\n\n>>> ")
+        release_notes = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/release_notes.txt")).content)
+        print(f"{language[15]} {language[16]} {version} {language[17]} {build}. {language[18]} {current_build_version}\n\n{language[19]}\n")
+        if language == "English":
+            print(f"Release notes: {release_notes}")
+        update_choice = input("")
         if update_choice == "1":
             print(language[6])
             download_update(current_build_version)
