@@ -5,12 +5,14 @@ from os import path, startfile
 from subprocess import Popen
 from time import monotonic
 
-build = 3
-version = "0.0.2"
-build_date = 1650035323
+build = 4
+version = "0.0.3"
+build_date = 1650037421
 
 current_directory = path.dirname(path.realpath(__file__))
 print(f"running CLI from {current_directory}")
+
+print(f"SUSSY AMOGUS build {build}")
 
 current_build_version = int((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt")).content)
 
