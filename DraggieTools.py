@@ -6,9 +6,9 @@ from time import monotonic
 import shutil
 from sys import exit
 
-build = 16
-version = "0.2.0"
-build_date = 1650042235
+build = 17
+version = "0.2.1"
+build_date = 1650049785
 
 global language
 
