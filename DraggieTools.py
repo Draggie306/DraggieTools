@@ -3,12 +3,13 @@ from requests import get
 from datetime import datetime
 from os import path
 
-build = 1
+build = 2
 version = "0.0.2"
 build_date = 1650035323
 
 current_directory = path.dirname(path.realpath(__file__))
 print(f"running CLI from {current_directory}")
+
 
 def check_for_update():
     print("Checking for update...")
