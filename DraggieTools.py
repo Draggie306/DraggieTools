@@ -12,9 +12,8 @@ build_date = 1650041026
 current_directory = path.dirname(path.realpath(__file__))
 print(f"running CLI from {current_directory}")
 
-current_build_version = int((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt")).content)
 
-def download_update():
+def download_update(current_build_version):
     r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true', stream=True)
     file_size = int(r.headers['content-length'])
     downloaded = 0
@@ -32,11 +31,12 @@ def download_update():
 
 def check_for_update():
     print("Checking for update...")
+    current_build_version = int((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt")).content)
     if build < current_build_version:
         update_choice = input(f"Update available! You are on version {version} which is build {build}. The newest version is build {current_build_version}\n\nType 1 to download update, else not\n\n>>> ")
         if update_choice == "1":
             print("Downloading update...")
-            download_update()
+            download_update(current_build_version)
             print("Update downloaded. Launching new version...")
             startfile(f'{current_directory}\\DraggieTools-{current_build_version}.exe')
         else:
