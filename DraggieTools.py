@@ -5,9 +5,9 @@ from os import path, startfile, mkdir, environ
 from time import monotonic, sleep
 import shutil, pathlib, sys, random
 
-build = 21
-version = "0.2.7"
-build_date = 1650134130
+build = 22
+version = "0.3.0"
+build_date = 1650144935
 
 global language, language_chosen
 
@@ -93,13 +93,21 @@ def view_source():
 
 def check_for_update():
     print(language[4])
-    x = (get('https://draggietools.ibaguette.com/checks/version_link.txt')).text
-    current_build_version = int((get(x)).content)
+    current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     if build < current_build_version:
-        release_notes = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/release_notes.txt")).text)
+        release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         print(f"{language[15]} {language[16]} {version} {language[21]} {build}. {language[17]}. {current_build_version} {language[18]}\n\n")
         if language_chosen == "English":
-            print(f"Release notes:\n\n{release_notes}\n")
+            versions_to_get = current_build_version - build
+            print(f"{versions_to_get} versions behind")
+            string = (f"Release notes (v{current_build_version}):\n\n{release_notes}\n")
+            
+            while current_build_version != build:
+                current_build_version = current_build_version - 1
+                version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
+                string = (string + f"\nv{current_build_version}:\n{version_patch}")
+            print(string)
+
         update_choice = input(">>> ")
         if update_choice == "1":
             print(language[6])
