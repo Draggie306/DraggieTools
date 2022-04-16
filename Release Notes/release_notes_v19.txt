@@ -1,0 +1,3 @@
+The update URL now points to draggietools.ibaguette.com.
+Updated more languages
+New option to check source code.
