@@ -1,0 +1,1 @@
+Improved release notes loading. Now gets list of all versions before current.
