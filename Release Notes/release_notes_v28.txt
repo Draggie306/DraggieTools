@@ -1,0 +1,1 @@
+- Recursive version update now no longer includes the current version.

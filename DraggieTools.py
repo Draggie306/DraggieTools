@@ -12,9 +12,9 @@ import traceback
 
 dev_mode = True
 
-build = 27
-version = "0.3.4"
-build_date = 1655560416
+build = 28
+version = "0.3.8"
+build_date = 1655561001
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
@@ -166,7 +166,7 @@ def check_for_update():
             print(f"{versions_to_get} versions behind")
             string = (f"Release notes (v{current_build_version}):\n\n{release_notes}\n")
             
-            while current_build_version != build:
+            while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
                 version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}")
