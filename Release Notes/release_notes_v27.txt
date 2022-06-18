@@ -1,0 +1,2 @@
+- Logging now formatted properly
+- Turned down fan usage

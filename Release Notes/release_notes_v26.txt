@@ -1,0 +1,3 @@
+- Added logging directory in AppData\Draggie\DraggieTools\Logs
+- Fixed broken file 1
+- Fixed broken file 2
