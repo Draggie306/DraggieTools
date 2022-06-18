@@ -2,7 +2,7 @@ from subprocess import Popen
 from requests import get
 from datetime import datetime
 from os import path, startfile, mkdir, environ
-from time import monotonic, sleep
+from time import monotonic, sleep, time
 import shutil, pathlib, sys, random
 
 build = 22
@@ -43,6 +43,15 @@ def change_language():
 if not path.exists(DraggieTools_AppData_Directory):
     mkdir(DraggieTools_AppData_Directory)
 
+
+if not path.exists(f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache"):
+    mkdir(f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache")
+
+
+if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
+    mkdir(f"{DraggieTools_AppData_Directory}\\SourceCode")
+
+
 if path.exists:
     try:
         x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt")
@@ -70,7 +79,8 @@ def download_update(current_build_version):
         file_size = int(r.headers['content-length'])
         downloaded = 0
         start = last_print = monotonic()
-        with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
+        mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds', 'wb')
+        with open(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 downloaded += f.write(chunk)
                 now = monotonic()
@@ -88,7 +98,11 @@ def download_update(current_build_version):
 
 def view_source():
     print(language[20])
-    Popen(f'explorer /select,"{current_directory}\\DraggieTools.py"')
+    x = time()
+    r = get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
+    with open(f'{current_directory}\\DraggieTools-{x}.py', 'wb') as f:
+        f.write(r.content)
+    Popen(f'explorer /select,"{current_directory}\\DraggieTools-{x}.py"')
 
 
 def check_for_update():
