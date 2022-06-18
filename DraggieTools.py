@@ -5,9 +5,9 @@ from os import path, startfile, mkdir, environ
 from time import monotonic, sleep, time
 import shutil, pathlib, sys, random
 
-build = 22
-version = "0.3.0"
-build_date = 1650144935
+build = 24
+version = "0.3.1"
+build_date = 1655558416
 
 global language, language_chosen
 
@@ -100,9 +100,10 @@ def view_source():
     print(language[20])
     x = time()
     r = get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
-    with open(f'{current_directory}\\DraggieTools-{x}.py', 'wb') as f:
+    with open(f'{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-{x}.py', 'wb') as f:
         f.write(r.content)
-    Popen(f'explorer /select,"{current_directory}\\DraggieTools-{x}.py"')
+    
+    Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-{x}.py"')
 
 
 def check_for_update():
