@@ -3,16 +3,22 @@ from requests import get
 from datetime import datetime
 from os import path, startfile, mkdir, environ
 from time import monotonic, sleep, time
-import shutil, pathlib, sys, random
+import shutil
+import pathlib
+import sys
+import random
 
-build = 24
-version = "0.3.1"
-build_date = 1655558416
+build = 25
+version = "0.3.2"
+build_date = 1655559416
 
 global language, language_chosen
 
-english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...\n", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION", r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Your tools are up to date. Running version", "built at", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.", "Opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build"]# Index number 21 -   ENGLISH
-french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "fini, vitesse moyenne", "Vérification de la mise à jour...\n", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE", r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Vos outils sont à jour. Version en cours d'exécution", "fait à", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.", "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version"]#     FRENCH
+english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...\n", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION", 
+            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Your tools are up to date. Running version", "built at", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.", 
+            "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build"]# Index number 21 -   ENGLISH
+
+french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...\n", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE", r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Vos outils sont à jour. Version en cours d'exécution", "fait à", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.", "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version"]#     FRENCH
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
 
@@ -137,7 +143,10 @@ def check_for_update():
         print(f"{language[11]} {version} - {language[13]} {build} - {language[12]} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {language[14]} {current_build_version}.")
 
 
-check_for_update()
+try:
+    check_for_update()
+except Exception as e:
+    print(f"An error occured while getting the update.\n{e}\n\n")
 
 
 def main():
@@ -157,7 +166,7 @@ def main():
             desktop = pathlib.Path.home() / 'Desktop'
             try:
                 shutil.copyfile(directory, f"{desktop}\\DraggieTools.exe")
-                print("Copied executable to the desktop. Note that if the file is deleted or an update is applied, this will need to be reapplied.")
+                print("Copied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
             except FileNotFoundError:
                 print("Running from PYTHON file. Not executable. This should print only in the development stage.")
                 shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop}\\DraggieTools.py")
@@ -200,4 +209,8 @@ def main():
     choice1()
 
 
-main()
+try:
+    main()
+except Exception as e:
+    print(f"An unhandled exception was encountered.\n{e}\n\n")
+    main()
