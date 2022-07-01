@@ -9,12 +9,11 @@ import sys
 import random
 import traceback
 
-
 dev_mode = True
 
-build = 28
-version = "0.3.8"
-build_date = 1655561001
+build = 29
+version = "0.4"
+build_date = 1656715696
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
@@ -29,6 +28,25 @@ if not path.exists(f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache"):
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
     mkdir(f"{DraggieTools_AppData_Directory}\\SourceCode")
+
+
+def get_first_line_of_term(search_phrase, file):
+    with open(file, 'r') as f:
+        line_num = 0
+        for line in f.readlines():
+            line_num += 1
+            if line.find(search_phrase) >= 0:
+                return(line_num)
+
+
+def replace_line(file_name, line_num, text):
+    line_num = line_num - 1
+    lines = open(file_name, 'r').readlines()
+    lines[line_num] = text
+    out = open(file_name, 'w')
+    out.writelines(lines)
+    out.close()
+
 
 global language, language_chosen
 
@@ -66,6 +84,7 @@ directory = sys.executable
 if dev_mode:
     logging.info(f"Assigned directory to {sys.executable}")
 
+
 def change_language():
     global language, language_chosen
     language = None
@@ -82,7 +101,7 @@ def change_language():
             x.write("French")
             x.close()
             if dev_mode:
-                logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S') : File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'French'")
+                logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'French'")
             language_chosen = "French"
         else:
             print("Language updated to English.")
@@ -123,6 +142,7 @@ print(f"{language[6]} {current_directory}")
 if dev_mode:
     logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: variable currrent_directory assigned with value {current_directory}")
 
+
 def download_update(current_build_version):
     try:
         r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true', stream=True)
@@ -153,6 +173,43 @@ def view_source():
     with open(f'{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py', 'wb') as f:
         f.write(r.content)
     Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py"')
+
+
+def fort_file_mod():
+    fort_ini_directory = (f"{environ['USERPROFILE']}\\AppData\\Local\\FortniteGame\\Saved\\Config\\WindowsClient\\GameUserSettings.ini")
+    print(fort_ini_directory)
+
+
+    y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\n\n>>> ")
+    if y == "1":
+        z = input("Okay, what type of framerate?\n\n1) FrameRateLimit (In-game and lobby) - note this will overwrite all other settings\n2) FrontendFrameRateLimit (Max Lobby FPS)\n\n>>> ")
+        if z == "1":
+            try:
+                fps = int(input("Input desired FPS here:\n\n>>> "))
+            except:
+                print("Disallowed input. Try again")
+                main()
+
+            x = get_first_line_of_term("FrameRateLimit=", fort_ini_directory)
+            print(x)
+
+            replace_line(fort_ini_directory, x, f'FrameRateLimit={fps}.000000\n')
+
+            print("Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
+
+        if z == "2":
+            try:
+                fps = int(input("Input desired FPS here:\n\n>>> "))
+            except:
+                print("Disallowed input. Try again")
+                main()
+
+            x = get_first_line_of_term("FrontendFrameRateLimit=", fort_ini_directory)
+            print(x)
+
+            replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
+
+            print("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
 
 
 def check_for_update():
@@ -193,68 +250,72 @@ except Exception as e:
     if dev_mode:
         logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
 
+
+def choice1():
+    if language == french:
+        x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n7) Changer les paramètres de Fortnite\n8) Quitter\n\n>>> ")
+    if language == english:
+        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7)Modify Fortnite Settings\n8) Quit\n\n>>> ")
+    if x == "1":
+        print("Initialising.")
+        print(f"Current directory: {directory}")
+        desktop = pathlib.Path.home() / 'Desktop'
+        try:
+            shutil.copyfile(directory, f"{desktop}\\DraggieTools.exe")
+            print("Copied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
+        except FileNotFoundError:
+            print("Running from PYTHON file. Not executable. This should print only in the development stage.")
+            shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop}\\DraggieTools.py")
+            print("I am very dumb. This will be improved later.")
+        except shutil.SameFileError:
+            print("This cannot be performed. The files are the same. Maybe it's already on the desktop!")
+    if x == "2":
+        try:
+            e = r"C:\Program Files"
+            c = r"C:\Program Files\Draggie"
+            y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
+            print(f"Current directory: {directory}")
+            try:
+                mkdir(f"{y}\\Draggie\\")
+            except Exception:
+                pass
+            shutil.copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
+
+            print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
+            if dev_mode:
+                logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
+        except Exception as e:
+            print(f"An error occured. {e}")
+            print("Please make sure that the file has not been renamed.")
+            if dev_mode:
+                logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+            choice1()
+    if x == "3":
+        print("Feature disabled due to a bug.")
+    if x == "4":
+        check_for_update()
+        choice1()
+    if x == "5":
+        change_language()
+        choice1()
+    if x == "6":
+        view_source()
+        choice1()
+    if x == "7":
+        fort_file_mod()
+        choice1()
+    if x == "8":
+        print("\n\n\n\n\n\nQuitting...")
+        sys.exit()
+    else:
+        choice1()
+
+
 def main():
-    if dev_mode:
-        logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed")
+    logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed")
     the_funny = [f'{language[8]}', f'{language[9]}', f'{language[10]}']
     print(f"{random.choice(the_funny)}")
     print(language[7])
-
-    def choice1():
-        if language == french:
-            x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n8) Quitter\n\n>>> ")
-        if language == english:
-            x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Quit\n\n>>> ")
-        if x == "1":
-            print("Initialising.")
-            print(f"Current directory: {directory}")
-            desktop = pathlib.Path.home() / 'Desktop'
-            try:
-                shutil.copyfile(directory, f"{desktop}\\DraggieTools.exe")
-                print("Copied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
-            except FileNotFoundError:
-                print("Running from PYTHON file. Not executable. This should print only in the development stage.")
-                shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop}\\DraggieTools.py")
-                print("I am very dumb. This will be improved later.")
-            except shutil.SameFileError:
-                print("This cannot be performed. The files are the same. Maybe it's already on the desktop!")
-        if x == "2":
-            try:
-                e = r"C:\Program Files"
-                c = r"C:\Program Files\Draggie"
-                y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
-                print(f"Current directory: {directory}")
-                try:
-                    mkdir(f"{y}\\Draggie\\")
-                except Exception:
-                    pass
-                shutil.copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
-                print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
-                if dev_mode:
-                    logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
-            except Exception as e:
-                print(f"An error occured. {e}")
-                print("Please make sure that the file has not been renamed.")
-                if dev_mode:
-                    logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
-                choice1()
-        if x == "3":
-            print("Feature disabled due to a bug.")
-        if x == "4":
-            check_for_update()
-            choice1()
-        if x == "5":
-            change_language()
-            choice1()
-        if x == "6":
-            view_source()
-            choice1()
-        if x == "7":
-            print("\n\n\n\n\n\nQuitting...")
-            sleep(0.1)
-            sys.exit()
-        else:
-            choice1()
 
     choice1()
 
