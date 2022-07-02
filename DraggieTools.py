@@ -8,12 +8,14 @@ import pathlib
 import sys
 import random
 import traceback
+import logging
+
 
 dev_mode = False
 
 build = 31
 version = "0.4.2"
-build_date = 1656782409
+build_date = 1656782509
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
@@ -64,7 +66,6 @@ Here are the prints for directory determining.
 """
 
 if dev_mode:
-    import logging
     logging.basicConfig(filename=f'{DraggieTools_AppData_Directory}\\Logs\\{version}-{build}-{time()}.log', encoding='utf-8', level=logging.DEBUG)
     logging.debug(f'Established uplink at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
     print(f"\n\n*-* Beta Tester Prints *-*\n\nAppData Directory: {DraggieTools_AppData_Directory}")
