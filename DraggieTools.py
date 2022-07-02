@@ -8,12 +8,29 @@ import pathlib
 import sys
 import random
 import traceback
+import subprocess
+import sys
+
+def spawn_program_and_die(program, exit_code=0):
+    """
+    Start an external program and exit the script 
+    with the specified return code.
+
+    Takes the parameter program, which is a list 
+    that corresponds to the args of your command.
+    """
+    # Start the external program
+    subprocess.Popen(program)
+    # We have started the program, and can suspend this interpreter
+    sys.exit(exit_code)
+
+
 
 dev_mode = True
 
-build = 29
-version = "0.4"
-build_date = 1656715696
+build = 30
+version = "0.4.1"
+build_date = 1656780784
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
@@ -149,7 +166,8 @@ def download_update(current_build_version):
         file_size = int(r.headers['content-length'])
         downloaded = 0
         start = last_print = monotonic()
-        mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds', 'wb')
+        if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
+            mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
         with open(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 downloaded += f.write(chunk)
@@ -208,7 +226,8 @@ def fort_file_mod():
             print(x)
 
             replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
-
+            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified!")
+            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified!")
             print("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
 
 
@@ -222,7 +241,7 @@ def check_for_update():
             versions_to_get = current_build_version - build
             print(f"{versions_to_get} versions behind")
             string = (f"Release notes (v{current_build_version}):\n\n{release_notes}\n")
-            
+
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
                 version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
@@ -231,11 +250,11 @@ def check_for_update():
 
         update_choice = input(">>> ")
         if update_choice == "1":
-            print(language[6])
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
             download_update(current_build_version)
             print("Update downloaded. Launching new version...")
-            startfile(f'{current_directory}\\DraggieTools-{current_build_version}.exe')
-            sys.exit()
+            spawn_program_and_die([f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe'])
+
         else:
             print("Skipping update.")
             return
@@ -247,15 +266,14 @@ try:
     check_for_update()
 except Exception as e:
     print(f"An error occured while getting the update.\n{e}\n\n")
-    if dev_mode:
-        logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+    logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
 
 
 def choice1():
     if language == french:
         x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n7) Changer les paramètres de Fortnite\n8) Quitter\n\n>>> ")
     if language == english:
-        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7)Modify Fortnite Settings\n8) Quit\n\n>>> ")
+        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Modify Fortnite Settings\n8) Quit\n\n>>> ")
     if x == "1":
         print("Initialising.")
         print(f"Current directory: {directory}")
@@ -282,13 +300,11 @@ def choice1():
             shutil.copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
 
             print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
-            if dev_mode:
-                logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
         except Exception as e:
             print(f"An error occured. {e}")
             print("Please make sure that the file has not been renamed.")
-            if dev_mode:
-                logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+            logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
             choice1()
     if x == "3":
         print("Feature disabled due to a bug.")
@@ -323,7 +339,6 @@ def main():
 try:
     main()
 except Exception as e:
-    print(f"An unhandled exception was encountered.\nShort: {e}\n\nLong:\n{traceback.format_exc()}\n\n")
-    if dev_mode:
-        logging.error(traceback.format_exc())
+    print(f"An unhandled exception was encountered.\nShort: {e}\n\nLong:\n{traceback.format_exc()}\n\nIt would be appreciated if you generate a logfile and DM it Draggie#3060. Thanks!\n")
+    logging.error(traceback.format_exc())
     main()

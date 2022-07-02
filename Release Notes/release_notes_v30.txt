@@ -1,0 +1,4 @@
+- Ameliorated redundant scripts
+- Fixed bug which couldn't download old versions
+- Fixed issues
+- Improved logging stability
