@@ -1,0 +1,3 @@
+- Fixed endless recursion on updating
+- Omg im so stupid so i fixed some more
+- Disabled devmode [public release]

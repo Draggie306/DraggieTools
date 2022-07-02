@@ -8,29 +8,12 @@ import pathlib
 import sys
 import random
 import traceback
-import subprocess
-import sys
 
-def spawn_program_and_die(program, exit_code=0):
-    """
-    Start an external program and exit the script 
-    with the specified return code.
+dev_mode = False
 
-    Takes the parameter program, which is a list 
-    that corresponds to the args of your command.
-    """
-    # Start the external program
-    subprocess.Popen(program)
-    # We have started the program, and can suspend this interpreter
-    sys.exit(exit_code)
-
-
-
-dev_mode = True
-
-build = 30
-version = "0.4.1"
-build_date = 1656780784
+build = 31
+version = "0.4.2"
+build_date = 1656782409
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 
@@ -69,11 +52,11 @@ global language, language_chosen
 
 # The following are new line separated every 10 index entries
 english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...\n", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION", 
-            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Your tools are up to date. Running version", "built at", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.", 
+            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Running version", "@", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.", 
             "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting..."]# Index number 22 -   ENGLISH
 
 french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...\n", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE", 
-        r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Vos outils sont à jour. Version en cours d'exécution", "fait à", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.", 
+        r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Version en cours d'exécution", "@", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.", 
         "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter..."]# Index number 22 - FRENCH
 
 """
@@ -91,12 +74,6 @@ if dev_mode:
     print(f"application_path: {path.dirname(path.abspath(__file__))}\n\nDevmode is ON, therefore enhanced logging is active.\nThe log file is located in the Roaming AppData directory")
     sleep(0.05)
 
-"""
-End prints
-"""
-y = f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S')"
-print(y)
-
 directory = sys.executable
 if dev_mode:
     logging.info(f"Assigned directory to {sys.executable}")
@@ -112,27 +89,23 @@ def change_language():
             language = french
             x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+")
             x.close()
-            if dev_mode:
-                logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
             x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w")
             x.write("French")
             x.close()
-            if dev_mode:
-                logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'French'")
+            logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'French'")
             language_chosen = "French"
         else:
             print("Language updated to English.")
             language = english
             x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+")
             x.close()
-            if dev_mode:
-                logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
             
             x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w")
             x.write("English")
             x.close()
-            if dev_mode:
-                logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'English'")
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'English'")
             language_chosen = "English"
     if dev_mode:
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
@@ -230,6 +203,11 @@ def fort_file_mod():
             logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified!")
             print("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
 
+    if y == "2":
+        print("Sorry this hasn't been made yet :)")
+        return
+    else:
+        main()
 
 def check_for_update():
     print(language[4])
@@ -252,9 +230,10 @@ def check_for_update():
         if update_choice == "1":
             logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
             download_update(current_build_version)
-            print("Update downloaded. Launching new version...")
-            spawn_program_and_die([f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe'])
-
+            print("Update downloaded. Launching new version - you can close this now.")
+            startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
+            sys.exit()
+        
         else:
             print("Skipping update.")
             return
