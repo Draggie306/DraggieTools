@@ -1,0 +1,2 @@
+- Alright so I fixed an issue where basically it does't run at all lmao, not that big of an issue
+- better error printing

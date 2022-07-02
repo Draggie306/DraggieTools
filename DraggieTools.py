@@ -13,11 +13,19 @@ import logging
 
 dev_mode = False
 
-build = 31
-version = "0.4.2"
-build_date = 1656782509
+build = 32
+version = "0.4.3"
+build_date = 1656783077
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
+Draggie_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie")
+
+#   Fixes issues on first-time entry.
+if not path.exists(Draggie_AppData_Directory):
+    mkdir(f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\")
+if not path.exists(DraggieTools_AppData_Directory):
+    mkdir(DraggieTools_AppData_Directory)
+
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\Logs"):
     mkdir(f"{DraggieTools_AppData_Directory}\\Logs")
@@ -169,7 +177,11 @@ def view_source():
 
 def fort_file_mod():
     fort_ini_directory = (f"{environ['USERPROFILE']}\\AppData\\Local\\FortniteGame\\Saved\\Config\\WindowsClient\\GameUserSettings.ini")
-    print(fort_ini_directory)
+    if not path.isfile(fort_ini_directory):
+        print("Unable to detect the INI settings file. Make sure your client is updated.")
+        return
+
+    print(f"Established uplink with {fort_ini_directory}")
 
 
     y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\n\n>>> ")
@@ -215,7 +227,7 @@ def check_for_update():
     current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     if build < current_build_version:
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
-        print(f"{language[15]} {language[16]} {version} {language[21]} {build}. {language[17]}. {current_build_version} {language[18]}\n\n")
+        print(f"{language[15]} {language[16]} {version} {language[21]} {build}. {language[17]} {current_build_version}. {language[18]}\n\n")
         if language_chosen == "English":
             versions_to_get = current_build_version - build
             print(f"{versions_to_get} versions behind")
