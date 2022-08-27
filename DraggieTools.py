@@ -13,9 +13,9 @@ import logging
 
 dev_mode = False
 
-build = 32
+build = 33
 version = "0.4.3"
-build_date = 1656783077
+build_date = 1661622335
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 Draggie_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie")
@@ -41,7 +41,7 @@ if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
 
 
 def get_first_line_of_term(search_phrase, file):
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding="UTF-8") as f:
         line_num = 0
         for line in f.readlines():
             line_num += 1
@@ -60,14 +60,15 @@ def replace_line(file_name, line_num, text):
 
 global language, language_chosen
 
-# The following are new line separated every 10 index entries
-english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...\n", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION", 
-            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Running version", "@", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.", 
-            "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting..."]# Index number 22 -   ENGLISH
+#   The following are new line separated every 10 index entries
+#   Remember - the index starts at 0 lol
+english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...\n", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION",
+           r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Running version", "@", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
+           "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n"]# Index number 23 -   ENGLISH
 
-french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...\n", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE", 
-        r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Version en cours d'exécution", "@", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.", 
-        "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter..."]# Index number 22 - FRENCH
+french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...\n", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE",
+          r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Version en cours d'exécution", "@", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.",
+          "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter...", "\nBonjour! Vous etes sur un mini-version plus récente que la version pour le public. Vous etes vraiment spécial, UwU\n"]# Index number 23 - FRENCH
 
 """
 Here are the prints for directory determining.
@@ -96,34 +97,35 @@ def change_language():
         if x == "2":
             print("La langue est maintenant francais.")
             language = french
-            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+")
-            x.close()
+            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+", encoding="UTF-8") as x:
+                x.close()
             logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
-            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w")
-            x.write("French")
-            x.close()
+            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w", encoding="UTF-8") as x:
+                x.write("French")
+                x.close()
             logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'French'")
             language_chosen = "French"
         else:
             print("Language updated to English.")
             language = english
-            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+")
-            x.close()
+            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+", encoding="UTF-8") as x:
+                x.close()
             logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
-            
-            x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w")
-            x.write("English")
-            x.close()
+
+            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w") as x:
+                x.write("English")
+                x.close()
             logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'English'")
             language_chosen = "English"
     if dev_mode:
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
 
-if path.exists:
+
+if path.exists(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt"):
     try:
-        x = open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt")
-        language_read = x.read()
-        x.close()
+        with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", encoding="UTF-8") as x:
+            language_read = x.read()
+
         if language_read == "French":
             language = french
             print("Language set to French.")
@@ -183,28 +185,26 @@ def fort_file_mod():
 
     print(f"Established uplink with {fort_ini_directory}")
 
-
     y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\n\n>>> ")
     if y == "1":
         z = input("Okay, what type of framerate?\n\n1) FrameRateLimit (In-game and lobby) - note this will overwrite all other settings\n2) FrontendFrameRateLimit (Max Lobby FPS)\n\n>>> ")
         if z == "1":
             try:
                 fps = int(input("Input desired FPS here:\n\n>>> "))
-            except:
+            except ValueError:
                 print("Disallowed input. Try again")
                 main()
 
             x = get_first_line_of_term("FrameRateLimit=", fort_ini_directory)
-            print(x)
 
             replace_line(fort_ini_directory, x, f'FrameRateLimit={fps}.000000\n')
 
-            print("Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
+            print(f"Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings], line {x}")
 
         if z == "2":
             try:
                 fps = int(input("Input desired FPS here:\n\n>>> "))
-            except:
+            except ValueError:
                 print("Disallowed input. Try again")
                 main()
 
@@ -212,15 +212,54 @@ def fort_file_mod():
             print(x)
 
             replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
-            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified!")
-            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified!")
+            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
+            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
             print("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
 
     if y == "2":
-        print("Sorry this hasn't been made yet :)")
-        return
-    else:
-        main()
+        graphics_settings = ["Low", "Medium", "High", "Epic"]
+        eligible_settings = [
+            ["3D Resolution", "View Distance", "Shadows", "Post Processing", "Textures", "Effects", "(hidden) Foliage", "(hidden) Shading", "Anti Aliasing", "(RTX only) Global Illumination", "(RTX only) Reflections"],
+            ["sg.ResolutionQuality", "sg.ViewDistanceQuality", "sg.ShadowQuality", "sg.PostProcessQuality", "sg.TextureQuality", "sg.EffectsQuality", "sg.FoliageQuality", "sg.ShadingQuality", "sg.AntiAliasingQuality", "sg.GlobalIlluminationQuality", "sg.ReflectionQuality"]
+        ]
+
+        other_settings = [
+            ["Culture", "Using DX12", "Using GPU Crash Debugging", "Ray Tracing", "Performance Mode Mesh Quality"],
+            ["Culture=", "bUseD3D12InGame=", "bUseGPUCrashDebugging=", "r.RayTracing.EnableInGame", "MeshQuality="]
+        ]
+        
+        print("Reading graphics settings and quality presets...")
+
+        for i in range(len(eligible_settings[1])): 
+            #print(eligible_settings[1][i])
+
+            try:
+                x = int(get_first_line_of_term(f"{eligible_settings[1][i]}=", fort_ini_directory))
+                with open(fort_ini_directory, "r") as ini_file:
+                    lines = ini_file.readlines()
+                    target_line = (lines[x - 1])
+                
+                quality = target_line.split("=")
+                quality = quality[1].split("\\")
+                quality_level = int(quality[0])
+
+                if eligible_settings[0][i] == "3D Resolution":
+                    print(f"{eligible_settings[0][i]} = {quality_level}%")
+                else:
+                    print(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
+                sleep(0.2)
+            except:
+                print(f"Could not find the value associated with {eligible_settings[0][i]}")
+
+        choice2 = input("1) Go back\n2)Modify a value")
+
+        if choice2 != "2":
+            return
+        else:
+            print("Type 1 for LOW/OFF\nType 2 for MEDIUM\nType 3 for HIGH\nType 4 for EPIC")
+
+    main()
+
 
 def check_for_update():
     print(language[4])
@@ -240,16 +279,18 @@ def check_for_update():
             print(string)
 
         update_choice = input(">>> ")
-        if update_choice == "1":
-            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
-            download_update(current_build_version)
-            print("Update downloaded. Launching new version - you can close this now.")
-            startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
-            sys.exit()
-        
-        else:
+        if update_choice != "1":
             print("Skipping update.")
             return
+
+        logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
+        download_update(current_build_version)
+        print("Update downloaded. Launching new version - you can close this now.")
+        startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
+        sys.exit()
+
+    if current_build_version < build:
+        print(language[23])
     else:
         print(f"{language[11]} {version} - {language[13]} {build} - {language[12]} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {language[14]} {current_build_version}.")
 

@@ -1,0 +1,4 @@
+- Now parses Fortnite graphics settings!
+- Includes 3d resolution and all settings
+- Also contains DirectX version info, RTX information and more!
+- Stability improvements
