@@ -10,12 +10,11 @@ import random
 import traceback
 import logging
 
-
 dev_mode = False
 
-build = 33
-version = "0.4.3"
-build_date = 1661622335
+build = 34
+version = "0.4.4"
+build_date = 1661897064
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 Draggie_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie")
@@ -225,20 +224,18 @@ def fort_file_mod():
 
         other_settings = [
             ["Culture", "Using DX12", "Using GPU Crash Debugging", "Ray Tracing", "Performance Mode Mesh Quality"],
-            ["Culture=", "bUseD3D12InGame=", "bUseGPUCrashDebugging=", "r.RayTracing.EnableInGame", "MeshQuality="]
+            ["Culture", "bUseD3D12InGame", "bUseGPUCrashDebugging", "r.RayTracing.EnableInGame", "MeshQuality"]
         ]
         
         print("Reading graphics settings and quality presets...")
 
-        for i in range(len(eligible_settings[1])): 
-            #print(eligible_settings[1][i])
-
+        for i in range(len(eligible_settings[1])):
             try:
                 x = int(get_first_line_of_term(f"{eligible_settings[1][i]}=", fort_ini_directory))
                 with open(fort_ini_directory, "r") as ini_file:
                     lines = ini_file.readlines()
                     target_line = (lines[x - 1])
-                
+
                 quality = target_line.split("=")
                 quality = quality[1].split("\\")
                 quality_level = int(quality[0])
@@ -247,16 +244,34 @@ def fort_file_mod():
                     print(f"{eligible_settings[0][i]} = {quality_level}%")
                 else:
                     print(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
-                sleep(0.2)
+                sleep(0.05)
             except:
                 print(f"Could not find the value associated with {eligible_settings[0][i]}")
 
-        choice2 = input("1) Go back\n2)Modify a value")
+        print("\nSearching for other settings...\n")
+
+        for i in range(len(other_settings[1])):
+            try:
+                x = get_first_line_of_term(f"{other_settings[1][i]}=", fort_ini_directory)
+                with open(fort_ini_directory, "r") as ini_file:
+                    lines = ini_file.readlines()
+                    target_line = (lines[x - 1])
+                
+                quality = target_line.split("=")
+                quality = quality[1].split("\n")
+                quality_level = (quality[0])
+
+                print(f"{other_settings[0][i]} is set to '{quality_level}'")
+            except:
+                print(f"Could not find the value associated with {other_settings[0][i]}")
+
+        choice2 = input("\n\n1) Go back\n2) Modify a value\n\n>>> ")
 
         if choice2 != "2":
             return
         else:
-            print("Type 1 for LOW/OFF\nType 2 for MEDIUM\nType 3 for HIGH\nType 4 for EPIC")
+            print("Default values are 0 for LOW/OFF\n1 for MEDIUM\n2 for HIGH\n3 for EPIC")
+            print("\nOk, what would you like to change?")
 
     main()
 
@@ -266,17 +281,17 @@ def check_for_update():
     current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     if build < current_build_version:
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
-        print(f"{language[15]} {language[16]} {version} {language[21]} {build}. {language[17]} {current_build_version}. {language[18]}\n\n")
+        print(f"{language[15]} {language[16]} {version} {language[21]} {build}.\n{language[17]} {current_build_version}. {language[18]}\n\n")
         if language_chosen == "English":
             versions_to_get = current_build_version - build
-            print(f"{versions_to_get} versions behind")
-            string = (f"Release notes (v{current_build_version}):\n\n{release_notes}\n")
+            print(f"You're {versions_to_get} builds behind latest")
+            string = (f"Latest release notes (v{current_build_version}):\n\n{release_notes}\n")
 
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
                 version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}")
-            print(string)
+            print(f"\n{string}\n")
 
         update_choice = input(">>> ")
         if update_choice != "1":
