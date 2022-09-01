@@ -185,7 +185,8 @@ def fort_file_mod():
 
     print(f"Established uplink with {fort_ini_directory}")
 
-    y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\n\n>>> ")
+    y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\nType 0 to open the directory\n\n>>> ")
+
     if y == "1":
         z = input("Okay, what type of framerate?\n\n1) FrameRateLimit (In-game and lobby) - note this will overwrite all other settings\n2) FrontendFrameRateLimit (Max Lobby FPS)\n\n>>> ")
         if z == "1":
@@ -274,6 +275,8 @@ def fort_file_mod():
             print("Default values are 0 for LOW/OFF\n1 for MEDIUM\n2 for HIGH\n3 for EPIC")
             print("\nOk, what would you like to change?")
 
+    if y == "0":
+        Popen(fort_ini_directory)
     main()
 
 

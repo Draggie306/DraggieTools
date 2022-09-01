@@ -1,0 +1,2 @@
+- Added AutoBrawlExtractor subroutines.
+- Added File Explorer opening option when changing graphics settings.
