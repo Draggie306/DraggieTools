@@ -13,9 +13,9 @@ import zipfile
 
 dev_mode = False
 
-build = 36
-version = "0.4.6"
-build_date = 1662034204
+build = 37
+version = "0.4.7"
+build_date = 1662034444
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 Draggie_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie")
@@ -363,7 +363,7 @@ def autobrawlextractor():
 
         if location == "1":
             print("Fetching available versions from GitHub...")
-            latest_apk = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractorlatest.apk")).text)
+            latest_apk = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/latest.apk")).text)
             latest_ipa = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/latest.ipa")).text)
             apk_lines = latest_apk.splitlines()
             print(f"APK version {apk_lines[0]} is available to download. Source: {apk_lines[2]}")
