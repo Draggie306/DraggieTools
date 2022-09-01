@@ -1,7 +1,7 @@
 from subprocess import Popen
 from requests import get
 from datetime import datetime
-from os import path, startfile, mkdir, environ
+from os import path, startfile, mkdir, environ, listdir
 from time import monotonic, sleep, time
 import shutil
 import pathlib
@@ -9,12 +9,13 @@ import sys
 import random
 import traceback
 import logging
+import zipfile
 
 dev_mode = False
 
-build = 34
-version = "0.4.4"
-build_date = 1661897064
+build = 35
+version = "0.4.5"
+build_date = 1662033879
 
 DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
 Draggie_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie")
@@ -226,7 +227,7 @@ def fort_file_mod():
             ["Culture", "Using DX12", "Using GPU Crash Debugging", "Ray Tracing", "Performance Mode Mesh Quality"],
             ["Culture", "bUseD3D12InGame", "bUseGPUCrashDebugging", "r.RayTracing.EnableInGame", "MeshQuality"]
         ]
-        
+
         print("Reading graphics settings and quality presets...")
 
         for i in range(len(eligible_settings[1])):
@@ -245,8 +246,8 @@ def fort_file_mod():
                 else:
                     print(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
                 sleep(0.05)
-            except:
-                print(f"Could not find the value associated with {eligible_settings[0][i]}")
+            except Exception as e:
+                print(f"Could not find the value associated with {eligible_settings[0][i]} - {e}")
 
         print("\nSearching for other settings...\n")
 
@@ -256,14 +257,14 @@ def fort_file_mod():
                 with open(fort_ini_directory, "r") as ini_file:
                     lines = ini_file.readlines()
                     target_line = (lines[x - 1])
-                
+
                 quality = target_line.split("=")
                 quality = quality[1].split("\n")
                 quality_level = (quality[0])
 
                 print(f"{other_settings[0][i]} is set to '{quality_level}'")
-            except:
-                print(f"Could not find the value associated with {other_settings[0][i]}")
+            except Exception as e:
+                print(f"Could not find the value associated with {other_settings[0][i]} - {e}")
 
         choice2 = input("\n\n1) Go back\n2) Modify a value\n\n>>> ")
 
@@ -315,6 +316,103 @@ try:
 except Exception as e:
     print(f"An error occured while getting the update.\n{e}\n\n")
     logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+
+
+def autobrawlextractor():
+    Brawl_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
+    Downloaded_Builds_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
+
+    def init_filetype(dir):
+        """
+        Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.
+        """
+        try:
+            archive = zipfile.ZipFile(dir, 'r')
+            try:
+                archive.read('Payload/Brawl Stars.app/PkgInfo')
+                version = "IPA"
+            except KeyError:
+                archive.read('classes.dex')
+                version = "APK"
+            if version:
+                print(f"Detected Verson: {version}")
+            else:
+                print("Unknown version type please use the other OS' version")
+                sleep(4)
+                sys.exit()
+        except Exception as e:
+            print(f"Error occured: {e}")
+
+    def number_one():
+        print(r"Enter the location of your Brawl Stars archive file, e.g D:\Downloads\brawl.apk")
+        print("Use an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
+        print("Alternatively, press 1 to search for downloadable versions, if you do not have the file.")
+
+        amount_of_files = 0
+
+        for i in listdir(Downloaded_Builds_AppData_Directory):
+            amount_of_files = amount_of_files + 1
+
+        if amount_of_files >= 1:
+            print(f"\nYou have {amount_of_files} files already downloaded inside the DownloadedBuilds folder")
+
+        location = input("\n>>> ")
+
+        if location == "1":
+            print("Fetching available versions from GitHub...")
+            latest_apk = str((get("https://raw.githubusercontent.com/Draggie306/AutoBrawlExtractor/main/Builds/latest.apk")).text)
+            latest_ipa = str((get("https://raw.githubusercontent.com/Draggie306/AutoBrawlExtractor/main/Builds/latest.ipa")).text)
+            apk_lines = latest_apk.splitlines()
+            print(f"APK version {apk_lines[0]} is available to download. Source: {apk_lines[2]}")
+            ipa_lines = latest_ipa.splitlines()
+            print(f"IPA version {ipa_lines[0]} is available to download. Source: {ipa_lines[2]}")
+            decision = input("Would you like to download the APK (type 1) or IPA (option 2). Alternatively, type enter to go back.\n\n>>> ")
+            print(f"Files will be downloaded to {Brawl_AppData_Directory}/DownloadedBuilds")
+
+            if decision == "1":
+                download_dir = apk_lines[1]
+                r = get(download_dir, stream=True)
+                file_size = int(r.headers['content-length'])
+                downloaded = 0
+                start = last_print = monotonic()
+                if not path.exists(f'{Brawl_AppData_Directory}\\DownloadedBuilds'):
+                    mkdir(f'{Brawl_AppData_Directory}\\DownloadedBuilds')
+                with open(f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{apk_lines[0]}.apk', 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=1024):
+                        downloaded += f.write(chunk)
+                        now = monotonic()
+                        if now - last_print > 0.5:
+                            pct_done = round(downloaded / file_size * 100)
+                            speed = round(downloaded / (now - start) / 1024)
+                            print(f'Downloading file. {pct_done}% - {speed} kbps')
+                            last_print = now
+                print("Downloaded the file!")
+
+            if decision == "2":
+                download_dir = ipa_lines[1]
+                r = get(download_dir, stream=True)
+                file_size = int(r.headers['content-length'])
+                downloaded = 0
+                start = last_print = monotonic()
+                if not path.exists(f'{Brawl_AppData_Directory}\\DownloadedBuilds'):
+                    mkdir(f'{Brawl_AppData_Directory}\\DownloadedBuilds')
+                with open(f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{ipa_lines[0]}.ipa', 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=1024):
+                        downloaded += f.write(chunk)
+                        now = monotonic()
+                        if now - last_print > 0.5:
+                            pct_done = round(downloaded / file_size * 100)
+                            speed = round(downloaded / (now - start) / 1024)
+                            print(f'Downloading file. {pct_done}% - {speed} kbps')
+                            last_print = now
+                print("Downloaded the file!")
+
+            number_one()
+
+        else:
+            init_filetype(location)
+
+    number_one()
 
 
 def choice1():
@@ -371,6 +469,9 @@ def choice1():
     if x == "8":
         print("\n\n\n\n\n\nQuitting...")
         sys.exit()
+    if x == "9":
+        autobrawlextractor()
+        choice1()
     else:
         choice1()
 
