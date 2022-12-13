@@ -1,0 +1,3 @@
+- Fixed a massive bug which made the code not work.
+- Added separate mode for developer testing.
+- 

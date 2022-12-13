@@ -3,6 +3,7 @@ from requests import get
 from datetime import datetime
 from os import path, startfile, mkdir, environ, listdir
 from time import monotonic, sleep, time
+from uuid import uuid4
 import shutil
 import pathlib
 import sys
@@ -13,18 +14,31 @@ import zipfile
 
 dev_mode = False
 
-build = 37
-version = "0.4.7"
-build_date = 1662034444
+build = 38
+version = "0.4.8"
+build_date = 1670953468
 
-DraggieTools_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\DraggieTools")
-Draggie_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie")
+environ_dir = environ['USERPROFILE']
 
-#   Fixes issues on first-time entry.
-if not path.exists(Draggie_AppData_Directory):
-    mkdir(f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\")
-if not path.exists(DraggieTools_AppData_Directory):
-    mkdir(DraggieTools_AppData_Directory)
+if not dev_mode:
+    DraggieTools_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\DraggieTools")
+    Draggie_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie")
+    #   Fixes issues on first-time entry.
+    if not path.exists(Draggie_AppData_Directory):
+        mkdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\")
+    if not path.exists(DraggieTools_AppData_Directory):
+        mkdir(DraggieTools_AppData_Directory)
+
+else:
+    uuid_gen = uuid4()
+    DraggieTools_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}\\DraggieTools")
+    Draggie_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}")
+
+    if not path.exists(Draggie_AppData_Directory):
+        mkdir(f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}\\")
+    if not path.exists(DraggieTools_AppData_Directory):
+        mkdir(DraggieTools_AppData_Directory)
+
 
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\Logs"):
@@ -139,7 +153,6 @@ if path.exists(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt"):
 
 
 current_directory = path.dirname(path.realpath(__file__))
-print(f"{language[6]} {current_directory}")
 if dev_mode:
     logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: variable currrent_directory assigned with value {current_directory}")
 
@@ -178,7 +191,7 @@ def view_source():
 
 
 def fort_file_mod():
-    fort_ini_directory = (f"{environ['USERPROFILE']}\\AppData\\Local\\FortniteGame\\Saved\\Config\\WindowsClient\\GameUserSettings.ini")
+    fort_ini_directory = (f"{environ_dir}\\AppData\\Local\\FortniteGame\\Saved\\Config\\WindowsClient\\GameUserSettings.ini")
     if not path.isfile(fort_ini_directory):
         print("Unable to detect the INI settings file. Make sure your client is updated.")
         return
@@ -281,7 +294,11 @@ def fort_file_mod():
 
 
 def check_for_update():
-    print(language[4])
+    try:
+        (print(language[4]))
+    except Exception as e:
+        change_language()
+        check_for_update()
     current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     if build < current_build_version:
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
@@ -322,8 +339,8 @@ except Exception as e:
 
 
 def autobrawlextractor():
-    Brawl_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
-    Downloaded_Builds_AppData_Directory = (f"{environ['USERPROFILE']}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
+    Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
+    Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
 
     def init_filetype(dir):
         """
@@ -480,6 +497,11 @@ def choice1():
 
 
 def main():
+    try:
+        print(f"{language[6]} {current_directory}")
+    except:
+        change_language()
+        print(f"{language[6]} {current_directory}")
     logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed")
     the_funny = [f'{language[8]}', f'{language[9]}', f'{language[10]}']
     print(f"{random.choice(the_funny)}")
