@@ -1,7 +1,7 @@
 from subprocess import Popen
 from requests import get
 from datetime import datetime
-from os import path, startfile, mkdir, environ, listdir
+from os import path, startfile, mkdir, environ, listdir, remove
 from time import monotonic, sleep, time
 from uuid import uuid4
 import shutil
@@ -14,9 +14,9 @@ import zipfile
 
 dev_mode = False
 
-build = 38
-version = "0.4.8"
-build_date = 1670953468
+build = 39
+version = "0.4.9"
+build_date = 1671647278
 
 environ_dir = environ['USERPROFILE']
 
@@ -31,6 +31,7 @@ if not dev_mode:
 
 else:
     uuid_gen = uuid4()
+    uuid_gen = "test1234"
     DraggieTools_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}\\DraggieTools")
     Draggie_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}")
 
@@ -53,7 +54,15 @@ if not path.exists(f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache"):
 if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
     mkdir(f"{DraggieTools_AppData_Directory}\\SourceCode")
 
-
+desktop_install_path = False
+if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
+    desktop_dir = pathlib.Path.home() / 'Desktop'
+    with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+        install_dir = e.read()
+        if install_dir == str(desktop_dir): 
+            logging.debug(f"Determined installLoc to be desktop @ {desktop_dir}")
+            desktop_install_path = True
+            
 def get_first_line_of_term(search_phrase, file):
     with open(file, 'r', encoding="UTF-8") as f:
         line_num = 0
@@ -163,6 +172,7 @@ def download_update(current_build_version):
         file_size = int(r.headers['content-length'])
         downloaded = 0
         start = last_print = monotonic()
+    
         if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
             mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
         with open(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe', 'wb') as f:
@@ -174,7 +184,17 @@ def download_update(current_build_version):
                     speed = round(downloaded / (now - start) / 1024)
                     print(f'{language[2]} {pct_done}% {language[3]} {speed} kbps')
                     last_print = now
+        if desktop_install_path == True:
+            try:
+                shutil.copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
+                print(f"Installed update to preferred directory, the desktop.")
+            except FileExistsError:
+                remove(f"{desktop_dir}\\DraggieTools.exe")
+                shutil.copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
+                print(f"Installed update to preferred directory, the desktop.")
+        
     except KeyError as e:
+        print(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be usedm saving to default directory.")
         print(f"{language[0]}{e}{language[1]}")
         r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
@@ -223,7 +243,7 @@ def fort_file_mod():
                 main()
 
             x = get_first_line_of_term("FrontendFrameRateLimit=", fort_ini_directory)
-            print(x)
+            print(f"first line of the codees = {x}")
 
             replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
             logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
@@ -322,7 +342,11 @@ def check_for_update():
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
         download_update(current_build_version)
         print("Update downloaded. Launching new version - you can close this now.")
-        startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
+        if desktop_install_path == False:
+            startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
+        else:
+            desktop_dir = pathlib.Path.home() / 'Desktop'
+            startfile(f'{desktop_dir}\\DraggieTools-{current_build_version}.exe')
         sys.exit()
 
     if current_build_version < build:
@@ -441,15 +465,28 @@ def choice1():
     if language == english:
         x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Modify Fortnite Settings\n8) Quit\n\n>>> ")
     if x == "1":
+        desktop_dir = pathlib.Path.home() / 'Desktop'
+        if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
+            with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
+                install_dir = e.read()
+                if install_dir == str(desktop_dir):
+                    print("Existing desktop file preference exists.")
+                    print("The file will now no longer be located on the desktop.\n")
+                    with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+                        e.close()
+                        choice1()
+
         print("Initialising.")
         print(f"Current directory: {directory}")
-        desktop = pathlib.Path.home() / 'Desktop'
         try:
-            shutil.copyfile(directory, f"{desktop}\\DraggieTools.exe")
+            shutil.copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
             print("Copied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
+            with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+                e.write(f"{desktop_dir}")
+            
         except FileNotFoundError:
             print("Running from PYTHON file. Not executable. This should print only in the development stage.")
-            shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop}\\DraggieTools.py")
+            shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
             print("I am very dumb. This will be improved later.")
         except shutil.SameFileError:
             print("This cannot be performed. The files are the same. Maybe it's already on the desktop!")
@@ -500,6 +537,7 @@ def main():
     try:
         print(f"{language[6]} {current_directory}")
     except:
+        print("First time run detected.")
         change_language()
         print(f"{language[6]} {current_directory}")
     logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed")
@@ -508,6 +546,7 @@ def main():
     print(language[7])
 
     choice1()
+
 
 
 try:
