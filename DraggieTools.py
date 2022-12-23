@@ -5,7 +5,7 @@ from os import path, startfile, mkdir, environ, listdir, remove
 from time import monotonic, sleep, time
 from uuid import uuid4
 from tqdm import tqdm
-import shutil
+from shutil import copyfile, SameFileError
 import pathlib
 import sys
 import random
@@ -16,12 +16,15 @@ from threading import Event, Thread
 from base64 import b64decode
 from math import ceil
 from cryptography.fernet import Fernet
+import json
+import hashlib
+#import libtorrent as lt
 
-dev_mode = True
+dev_mode = False
 
-build = 40
-version = "0.5.0"
-build_date = 1671805296
+build = 41
+version = "0.5.1"
+build_date = 1671835838
 
 environ_dir = environ['USERPROFILE']
 
@@ -152,33 +155,33 @@ def change_language():
         if x == "2":
             print("La langue est maintenant francais.")
             language = french
-            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+", encoding="UTF-8") as x:
+            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
                 x.close()
-            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
-            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w", encoding="UTF-8") as x:
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
+            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w", encoding="UTF-8") as x:
                 x.write("French")
                 x.close()
-            logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'French'")
+            logging.info(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'French'")
             language_chosen = "French"
         else:
             print("Language updated to English.")
             language = english
-            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w+", encoding="UTF-8") as x:
+            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
                 x.close()
-            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' cleared")
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
 
-            with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", "w") as x:
+            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w") as x:
                 x.write("English")
                 x.close()
-            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Langauge_Preference.txt' written with 'English'")
+            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'English'")
             language_chosen = "English"
     if dev_mode:
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
 
 
-if path.exists(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt"):
+if path.exists(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt"):
     try:
-        with open(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt", encoding="UTF-8") as x:
+        with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", encoding="UTF-8") as x:
             language_read = x.read()
 
         if language_read == "French":
@@ -191,6 +194,9 @@ if path.exists(f"{DraggieTools_AppData_Directory}\\Langauge_Preference.txt"):
             language_chosen = "English"
     except Exception:
         change_language()
+else:
+    #print("the file son't exist")
+    change_language()
 
 
 current_directory = path.dirname(path.realpath(__file__))
@@ -219,11 +225,11 @@ def download_update(current_build_version):
                 
         if desktop_install_path == True:
             try:
-                shutil.copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
+                copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
                 print(f"Installed update to preferred directory, the desktop.")
             except FileExistsError:
                 remove(f"{desktop_dir}\\DraggieTools.exe")
-                shutil.copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
+                copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
                 print(f"Installed update to preferred directory, the desktop.")
         
     except KeyError as e:
@@ -232,6 +238,70 @@ def download_update(current_build_version):
         r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             f.write(r)
+
+
+def secret_menu():
+    print("Welcome to the secret menu.")
+    x = input("[1] = The.Batman.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX]\n[2] = Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY\n\n>>> ")
+
+    index = get("https://awtd.ibaguette.com/index.beans").content
+    lines = index.splitlines()
+    
+    if x == "1":
+        download_url = str(lines[1]).strip("b'").strip("'")
+    if x == "2":
+        download_url = str(lines[0]).strip("b'").strip("'")
+        
+
+    response = get(download_url, stream=True)
+    total_size = int(response.headers.get("content-length", 0))
+    block_size = 1024  # 1 Kibibyte
+    written = 0
+
+    x = uuid4()
+    
+    with open(f"{DraggieTools_AppData_Directory}\\{x}.mp4", "wb") as f:
+        for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
+            written = written + len(data)
+            f.write(data)
+    
+    Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\{x}.mp4"')
+
+
+def torrent_downloader():
+    # Create a session object
+    s = lt.session()
+
+    # Set the session settings
+    s.listen_on(6881, 6891)
+
+    # Create a torrent_info object from the .torrent file
+    x = input("Where do you want to download the torrent to? Right click to paste.\n\n>>> ")
+
+    # Add the magnet link to the session
+    params = {
+        'save_path': x,
+        'storage_mode': lt.storage_mode_t(2),
+        'paused': False,
+        'auto_managed': True,
+        'duplicate_is_error': True
+    }
+
+    link = input("Enter the magnet link.\n\n>>> ")
+
+    th = s.add_magnet_uri(link, params)
+
+    # Set the download and upload rate limits
+    #th.set_download_limit(8 * 1024)
+    #th.set_upload_limit(2 * 1024)
+
+    # Start downloading the magnet link
+    while (not th.is_seed()):
+        s.wait_for_alert(1000)
+
+    # Print the torrent status
+    print(th.status())
+
 
 
 def view_source():
@@ -345,11 +415,10 @@ def fort_file_mod():
         Popen(fort_ini_directory)
     main()
 
-
 def check_for_update():
     try:
         stop_event = Event()
-        thread = Thread(target=loading_icon, args=(stop_event,language[4]))
+        thread = Thread(target=loading_icon, args=(stop_event, language[4]))
         thread.start()
     except Exception as e:
         change_language()
@@ -501,7 +570,7 @@ def autobrawlextractor():
 
 def awtd():
     print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n-*-*-*-*-*-*-*-*-*-*-*-* Welcome to the Advanced Water Tech Demo Secret Area! *-*-*-*-*-*-*-*-*-*-*-*-\n")
-    print("Searching for installed versions...")
+    #print("Searching for installed versions...")
     if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD"):
         mkdir(f"{DraggieTools_AppData_Directory}\\AWTD")
     if path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\Config"):
@@ -511,10 +580,10 @@ def awtd():
         stop_event = Event()
 
         # Start the loading icon in a separate thread
-        thread = Thread(target=loading_icon, args=(stop_event,))
+        thread = Thread(target=loading_icon, args=(stop_event, "Checking for an installed version..."))
         thread.start()
 
-        #sleep(5)
+        sleep(random.randint(1,3))
 
         # Set the stop event to stop the loading icon
         stop_event.set()
@@ -522,13 +591,13 @@ def awtd():
         # Wait for the thread to finish
         thread.join()
 
-        print("Unable to detect an installed version.")
-        print("Please enter your ACCESS KEY given to you. Note: this may only be used ONCE. If this is used, then you will not be able to transfer the game to another system, nor give the key to anyone else. It 'self-destructs', but gives you access.")
+        print("\nUnable to detect an installed version.")
+        print("Please enter your ACCESS KEY given to you.\nNote: this may only be used ONCE. It 'self-destructs' when entered.\nUpdates will still be applied automatically with a valid key!")
         inputted_key = input("Press right click to paste.\n\n>>> ")
         
         stop_event = Event()
 
-        thread = Thread(target=loading_icon, args=(stop_event,))
+        thread = Thread(target=loading_icon, args=(stop_event, f"Requesting the server to validate {inputted_key}"))
         thread.start()
 
         logging.info(f"Requesting the server to validate {inputted_key}")
@@ -539,43 +608,58 @@ def awtd():
 
         if code_response.status_code == 404:
             log_print(f"\nThis is an invalid key. Please try again.")
+            sleep(1.5)
             awtd()
         else:
             log_print("\n404 not received.")
-            log_print("Validating code")
+            log_print("Reading and validating code")
+
+            # Open the JSON file
+            raw_version_info = get(f"https://awtd.ibaguette.com/staticKeys/a5e81fe8_4e21_4d58_a0db_ea0c25ee9086").content
+            #version_info = str(version_info)
+            raw_version_info = str(raw_version_info).strip('b"b').strip("'")
+            raw_version_info = b64decode(raw_version_info)
+            
+            # Load the JSON data into a Python object
+            versions = json.loads(raw_version_info)
+            current_alpha_version = versions['alpha']
+            current_beta_version = versions['beta']
+            current_release_version = versions['stable']
+
             code_response = code_response.text
             response_lines = code_response.splitlines()
 
             download_url = response_lines[1]
-            #response_line0 = {response_lines[0]}
+            response_line_0 = str(response_lines[0])
 
-            if response_lines[0] == "alpha":
-                version = "ALPHA"
-            if response_lines[0] == "beta":
-                version = "BETA"
-            if response_lines[0] == "stable":
-                version = "STABLE"
+            if response_line_0 == 'alpha':
+                branch = "ALPHA"
+                current_version = current_alpha_version
+            elif response_line_0 == "beta":
+                branch = "BETA"
+                current_version = current_beta_version
+            elif response_line_0 == "stable":
+                branch = "STABLE"
+                current_version = current_release_version
             else:
-                version = "Unknown"
+                branch = "Unknown"
 
-            log_print(f"Validation completed! The version is {version}")
+            log_print(f"Validation completed! The branch is {branch}.")
 
             if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache"):
                 mkdir(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache")
-            #if not path.exists(f"C:\\Program Files\\Draggie\\AWTD"):
-            #    mkdir(f"C:\\Program Files\\Draggie\\AWTD")
 
             log_print(f"Validating Download URL.")
             download_url = b64decode(download_url)          # pass 1 of base64
-            log_print(f"[b64decode#1] {download_url}")
+            log_print(f"[b64decode#1] [DECRYPT/thread1] binaryFCalc:{download_url}")
             download_url = b64decode(download_url)          # pass 2 of base64
-            log_print(f"[b64decode#2] {download_url}")
+            log_print(f"[b64decode#2] [STATIC KEY VALID] binaryValue:{download_url}")
 
             # Retrieve the key from the URL
             response = get(download_url)                    # get sha512 key from pass 2
             log_print(f"[sha512pass2] {response.content}")
             key = (response.content).decode("utf-8")
-            print(f"key = {key}")
+            log_print(f"[sha512decryptor] [KeyThreadingInfo] {key}")
 
             # Use the key to create a Fernet object
             fernet_key = response_lines[3].strip("b'").strip("'")
@@ -584,12 +668,18 @@ def awtd():
             # Decrypt the message
             encrypted_message = f'{response_lines[2]}'      # decrypt line 3 of original url hit using sha512 key
             decrypted_message = fernet.decrypt(encrypted_message)
-            log_print(f"[sha512decryptor] {decrypted_message}")
+            #log_print(f"[sha512decryptor] {decrypted_message}")
+            log_print("Successfully decrypted and resolved endpoint download url.")
             #print("Decrypted message:", decrypted_message)
 
             download_url=str(decrypted_message).strip("b'").strip("'")
 
-            log_print(f"The files are ready to be downloaded. Note that this will be downloaded temporarily to {DraggieTools_AppData_Directory}\\AWTD\\BuildCache. Input 1 to start downloading.")
+            log_print(f"\n\nThe files are ready to be downloaded. Note that this will be downloaded temporarily to {DraggieTools_AppData_Directory}\\AWTD\\BuildCache.\nInput 1 to start downloading.")
+            
+            x = input("\n\n>>> ")
+
+            if x != "1":
+                main()
             
             response = get(download_url, stream=True)
 
@@ -602,22 +692,44 @@ def awtd():
                     written = written + len(data)
                     f.write(data)
 
-            print("Successsfully downloaded the game's PAK file. Decrypting, unpacking and verifying contents...")
+            start_anim_loading("Successsfully downloaded the game's PAK file. Decrypting, unpacking and verifying contents...")
+
             try:
                 with zipfile.ZipFile(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech.DraggiePAK', 'r') as zip_ref:
                     zip_ref.extractall(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech", pwd=b"beans")
-                    print("Successfully extracted all.")
+                    stop_anim_loading()
+                    # Loop through the files in the folder
+
+                    for filename in listdir(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech'):
+                        # Compute the full path of the file
+                        filepath = path.join(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech', filename)
+
+                        # Open the file in binary mode
+                        with open(filepath, 'rb') as f:
+                            # Read the contents of the file
+                            data = f.read()
+
+                            # Compute the SHA1 hash of the file
+                            sha1 = hashlib.sha1(data).hexdigest()
+
+                            # Print the filename and hash
+                            log_print(f'[HashVerification] Hash of "{filename}": {sha1}')
+
+
+                    log_print("\nSuccessfully extracted all.")
                     Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech"')
+                    main()
             except Exception as e:
                 log_print(e)
                 awtd()
 
 def choice1():
+    global language
     if language == french:
-        x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n7) Changer les paramètres de Fortnite\n8) Quitter\n\n>>> ")
+        x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n7) Changer les paramètres de Fortnite\n8) Quitter\n000) AWTD\n\n>>> ")
     else: 
         language = english
-        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Modify Fortnite Settings\n8) Quit\n\n>>> ")
+        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Modify Fortnite Settings\n8) Quit\n000) AWTD\n\n>>> ")
     if x == "1":
         desktop_dir = pathlib.Path.home() / 'Desktop'
         if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
@@ -633,7 +745,7 @@ def choice1():
         start_anim_loading("Initialising.")
         #print(f"Current directory: {directory}")
         try:
-            shutil.copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
+            copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
             stop_anim_loading()
             print("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
             with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
@@ -642,9 +754,9 @@ def choice1():
         except FileNotFoundError:
             stop_anim_loading()
             print("\nRunning from PYTHON file. Not executable. This should print only in the development stage.")
-            shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
+            copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
             print("I am very dumb. This will be improved later.")
-        except shutil.SameFileError:
+        except SameFileError:
             stop_anim_loading()
             print("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
     if x == "2":
@@ -657,7 +769,7 @@ def choice1():
                 mkdir(f"{y}\\Draggie\\")
             except Exception:
                 pass
-            shutil.copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
+            copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
 
             print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
             logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
@@ -686,8 +798,13 @@ def choice1():
     if x == "9":
         autobrawlextractor()
         choice1()
+    if x == "10":
+        torrent_downloader()
     if x == "000":
         awtd()
+    if x == "69":
+        secret_menu()
+
     else:
         choice1()
 
