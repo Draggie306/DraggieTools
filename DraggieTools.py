@@ -4,6 +4,7 @@ from datetime import datetime
 from os import path, startfile, mkdir, environ, listdir, remove
 from time import monotonic, sleep, time
 from uuid import uuid4
+from tqdm import tqdm
 import shutil
 import pathlib
 import sys
@@ -11,12 +12,16 @@ import random
 import traceback
 import logging
 import zipfile
+from threading import Event, Thread
+from base64 import b64decode
+from math import ceil
+from cryptography.fernet import Fernet
 
-dev_mode = False
+dev_mode = True
 
-build = 39
-version = "0.4.9"
-build_date = 1671647278
+build = 40
+version = "0.5.0"
+build_date = 1671805296
 
 environ_dir = environ['USERPROFILE']
 
@@ -31,7 +36,7 @@ if not dev_mode:
 
 else:
     uuid_gen = uuid4()
-    uuid_gen = "test1234"
+    #uuid_gen = "test1234"
     DraggieTools_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}\\DraggieTools")
     Draggie_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie{uuid_gen}")
 
@@ -40,6 +45,25 @@ else:
     if not path.exists(DraggieTools_AppData_Directory):
         mkdir(DraggieTools_AppData_Directory)
 
+
+global stop_event, thread
+
+def start_anim_loading(text):
+    global stop_event, thread
+    stop_event = Event()
+    thread = Thread(target=loading_icon, args=(stop_event,text))
+    thread.start()
+
+def stop_anim_loading():
+    global stop_event, thread
+    stop_event.set()
+    thread.join()
+
+def loading_icon(stop_event, text):
+    while not stop_event.is_set():
+        for i in ["|", "/", "-", "\\"]:
+            print(f"\r{text} {i}", end="")
+            sleep(0.1)
 
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\Logs"):
@@ -55,6 +79,7 @@ if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
     mkdir(f"{DraggieTools_AppData_Directory}\\SourceCode")
 
 desktop_install_path = False
+
 if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
     desktop_dir = pathlib.Path.home() / 'Desktop'
     with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
@@ -81,16 +106,23 @@ def replace_line(file_name, line_num, text):
     out.close()
 
 
+def log_print(text):
+    """
+    Logs and prints the text inputted. The logging level is INFO.
+    """
+    logging.info(text)
+    print(text)
+
 global language, language_chosen
 
 #   The following are new line separated every 10 index entries
 #   Remember - the index starts at 0 lol
-english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...\n", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION",
-           r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Running version", "@", "build", "The server says the newest build is", "Update available!", "You are on version", "The newest version is build", "Type 1 to download update, or enter to skip", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
+english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "Running from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX UBUNTO and location: RUSSIAN FEDERATION",
+           r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Running version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
            "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n"]# Index number 23 -   ENGLISH
 
-french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...\n", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE",
-          r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Version en cours d'exécution", "@", "mini-version", "Le serveur dit que la nouvelle version est", "Mise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez 1 pour télécharge la mise à jour, ou entre pour ignorer", "This is index 20 in french (defined under **language[20]**), if you see this then report as error.",
+french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE",
+          r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Version en cours d'exécution", "@", "mini-version", "Le serveur dit que la nouvelle version est", "\nMise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez entre pour la télécharger.", "This is index 20 in french (defined under **language[19]**), if you see this then report as error.",
           "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter...", "\nBonjour! Vous etes sur un mini-version plus récente que la version pour le public. Vous etes vraiment spécial, UwU\n"]# Index number 23 - FRENCH
 
 """
@@ -168,22 +200,23 @@ if dev_mode:
 
 def download_update(current_build_version):
     try:
-        r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true', stream=True)
-        file_size = int(r.headers['content-length'])
-        downloaded = 0
-        start = last_print = monotonic()
-    
+
         if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
             mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
-        with open(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe', 'wb') as f:
-            for chunk in r.iter_content(chunk_size=1024):
-                downloaded += f.write(chunk)
-                now = monotonic()
-                if now - last_print > 0.1:
-                    pct_done = round(downloaded / file_size * 100)
-                    speed = round(downloaded / (now - start) / 1024)
-                    print(f'{language[2]} {pct_done}% {language[3]} {speed} kbps')
-                    last_print = now
+
+        download_url = "https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true"
+
+        response = get(download_url, stream=True)
+
+        total_size = int(response.headers.get("content-length", 0))
+        block_size = 1024  # 1 Kibibyte
+        written = 0
+
+        with open(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", "wb") as f:
+            for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
+                written = written + len(data)
+                f.write(data)
+                
         if desktop_install_path == True:
             try:
                 shutil.copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
@@ -315,17 +348,25 @@ def fort_file_mod():
 
 def check_for_update():
     try:
-        (print(language[4]))
+        stop_event = Event()
+        thread = Thread(target=loading_icon, args=(stop_event,language[4]))
+        thread.start()
     except Exception as e:
         change_language()
         check_for_update()
     current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     if build < current_build_version:
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
+        stop_event.set()
+        thread.join()
         print(f"{language[15]} {language[16]} {version} {language[21]} {build}.\n{language[17]} {current_build_version}. {language[18]}\n\n")
         if language_chosen == "English":
             versions_to_get = current_build_version - build
-            print(f"You're {versions_to_get} builds behind latest")
+            if versions_to_get == 1:
+                print(f"You're {versions_to_get} build behind latest")
+            else:
+                print(f"You're {versions_to_get} builds behind latest")
+
             string = (f"Latest release notes (v{current_build_version}):\n\n{release_notes}\n")
 
             while current_build_version != (build + 1):
@@ -335,7 +376,7 @@ def check_for_update():
             print(f"\n{string}\n")
 
         update_choice = input(">>> ")
-        if update_choice != "1":
+        if update_choice != "":
             print("Skipping update.")
             return
 
@@ -350,10 +391,13 @@ def check_for_update():
         sys.exit()
 
     if current_build_version < build:
+        stop_event.set()
+        thread.join()
         print(language[23])
     else:
         print(f"{language[11]} {version} - {language[13]} {build} - {language[12]} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {language[14]} {current_build_version}.")
-
+        stop_event.set()
+        thread.join()
 
 try:
     check_for_update()
@@ -450,19 +494,129 @@ def autobrawlextractor():
                             print(f'Downloading file. {pct_done}% - {speed} kbps')
                             last_print = now
                 print("Downloaded the file!")
-
             number_one()
-
         else:
             init_filetype(location)
-
     number_one()
 
+def awtd():
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n-*-*-*-*-*-*-*-*-*-*-*-* Welcome to the Advanced Water Tech Demo Secret Area! *-*-*-*-*-*-*-*-*-*-*-*-\n")
+    print("Searching for installed versions...")
+    if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD"):
+        mkdir(f"{DraggieTools_AppData_Directory}\\AWTD")
+    if path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\Config"):
+        print("Found a config file.")
+    else:
+        # Create a stop event
+        stop_event = Event()
+
+        # Start the loading icon in a separate thread
+        thread = Thread(target=loading_icon, args=(stop_event,))
+        thread.start()
+
+        #sleep(5)
+
+        # Set the stop event to stop the loading icon
+        stop_event.set()
+
+        # Wait for the thread to finish
+        thread.join()
+
+        print("Unable to detect an installed version.")
+        print("Please enter your ACCESS KEY given to you. Note: this may only be used ONCE. If this is used, then you will not be able to transfer the game to another system, nor give the key to anyone else. It 'self-destructs', but gives you access.")
+        inputted_key = input("Press right click to paste.\n\n>>> ")
+        
+        stop_event = Event()
+
+        thread = Thread(target=loading_icon, args=(stop_event,))
+        thread.start()
+
+        logging.info(f"Requesting the server to validate {inputted_key}")
+        code_response = get(f"https://awtd.ibaguette.com/keys/{inputted_key}/type.awtd")
+
+        stop_event.set()
+        thread.join()
+
+        if code_response.status_code == 404:
+            log_print(f"\nThis is an invalid key. Please try again.")
+            awtd()
+        else:
+            log_print("\n404 not received.")
+            log_print("Validating code")
+            code_response = code_response.text
+            response_lines = code_response.splitlines()
+
+            download_url = response_lines[1]
+            #response_line0 = {response_lines[0]}
+
+            if response_lines[0] == "alpha":
+                version = "ALPHA"
+            if response_lines[0] == "beta":
+                version = "BETA"
+            if response_lines[0] == "stable":
+                version = "STABLE"
+            else:
+                version = "Unknown"
+
+            log_print(f"Validation completed! The version is {version}")
+
+            if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache"):
+                mkdir(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache")
+            #if not path.exists(f"C:\\Program Files\\Draggie\\AWTD"):
+            #    mkdir(f"C:\\Program Files\\Draggie\\AWTD")
+
+            log_print(f"Validating Download URL.")
+            download_url = b64decode(download_url)          # pass 1 of base64
+            log_print(f"[b64decode#1] {download_url}")
+            download_url = b64decode(download_url)          # pass 2 of base64
+            log_print(f"[b64decode#2] {download_url}")
+
+            # Retrieve the key from the URL
+            response = get(download_url)                    # get sha512 key from pass 2
+            log_print(f"[sha512pass2] {response.content}")
+            key = (response.content).decode("utf-8")
+            print(f"key = {key}")
+
+            # Use the key to create a Fernet object
+            fernet_key = response_lines[3].strip("b'").strip("'")
+            fernet = Fernet(fernet_key)
+
+            # Decrypt the message
+            encrypted_message = f'{response_lines[2]}'      # decrypt line 3 of original url hit using sha512 key
+            decrypted_message = fernet.decrypt(encrypted_message)
+            log_print(f"[sha512decryptor] {decrypted_message}")
+            #print("Decrypted message:", decrypted_message)
+
+            download_url=str(decrypted_message).strip("b'").strip("'")
+
+            log_print(f"The files are ready to be downloaded. Note that this will be downloaded temporarily to {DraggieTools_AppData_Directory}\\AWTD\\BuildCache. Input 1 to start downloading.")
+            
+            response = get(download_url, stream=True)
+
+            total_size = int(response.headers.get("content-length", 0))
+            block_size = 1024  # 1 Kibibyte
+            written = 0
+
+            with open(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech.DraggiePAK", "wb") as f:
+                for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
+                    written = written + len(data)
+                    f.write(data)
+
+            print("Successsfully downloaded the game's PAK file. Decrypting, unpacking and verifying contents...")
+            try:
+                with zipfile.ZipFile(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech.DraggiePAK', 'r') as zip_ref:
+                    zip_ref.extractall(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech", pwd=b"beans")
+                    print("Successfully extracted all.")
+                    Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech"')
+            except Exception as e:
+                log_print(e)
+                awtd()
 
 def choice1():
     if language == french:
         x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n7) Changer les paramètres de Fortnite\n8) Quitter\n\n>>> ")
-    if language == english:
+    else: 
+        language = english
         x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Modify Fortnite Settings\n8) Quit\n\n>>> ")
     if x == "1":
         desktop_dir = pathlib.Path.home() / 'Desktop'
@@ -476,20 +630,23 @@ def choice1():
                         e.close()
                         choice1()
 
-        print("Initialising.")
-        print(f"Current directory: {directory}")
+        start_anim_loading("Initialising.")
+        #print(f"Current directory: {directory}")
         try:
             shutil.copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
-            print("Copied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
+            stop_anim_loading()
+            print("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
             with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
                 e.write(f"{desktop_dir}")
             
         except FileNotFoundError:
-            print("Running from PYTHON file. Not executable. This should print only in the development stage.")
+            stop_anim_loading()
+            print("\nRunning from PYTHON file. Not executable. This should print only in the development stage.")
             shutil.copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
             print("I am very dumb. This will be improved later.")
         except shutil.SameFileError:
-            print("This cannot be performed. The files are the same. Maybe it's already on the desktop!")
+            stop_anim_loading()
+            print("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
     if x == "2":
         try:
             e = r"C:\Program Files"
@@ -529,6 +686,8 @@ def choice1():
     if x == "9":
         autobrawlextractor()
         choice1()
+    if x == "000":
+        awtd()
     else:
         choice1()
 
