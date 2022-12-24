@@ -24,8 +24,8 @@ dev_mode = False
 
 global build
 
-build = 45
-version = "0.5.5"
+build = 46
+version = "0.5.6"
 build_date = 1671883592
 
 environ_dir = environ['USERPROFILE']
@@ -421,21 +421,24 @@ def check_for_update():
     except Exception as e:
         change_language()
         check_for_update()
-    if path.isfile(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt"): # OverwriteOldVersion
-        logging.debug(f"[OverwriteOldVersion] {Draggie_AppData_Directory}\\OldExecutableDir.txt exists!")
-        with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "r") as file:
-            old_sys_exe = file.read()
-            file.close()
-        if old_sys_exe == str(sys.executable):
-            logging.error(f"[WARNING] The update cannot be applied to the current directory as you are running the file in the same place! Please download the update and wait for it to be closed.")
-        else:
-            logging.info(f"[OverwriteOldVersion] Removing OldExeDir.txt")
-            remove(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt")
-            logging.info(f"[OverwriteOldVersion] Removing old exe")
-            remove(old_sys_exe)
-            logging.info(f"[OverwriteOldVersion] Copying current exe to old sys exe")
-            copyfile(str(sys.executable), old_sys_exe)
-    logging.debug(f"[OverwriteOldVersion] OldExeFile does not exist!")
+    try:
+        if path.isfile(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt"): # OverwriteOldVersion
+            logging.debug(f"[OverwriteOldVersion] {Draggie_AppData_Directory}\\OldExecutableDir.txt exists!")
+            with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "r") as file:
+                old_sys_exe = file.read()
+                file.close()
+            if old_sys_exe == str(sys.executable):
+                logging.error(f"[WARNING] The update cannot be applied to the current directory as you are running the file in the same place! Please download the update and wait for it to be closed.")
+            else:
+                logging.info(f"[OverwriteOldVersion] Removing OldExeDir.txt")
+                remove(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt")
+                logging.info(f"[OverwriteOldVersion] Removing old exe")
+                remove(old_sys_exe)
+                logging.info(f"[OverwriteOldVersion] Copying current exe to old sys exe")
+                copyfile(str(sys.executable), old_sys_exe)
+        logging.debug(f"[OverwriteOldVersion] OldExeFile does not exist!")
+    except Exception as e:
+        log_print(f"Unable to overwrite older version. {e}")
 
 
     current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
@@ -466,7 +469,7 @@ def check_for_update():
 
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
         download_update(current_build_version)
-        start_anim_loading("Update downloaded. Launching new version...")
+        log_print("Update downloaded. Launching new version...")
         if desktop_install_path == False:
             startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
         else:
@@ -483,12 +486,7 @@ def check_for_update():
         stop_event.set()
         thread.join()
 
-try:
-    check_for_update()
-except Exception as e:
-    print(f"An error occured while getting the update.\n{e}\n\n")
-    logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
-
+check_for_update()
 
 def autobrawlextractor():
     Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
