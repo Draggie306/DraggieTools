@@ -22,9 +22,11 @@ import hashlib
 
 dev_mode = False
 
-build = 44
-version = "0.5.4"
-build_date = 1671884264
+global build
+
+build = 45
+version = "0.5.5"
+build_date = 1671883592
 
 environ_dir = environ['USERPROFILE']
 
@@ -739,6 +741,16 @@ def awtd():
                 log_print(e)
                 awtd()
 
+def dev_menu():
+    global build
+    x = input("\n\n1) Set build\n2) Set version\nSet unix time\n\n>>> ")
+    if x == "1":
+        build = int(input("Enter the build number: "))
+        choice1()
+    else:
+        choice1()
+
+
 def choice1():
     global language
     if language == french:
@@ -821,6 +833,8 @@ def choice1():
     if x == "69":
         print(";)")
         secret_menu()
+    if x == "dev":
+        dev_menu()
 
     else:
         choice1()
