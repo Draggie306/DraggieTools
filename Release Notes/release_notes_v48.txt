@@ -1,0 +1,2 @@
+- Fixed BROKEN downloads. Now actually works. Updating from v42-47 will require a new fresh external download.
+- Got to https://draggietools.ibaguette.com to get the new update instead of using this program.

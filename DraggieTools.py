@@ -24,9 +24,9 @@ dev_mode = False
 
 global build
 
-build = 47
-version = "0.5.7"
-build_date = 1671883592
+build = 48
+version = "0.5.8"
+build_date = 1671891850
 
 environ_dir = environ['USERPROFILE']
 
@@ -214,7 +214,7 @@ def download_update(current_build_version):
         if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
             mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
 
-        download_url = "https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true"
+        download_url = "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe"
         response = get(download_url, stream=True)
 
         total_size = int(response.headers.get("content-length", 0))
