@@ -1,0 +1,3 @@
+- Improve the updating system
+- Now copies the new file where the old one was and overwrites it!!!
+- You don't need to worry about reinstalling and copying things now.

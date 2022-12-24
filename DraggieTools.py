@@ -22,9 +22,9 @@ import hashlib
 
 dev_mode = False
 
-build = 43
-version = "0.5.3"
-build_date = 1671883592
+build = 44
+version = "0.5.4"
+build_date = 1671884264
 
 environ_dir = environ['USERPROFILE']
 
@@ -427,8 +427,12 @@ def check_for_update():
         if old_sys_exe == str(sys.executable):
             log_print(f"[WARNING] The update cannot be applied to the current directory as you are running the file in the same place! Please download the update and wait for it to be closed.")
         else:
+            log_print(f"[OverwriteOldVersion] Removing OldExeDir.txt")
             remove(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt")
+            log_print(f"[OverwriteOldVersion] Removing old exe")
             remove(old_sys_exe)
+            log_print(f"[OverwriteOldVersion] Copying current exe to old sys exe")
+            copyfile(str(sys.executable), old_sys_exe)
     log_print(f"[OverwriteOldVersion] OldExeFile does not exist!")
 
 
