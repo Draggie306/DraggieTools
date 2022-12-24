@@ -22,9 +22,9 @@ import hashlib
 
 dev_mode = False
 
-build = 42
-version = "0.5.2"
-build_date = 1671845838
+build = 43
+version = "0.5.3"
+build_date = 1671883592
 
 environ_dir = environ['USERPROFILE']
 
@@ -124,7 +124,7 @@ english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "do
            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "Running version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
            "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n"]# Index number 23 -   ENGLISH
 
-french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "finir, avec vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE",
+french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "fini, avec vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "En cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX UBUNTU et emplacement : FÉDÉRATION DE RUSSIE",
           r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "Version en cours d'exécution", "@", "mini-version", "Le serveur dit que la nouvelle version est", "\nMise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez entre pour la télécharger.", "This is index 20 in french (defined under **language[19]**), if you see this then report as error.",
           "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter...", "\nBonjour! Vous etes sur un mini-version plus récente que la version pour le public. Vous etes vraiment spécial, UwU\n"]# Index number 23 - FRENCH
 
@@ -133,14 +133,17 @@ Here are the prints for directory determining.
 """
 
 if dev_mode:
-    logging.basicConfig(filename=f'{DraggieTools_AppData_Directory}\\Logs\\{version}-{build}-{time()}.log', encoding='utf-8', level=logging.DEBUG)
-    logging.debug(f'Established uplink at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    #logging.basicConfig(filename=f'{DraggieTools_AppData_Directory}\\Logs\\{version}-{build}-{time()}.log', encoding='utf-8', level=logging.debug)
+    #logging.debug(f'Established uplink at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
     print(f"\n\n*-* Beta Tester Prints *-*\n\nAppData Directory: {DraggieTools_AppData_Directory}")
     sleep(0.05)
     print(f"Executable location: {sys.executable}")
     sleep(0.05)
     print(f"application_path: {path.dirname(path.abspath(__file__))}\n\nDevmode is ON, therefore enhanced logging is active.\nThe log file is located in the Roaming AppData directory")
     sleep(0.05)
+
+logging.basicConfig(filename=f'{DraggieTools_AppData_Directory}\\Logs\\{version}-{build}-{time()}.log', encoding='utf-8', level=logging.DEBUG)
+logging.debug(f'Established uplink at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
 directory = sys.executable
 if dev_mode:
@@ -206,12 +209,10 @@ if dev_mode:
 
 def download_update(current_build_version):
     try:
-
         if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
             mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
 
         download_url = "https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true"
-
         response = get(download_url, stream=True)
 
         total_size = int(response.headers.get("content-length", 0))
@@ -223,14 +224,9 @@ def download_update(current_build_version):
                 written = written + len(data)
                 f.write(data)
                 
-        if desktop_install_path == True:
-            try:
-                copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
-                print(f"Installed update to preferred directory, the desktop.")
-            except FileExistsError:
-                remove(f"{desktop_dir}\\DraggieTools.exe")
-                copyfile(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", f"{desktop_dir}\\DraggieTools.exe")
-                print(f"Installed update to preferred directory, the desktop.")
+        with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "w") as file:
+            file.write(f"{sys.executable}")
+            file.close()
         
     except KeyError as e:
         print(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be usedm saving to default directory.")
@@ -423,12 +419,25 @@ def check_for_update():
     except Exception as e:
         change_language()
         check_for_update()
+    if path.isfile(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt"): # OverwriteOldVersion
+        log_print(f"[OverwriteOldVersion] {Draggie_AppData_Directory}\\OldExecutableDir.txt exists!")
+        with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "r") as file:
+            old_sys_exe = file.read()
+            file.close()
+        if old_sys_exe == str(sys.executable):
+            log_print(f"[WARNING] The update cannot be applied to the current directory as you are running the file in the same place! Please download the update and wait for it to be closed.")
+        else:
+            remove(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt")
+            remove(old_sys_exe)
+    log_print(f"[OverwriteOldVersion] OldExeFile does not exist!")
+
+
     current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     if build < current_build_version:
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         stop_event.set()
         thread.join()
-        print(f"{language[15]} {language[16]} {version} {language[21]} {build}.\n{language[17]} {current_build_version}. {language[18]}\n\n")
+        log_print(f"\n{language[15]} {language[16]} {version} {language[21]} {build}.\n{language[17]} {current_build_version}. {language[18]}\n\n")
         if language_chosen == "English":
             versions_to_get = current_build_version - build
             if versions_to_get == 1:
@@ -451,7 +460,7 @@ def check_for_update():
 
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
         download_update(current_build_version)
-        print("Update downloaded. Launching new version - you can close this now.")
+        start_anim_loading("Update downloaded. Launching new version...")
         if desktop_install_path == False:
             startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
         else:
@@ -643,8 +652,10 @@ def awtd():
                 current_version = current_release_version
             else:
                 branch = "Unknown"
+                current_version = "Unknown"
 
-            log_print(f"Validation completed! The branch is {branch}.")
+            log_print(f"[AWTD] Validation completed! The branch is {branch}.")
+            log_print(f"Current Version to Download: {current_version}")
 
             if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache"):
                 mkdir(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache")
@@ -677,6 +688,7 @@ def awtd():
             log_print(f"\n\nThe files are ready to be downloaded. Note that this will be downloaded temporarily to {DraggieTools_AppData_Directory}\\AWTD\\BuildCache.\nInput 1 to start downloading.")
             
             x = input("\n\n>>> ")
+            logging.info(f"Input: {x}")
 
             if x != "1":
                 main()
