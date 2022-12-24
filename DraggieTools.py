@@ -22,9 +22,9 @@ import hashlib
 
 dev_mode = False
 
-build = 41
-version = "0.5.1"
-build_date = 1671835838
+build = 42
+version = "0.5.2"
+build_date = 1671845838
 
 environ_dir = environ['USERPROFILE']
 
