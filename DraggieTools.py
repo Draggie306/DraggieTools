@@ -24,9 +24,9 @@ dev_mode = False
 
 global build
 
-build = 48
-version = "0.5.8"
-build_date = 1671891850
+build = 49
+version = "0.6.0"
+build_date = 1671904760
 
 environ_dir = environ['USERPROFILE']
 
@@ -109,6 +109,19 @@ def replace_line(file_name, line_num, text):
     out = open(file_name, 'w')
     out.writelines(lines)
     out.close()
+
+
+def tqdm_download(download_url, save_dir):
+    response = get(download_url, stream=True)
+
+    total_size = int(response.headers.get("content-length", 0))
+    block_size = 1024  # 1 Kibibyte
+    written = 0
+
+    with open(save_dir, "wb") as f:
+        for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
+            written = written + len(data)
+            f.write(data)
 
 
 def log_print(text):
@@ -214,17 +227,7 @@ def download_update(current_build_version):
         if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
             mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
 
-        download_url = "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe"
-        response = get(download_url, stream=True)
-
-        total_size = int(response.headers.get("content-length", 0))
-        block_size = 1024  # 1 Kibibyte
-        written = 0
-
-        with open(f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe", "wb") as f:
-            for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
-                written = written + len(data)
-                f.write(data)
+        tqdm_download("https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe")
                 
         with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "w") as file:
             file.write(f"{sys.executable}")
@@ -301,6 +304,39 @@ def torrent_downloader():
     print(th.status())
 
 
+
+def cleanup_files():
+    dir_paths =[f"{DraggieTools_AppData_Directory}\\Logs", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds", f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache", f"{DraggieTools_AppData_Directory}\\SourceCode",
+     f"{Draggie_AppData_Directory}\\AutoBrawlExtractor\\DownloadedBuilds", ]
+
+    # Get the current time in seconds
+    current_time = time()
+    file_amount = 0
+
+    for dir in dir_paths:
+        # Loop through all the files in the directory
+        if path.exists(dir):
+            for file in listdir(dir):
+                # Get the path of the file
+                file_path = path.join(dir, file)
+                # Check the modification time of the file
+                mod_time = path.getmtime(file_path)
+                # Calculate the difference in seconds between the current time and the modification time
+                time_diff = current_time - mod_time
+                # Convert the difference in seconds to days
+                time_diff_days = time_diff / (60 * 60 * 24)
+                # If the file is older than 7 days
+                if time_diff_days > 7:
+                    # Delete the file
+                    remove(file_path)
+                    log_print(f"[FileCleanup] Cleaned up file at {file_path}")
+                    file_amount += 1
+        else:
+            logging.info("Skipped directory as it doesn't exist.")
+        sleep(0.5)
+    
+    log_print(f"[FileCleanup] Purged {file_amount} file(s).")
+    
 
 def view_source():
     print(language[20])
@@ -410,7 +446,7 @@ def fort_file_mod():
             print("\nOk, what would you like to change?")
 
     if y == "0":
-        Popen(fort_ini_directory)
+        Popen(f'explorer /select,"{fort_ini_directory}"')
     main()
 
 def check_for_update():
@@ -539,43 +575,17 @@ def autobrawlextractor():
             print(f"IPA version {ipa_lines[0]} is available to download. Source: {ipa_lines[2]}")
             decision = input("Would you like to download the APK (type 1) or IPA (option 2). Alternatively, type enter to go back.\n\n>>> ")
             print(f"Files will be downloaded to {Brawl_AppData_Directory}/DownloadedBuilds")
+            if not path.exists(f'{Brawl_AppData_Directory}\\DownloadedBuilds'):
+                mkdir(f'{Brawl_AppData_Directory}\\DownloadedBuilds')
 
             if decision == "1":
-                download_dir = apk_lines[1]
-                r = get(download_dir, stream=True)
-                file_size = int(r.headers['content-length'])
-                downloaded = 0
-                start = last_print = monotonic()
-                if not path.exists(f'{Brawl_AppData_Directory}\\DownloadedBuilds'):
-                    mkdir(f'{Brawl_AppData_Directory}\\DownloadedBuilds')
-                with open(f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{apk_lines[0]}.apk', 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=1024):
-                        downloaded += f.write(chunk)
-                        now = monotonic()
-                        if now - last_print > 0.5:
-                            pct_done = round(downloaded / file_size * 100)
-                            speed = round(downloaded / (now - start) / 1024)
-                            print(f'Downloading file. {pct_done}% - {speed} kbps')
-                            last_print = now
+                download_url = apk_lines[1]
+                tqdm_download(download_url, f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{apk_lines[0]}.apk')
                 print("Downloaded the file!")
 
             if decision == "2":
-                download_dir = ipa_lines[1]
-                r = get(download_dir, stream=True)
-                file_size = int(r.headers['content-length'])
-                downloaded = 0
-                start = last_print = monotonic()
-                if not path.exists(f'{Brawl_AppData_Directory}\\DownloadedBuilds'):
-                    mkdir(f'{Brawl_AppData_Directory}\\DownloadedBuilds')
-                with open(f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{ipa_lines[0]}.ipa', 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=1024):
-                        downloaded += f.write(chunk)
-                        now = monotonic()
-                        if now - last_print > 0.5:
-                            pct_done = round(downloaded / file_size * 100)
-                            speed = round(downloaded / (now - start) / 1024)
-                            print(f'Downloading file. {pct_done}% - {speed} kbps')
-                            last_print = now
+                download_url = ipa_lines[1]
+                tqdm_download(download_url, f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{ipa_lines[0]}.ipa')
                 print("Downloaded the file!")
             number_one()
         else:
@@ -753,10 +763,13 @@ def dev_menu():
 def choice1():
     global language
     if language == french:
-        x = input("\n\n1) Installez ceci sur le bureau\n2) Installez ceci dans un répertoire personnalisé\n3) Créez un raccourci sur le bureau\n4) Actualises les mises à jour\n5) Changez la langue\n6) Regarde le code source\n7) Changer les paramètres de Fortnite\n8) Quitter\n000) AWTD\n\n>>> ")
+        x = input("\n\n1) Installer cela sur le bureau\n2) Installer cela dans un répertoire personnalisé\n3) Actualiser les mises à jour\n4) Changer de langue\n5) Afficher le code source\n6) Modifier les paramètres de Fortnite\n7) AWTD\n8) Téléchargeur de torrent\n9) AutoBrawlExtractor\n0) Quitter\n\n>>> ")
     else: 
         language = english
-        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Create shortcut on desktop\n4) Refresh updates\n5) Change language\n6) View source code\n7) Modify Fortnite Settings\n8) Quit\n000) AWTD\n\n>>> ")
+        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Refresh updates\n4) Change language\n5) View source code\n6) Modify Fortnite Settings\n7) AWTD\n8) Torrent Downloader\n9) AutoBrawlExtractor\n0) Quit\n\n>>> ")
+    if x == "0":
+        print("\n\n\n\n\n\nQuitting...")
+        sys.exit()
     if x == "1":
         desktop_dir = pathlib.Path.home() / 'Desktop'
         if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
@@ -806,29 +819,21 @@ def choice1():
             logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
             choice1()
     if x == "3":
-        print("Feature disabled due to a bug.")
-    if x == "4":
         check_for_update()
-        choice1()
-    if x == "5":
+    if x == "4":
         change_language()
-        choice1()
-    if x == "6":
+    if x == "5":
         view_source()
-        choice1()
-    if x == "7":
+    if x == "6":
         fort_file_mod()
-        choice1()
+    if x == "7":
+        awtd()
     if x == "8":
-        print("\n\n\n\n\n\nQuitting...")
-        sys.exit()
+        torrent_downloader()
     if x == "9":
         autobrawlextractor()
-        choice1()
     if x == "10":
-        torrent_downloader()
-    if x == "000":
-        awtd()
+        cleanup_files()
     if x == "69":
         print(";)")
         secret_menu()
@@ -837,6 +842,8 @@ def choice1():
 
     else:
         choice1()
+
+    choice1()
 
 
 def main():

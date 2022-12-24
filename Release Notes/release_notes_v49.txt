@@ -1,0 +1,3 @@
+- Added more 'robustness' overall.
+- Removed an option in the main menu as it was useless.
+- Added a cleanup command! This helps reduce the amount of junk which builds up over time.
