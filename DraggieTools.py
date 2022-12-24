@@ -803,6 +803,7 @@ def choice1():
     if x == "000":
         awtd()
     if x == "69":
+        print(";)")
         secret_menu()
 
     else:
