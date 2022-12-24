@@ -1,0 +1,4 @@
+- Fixed multiple issues
+- Improved language loading.
+- Things just look better now.
+- Logging now actually works even if dev_mode is False.
