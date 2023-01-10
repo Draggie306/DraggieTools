@@ -1,7 +1,7 @@
 from subprocess import Popen
 from requests import get
 from datetime import datetime
-from os import path, startfile, mkdir, environ, listdir, remove
+from os import path, startfile, mkdir, environ, listdir, remove, makedirs
 from time import monotonic, sleep, time
 from uuid import uuid4
 from tqdm import tqdm
@@ -18,15 +18,17 @@ from math import ceil
 from cryptography.fernet import Fernet
 import json
 import hashlib
+import re
+from urllib.parse import urlsplit
 #import libtorrent as lt
 
 dev_mode = False
 
 global build
 
-build = 49
-version = "0.6.0"
-build_date = 1671904760
+build = 50
+version = "0.7.0"
+build_date = 1673381640
 
 environ_dir = environ['USERPROFILE']
 
@@ -270,6 +272,7 @@ def secret_menu():
 
 
 def torrent_downloader():
+    return log_print("The torrent downloader will be enabled in a later version of the program.")
     # Create a session object
     s = lt.session()
 
@@ -316,6 +319,7 @@ def cleanup_files():
     for dir in dir_paths:
         # Loop through all the files in the directory
         if path.exists(dir):
+            log_print(f"[FileCleanup] Inspecting directory {dir}.")
             for file in listdir(dir):
                 # Get the path of the file
                 file_path = path.join(dir, file)
@@ -333,7 +337,7 @@ def cleanup_files():
                     file_amount += 1
         else:
             logging.info("Skipped directory as it doesn't exist.")
-        sleep(0.5)
+        sleep(0.2)
     
     log_print(f"[FileCleanup] Purged {file_amount} file(s).")
     
@@ -525,10 +529,111 @@ def check_for_update():
 
 check_for_update()
 
+def maniupulate_brawl_file(dir, brawl_versioning):
+    brawl_versioning = str(brawl_versioning)
+    print(f"Allowing manipulation of brawl file. [{brawl_versioning}]")
+    archive = zipfile.ZipFile(dir, 'r')
+    fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+    fingerprint_json = json.loads(fingerprint_json)
+    x = input ("Select options:\n\n1) Grab fingerprint hash\n2) Compare music to old version and extract\n3) Compare all files\n4) Download all background music files\n5) Download all with custom string\n6) Open brawl downloaded file directory\n0) Go back   \n\n>>> ")
+    if x == "1":
+        print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}")
+    if x == "4":
+        fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+        fingerprint_json = json.loads(fingerprint_json)
+        for item in fingerprint_json['files']:
+            if 'music/background' in item['file']:
+                print(f"File: {item}")
+                # The file field contains 'music/background'
+                print(f'Found "music/background" in file: {item["file"]}')
+                # Split the file field on the '\' character and take the first two elements
+                dir_path = item['file'].split('/')[:2]
+
+                # Join the elements back together with the '\' character
+                dir_path = '\\'.join(dir_path)
+
+                # Create the directory and its parent directories if they do not already exist
+                makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}', exist_ok=True)
+                tqdm_download(f'https://game-assets.brawlstarsgame.com/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+            else:
+                #print(f"Not in file {item}")
+                pass
+        print("ok")
+    if x == "5":
+        search_term = input("Enter the term to search all files for and it will be downloaded:\n\n>>> ")
+        x = input(f"Enter 1 to search through ALL archives located in the DownloadedBuilds directory\nHit enter and it will be searched for in current version: {fingerprint_json['version']}\n\n>>> ")
+        file_cycle = True if x == "1" else False
+        hits = 0
+        files = 0
+        archives = 0
+        if file_cycle:
+            available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
+            for file in available_archives:
+                if file.lower().endswith(".ipa") or file.lower().endswith(".zip"):
+                    archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
+                    archives += 1
+                    new_fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+                    new_fingerprint_json = json.loads(new_fingerprint_json)
+                    for item in fingerprint_json['files']:
+                        files += 1
+                        if search_term in item['file']:
+                            print(f"File: {item}")
+                            # The file field contains search_term
+                            print(f'Found "{search_term}" in file: {item["file"]}')
+                            hits += 1
+
+                            # Split the file path on the '\' character and take all elements except the last one
+                            dir_path = item["file"].split('/')[:-1]
+
+                            # Join the elements back together with the '\' character
+                            dir_path = '\\'.join(dir_path)
+
+                            # Create the directory and its parent directories if they do not already exist
+                            directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
+                            makedirs(directory_to_save_to, exist_ok=True)
+                            tqdm_download(f'https://game-assets.brawlstarsgame.com/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                        else:
+                            print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
+                else:
+                    print(f"Skipping file {file} as it does not have a supported extension or it will not work.")
+        else:
+            archives += 1
+            new_fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+            new_fingerprint_json = json.loads(new_fingerprint_json)
+            for item in fingerprint_json['files']:
+                files += 1
+                if search_term in item['file']:
+                    print(f"File: {item}")
+                    # The file field contains search_term
+                    print(f'Found "{search_term}" in file: {item["file"]}')
+                    hits += 1
+
+                    # Split the file path on the '\' character and take all elements except the last one
+                    dir_path = item["file"].split('/')[:-1]
+
+                    # Join the elements back together with the '\' character
+                    dir_path = '\\'.join(dir_path)
+
+                    # Create the directory and its parent directories if they do not already exist
+                    directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
+                    makedirs(directory_to_save_to, exist_ok=True)
+                    tqdm_download(f'https://game-assets.brawlstarsgame.com/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                else:
+                    print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
+        print(f"Found {hits} hits across {files} total files in {archives} available archives.")
+    if x == "6":
+        Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}"')
+    else:
+        autobrawlextractor()
+
+    maniupulate_brawl_file(dir, brawl_versioning)
+
+
 def autobrawlextractor():
     Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
     Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
-
+    if not path.exists(f"{Brawl_AppData_Directory}\\Versions"):
+        mkdir(f"{Brawl_AppData_Directory}\\Versions")
     def init_filetype(dir):
         """
         Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.
@@ -536,24 +641,40 @@ def autobrawlextractor():
         try:
             archive = zipfile.ZipFile(dir, 'r')
             try:
-                archive.read('Payload/Brawl Stars.app/PkgInfo')
-                version = "IPA"
+                string = str(archive.read('Payload/Brawl Stars.app/res/version.number'), encoding="UTF-8")
+                store_type = "IPA"
+
+                # Split the string into a list of lines
+                lines = string.split('\n')
+
+                # Iterate through the lines and extract the version and build values
+                brawl_version = None
+                brawl_build = None
+                for line in lines:
+                    if line.startswith('version='):
+                        brawl_version = line.split('=')[1]
+                    elif line.startswith('build='):
+                        brawl_build = line.split('=')[1]
+                print(f"Parsed build from file: {brawl_version}.{brawl_build}")
+                if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_version}.{brawl_build}"):
+                    mkdir(f"{Brawl_AppData_Directory}\\Versions\\{brawl_version}.{brawl_build}")
+                maniupulate_brawl_file(dir, f"{brawl_version}.{brawl_build}")
+                
             except KeyError:
                 archive.read('classes.dex')
-                version = "APK"
-            if version:
-                print(f"Detected Verson: {version}")
+                store_type = "APK"
+            if store_type:
+                print(f"Detected Verson: {store_type}")
             else:
                 print("Unknown version type please use the other OS' version")
                 sleep(4)
-                sys.exit()
         except Exception as e:
             print(f"Error occured: {e}")
 
     def number_one():
-        print(r"Enter the location of your Brawl Stars archive file, e.g D:\Downloads\brawl.apk")
+        print(r"Enter the location of your Brawl Stars archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
         print("Use an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
-        print("Alternatively, press 1 to search for downloadable versions, if you do not have the file.")
+        print("Alternatively, press 1 to search for all downloadable versions.\nType 0 to go back")
 
         amount_of_files = 0
 
@@ -561,36 +682,66 @@ def autobrawlextractor():
             amount_of_files = amount_of_files + 1
 
         if amount_of_files >= 1:
-            print(f"\nYou have {amount_of_files} files already downloaded inside the DownloadedBuilds folder")
+            print(f"\nYou have {amount_of_files} files already downloaded inside the DownloadedBuilds folder, [Enter] to go there.")
 
         location = input("\n>>> ")
 
         if location == "1":
-            print("Fetching available versions from GitHub...")
-            latest_apk = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/latest.apk")).text)
-            latest_ipa = str((get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/latest.ipa")).text)
-            apk_lines = latest_apk.splitlines()
-            print(f"APK version {apk_lines[0]} is available to download. Source: {apk_lines[2]}")
-            ipa_lines = latest_ipa.splitlines()
-            print(f"IPA version {ipa_lines[0]} is available to download. Source: {ipa_lines[2]}")
-            decision = input("Would you like to download the APK (type 1) or IPA (option 2). Alternatively, type enter to go back.\n\n>>> ")
-            print(f"Files will be downloaded to {Brawl_AppData_Directory}/DownloadedBuilds")
-            if not path.exists(f'{Brawl_AppData_Directory}\\DownloadedBuilds'):
-                mkdir(f'{Brawl_AppData_Directory}\\DownloadedBuilds')
+            print("Fetching a list of all versions from GitHub...")
+            git_brawl_builds = get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/brawl_builds.txt")
+            git_brawl_builds = git_brawl_builds.text
+            urls = git_brawl_builds.splitlines()
+            version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
+            for i, version_name in enumerate(version_names):
+                print(f"[{i + 1}]   {version_name}")
+            selected_version = (input("\nPlease select a version to download:\n\n>>> "))
+            #if selected_version == "*":
+            selected_url = urls[int(selected_version) - 1]
+            real_file_name = path.basename(urlsplit(selected_url).path)
+            print(real_file_name)
 
-            if decision == "1":
-                download_url = apk_lines[1]
-                tqdm_download(download_url, f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{apk_lines[0]}.apk')
-                print("Downloaded the file!")
-
-            if decision == "2":
-                download_url = ipa_lines[1]
-                tqdm_download(download_url, f'{Brawl_AppData_Directory}\\DownloadedBuilds\\{ipa_lines[0]}.ipa')
-                print("Downloaded the file!")
+            tqdm_download(selected_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}.ipa")
+            print(f"\nDownloaded build {real_file_name}")
             number_one()
+
+        if location == "":
+            files = []
+            f = 0
+            for file in listdir(Downloaded_Builds_AppData_Directory):
+                files.append(file)
+            for i in files:
+                print(f"[{f}] {i}")
+                f += 1
+            x = input("\nChoose file\n\n>>> ")
+            try:
+                init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{files[int(x)]}")
+            except ValueError:
+                # Initialize variables to store the highest version number and corresponding filename
+                highest_version = 0.0
+                highest_version_file = ""
+                # Iterate through each file in the list
+                for f in files:
+                    # Use regular expression to search for a string of digits with a dot in between (e.g., "x.x")
+                    match = re.search(r"(\d+\.\d+)", f)
+                    # If a match is found (i.e., if the file contains a version number of the format "x.x")
+                    if match:
+                        # Extract the version number as a float
+                        archive_version = float(match.group(1))
+                        # Compare the version number to the current highest version number (just iterating over the list to find the maximum value)
+                        if archive_version > highest_version:
+                            highest_version = archive_version
+                            highest_version_file = f
+
+                print(f"Error occured! Resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
+                init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
+            
+        if location == "0":
+            main()
         else:
             init_filetype(location)
     number_one()
+
+
 
 def awtd():
     print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n-*-*-*-*-*-*-*-*-*-*-*-* Welcome to the Advanced Water Tech Demo Secret Area! *-*-*-*-*-*-*-*-*-*-*-*-\n")
@@ -640,22 +791,29 @@ def awtd():
 
             # Open the JSON file
             raw_version_info = get(f"https://awtd.ibaguette.com/staticKeys/a5e81fe8_4e21_4d58_a0db_ea0c25ee9086").content
-            #version_info = str(version_info)
+            # Get the raw version info from the specified URL
+            # The content is returned as bytes, so it needs to be converted to a string
             raw_version_info = str(raw_version_info).strip('b"b').strip("'")
+            # Base64 decode the version info
             raw_version_info = b64decode(raw_version_info)
             
             # Load the JSON data into a Python object
             versions = json.loads(raw_version_info)
+            # Get the current alpha, beta, and release versions
             current_alpha_version = versions['alpha']
             current_beta_version = versions['beta']
             current_release_version = versions['stable']
 
+            # Get the text of the response and split it into lines
             code_response = code_response.text
             response_lines = code_response.splitlines()
 
+            # Get the download URL from the second line of the response
             download_url = response_lines[1]
+            # Get the first line of the response and convert it to a string
             response_line_0 = str(response_lines[0])
 
+            # Check the first line of the response and set the branch and current version accordingly
             if response_line_0 == 'alpha':
                 branch = "ALPHA"
                 current_version = current_alpha_version
@@ -669,36 +827,44 @@ def awtd():
                 branch = "Unknown"
                 current_version = "Unknown"
 
+            # Print a message indicating that the validation has completed and the branch has been determined
             log_print(f"[AWTD] Validation completed! The branch is {branch}.")
             log_print(f"Current Version to Download: {current_version}")
 
+            # If the BuildCache directory does not exist, create it
             if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache"):
                 mkdir(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache")
 
+            # Print a message indicating that the download URL is being validated
             log_print(f"Validating Download URL.")
-            download_url = b64decode(download_url)          # pass 1 of base64
+            # Base64 decode the download URL (pass 1)
+            download_url = b64decode(download_url)
+            # Print the result of the first base64 decoding
             log_print(f"[b64decode#1] [DECRYPT/thread1] binaryFCalc:{download_url}")
-            download_url = b64decode(download_url)          # pass 2 of base64
+            # Base64 decode the download URL again (pass 2)
+            download_url = b64decode(download_url)
+            # Print the result of the second base64 decoding
             log_print(f"[b64decode#2] [STATIC KEY VALID] binaryValue:{download_url}")
 
             # Retrieve the key from the URL
-            response = get(download_url)                    # get sha512 key from pass 2
+            response = get(download_url)                    # make request to download_url and store the response in response
             log_print(f"[sha512pass2] {response.content}")
-            key = (response.content).decode("utf-8")
+            key = (response.content).decode("utf-8")        # decode the content of response from bytes to a string and store it in key
             log_print(f"[sha512decryptor] [KeyThreadingInfo] {key}")
 
             # Use the key to create a Fernet object
-            fernet_key = response_lines[3].strip("b'").strip("'")
-            fernet = Fernet(fernet_key)
+            fernet_key = response_lines[3].strip("b'").strip("'")  # remove leading and trailing characters from fourth line of original response and store the result in fernet_key
+            fernet = Fernet(fernet_key)                            # create a Fernet object using fernet_key as the key
 
             # Decrypt the message
-            encrypted_message = f'{response_lines[2]}'      # decrypt line 3 of original url hit using sha512 key
-            decrypted_message = fernet.decrypt(encrypted_message)
+            encrypted_message = f'{response_lines[2]}'      # store the third line of the original response in encrypted_message
+            decrypted_message = fernet.decrypt(encrypted_message)   # decrypt encrypted_message using the Fernet object and store the result in decrypted_message
             #log_print(f"[sha512decryptor] {decrypted_message}")
             log_print("Successfully decrypted and resolved endpoint download url.")
             #print("Decrypted message:", decrypted_message)
 
-            download_url=str(decrypted_message).strip("b'").strip("'")
+            download_url=str(decrypted_message).strip("b'").strip("'")  # remove leading and trailing characters from decrypted_message and store the result in download_url
+
 
             log_print(f"\n\nThe files are ready to be downloaded. Note that this will be downloaded temporarily to {DraggieTools_AppData_Directory}\\AWTD\\BuildCache.\nInput 1 to start downloading.")
             

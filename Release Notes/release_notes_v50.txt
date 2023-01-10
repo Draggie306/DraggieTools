@@ -1,0 +1,6 @@
+- Added more options to AutoBrawlExtractor.
+- Now can download all IPA builds in the last 3 years.
+- Can now interact with Supercell's servers to download background assets.
+- Now uses Regex expressions.
+- Added better commenting for complex encryption codes.
+- so many new features ohh mah gawd
