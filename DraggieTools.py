@@ -26,9 +26,9 @@ dev_mode = False
 
 global build
 
-build = 50
-version = "0.7.0"
-build_date = 1673381640
+build = 51
+version = "0.7.1"
+build_date = 1673638831
 
 environ_dir = environ['USERPROFILE']
 
