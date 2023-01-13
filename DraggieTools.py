@@ -687,21 +687,36 @@ def autobrawlextractor():
         location = input("\n>>> ")
 
         if location == "1":
-            print("Fetching a list of all versions from GitHub...")
+            print("Fetching a list of all trusted versions from GitHub...")
             git_brawl_builds = get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/brawl_builds.txt")
             git_brawl_builds = git_brawl_builds.text
             urls = git_brawl_builds.splitlines()
             version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
             for i, version_name in enumerate(version_names):
                 print(f"[{i + 1}]   {version_name}")
-            selected_version = (input("\nPlease select a version to download:\n\n>>> "))
-            #if selected_version == "*":
+            selected_version = (input("\nPlease select a version to download: (or '*' to download them all).\n\n>>> "))
+            if selected_version == "*":
+                print("You have chosen to download ALL builds. If you would like to stop it, you will need to press Ctrl+C.")
+                amount = len(urls)
+                downloaded_amount = 0
+                for line in urls:
+                    source = line.strip().split(' (')
+                    source = source[0].strip(')')
+                    real_file_name = path.basename(urlsplit(line).path)
+                    if "Baguette Brigaders" in source:
+                        source = (f"[VERIFIED] {source}")
+                    print(f"Downloading the build {real_file_name}. This file comes from {source}")
+                    tqdm_download(line, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                    downloaded_amount += 1
+                    print(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} ({round(downloaded_amount/amount)}%)")
+                print(f"{downloaded_amount} builds have been saved!\n\n")
+                number_one()
+
             selected_url = urls[int(selected_version) - 1]
             real_file_name = path.basename(urlsplit(selected_url).path)
-            print(real_file_name)
 
-            tqdm_download(selected_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}.ipa")
-            print(f"\nDownloaded build {real_file_name}")
+            tqdm_download(selected_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+            print(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
             number_one()
 
         if location == "":
