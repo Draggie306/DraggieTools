@@ -1,0 +1,3 @@
+- Added even more options to AutoBrawlExtractor.
+- Can now download bulk files.
+- Added sources to files.
