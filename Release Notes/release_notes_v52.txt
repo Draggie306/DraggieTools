@@ -1,0 +1,4 @@
+- Updated the initial menu to be more pleasant.
+- AutoBrawlExtractor: Added support for more Supercell games. Now includes Brawl Stars, Clash Royale, Clash of Clans and Clash Mini.
+- AutoBrawlExtractor: Added support for SC LZMA decompression.
+- AutoBrawlExtractor: Improved downloading of files.

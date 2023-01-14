@@ -19,6 +19,7 @@ from cryptography.fernet import Fernet
 import json
 import hashlib
 import re
+import lzma
 from urllib.parse import urlsplit
 #import libtorrent as lt
 
@@ -26,9 +27,9 @@ dev_mode = False
 
 global build
 
-build = 51
-version = "0.7.1"
-build_date = 1673638831
+build = 52
+version = "0.7.2"
+build_date = 1673718061
 
 environ_dir = environ['USERPROFILE']
 
@@ -529,17 +530,29 @@ def check_for_update():
 
 check_for_update()
 
-def maniupulate_brawl_file(dir, brawl_versioning):
+def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
     brawl_versioning = str(brawl_versioning)
-    print(f"Allowing manipulation of brawl file. [{brawl_versioning}]")
+    print(f"Allowing manipulation of '{app_folder}' file. [{brawl_versioning}]")
     archive = zipfile.ZipFile(dir, 'r')
-    fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+    fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
     fingerprint_json = json.loads(fingerprint_json)
+
+    if "Brawl Stars" in app_folder:
+        game_download_url = "game.brawlstarsgame.com"
+    if "Boom Beach" in app_folder:
+        game_download_url = "game-assets.boombeach.com"
+    if "Clash of Clans" in app_folder:
+        game_download_url = "game-assets.clashofclans.com"
+    if "Clash Royale" in app_folder:
+        game_download_url = "game-assets.clashroyaleapp.com"
+    if "Clash Mini" in app_folder:
+        game_download_url = "game-assets.clashminigame.com"
+
     x = input ("Select options:\n\n1) Grab fingerprint hash\n2) Compare music to old version and extract\n3) Compare all files\n4) Download all background music files\n5) Download all with custom string\n6) Open brawl downloaded file directory\n0) Go back   \n\n>>> ")
     if x == "1":
         print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}")
     if x == "4":
-        fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+        fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
         fingerprint_json = json.loads(fingerprint_json)
         for item in fingerprint_json['files']:
             if 'music/background' in item['file']:
@@ -554,7 +567,7 @@ def maniupulate_brawl_file(dir, brawl_versioning):
 
                 # Create the directory and its parent directories if they do not already exist
                 makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}', exist_ok=True)
-                tqdm_download(f'https://game-assets.brawlstarsgame.com/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                tqdm_download(f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
             else:
                 #print(f"Not in file {item}")
                 pass
@@ -572,7 +585,7 @@ def maniupulate_brawl_file(dir, brawl_versioning):
                 if file.lower().endswith(".ipa") or file.lower().endswith(".zip"):
                     archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
                     archives += 1
-                    new_fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+                    new_fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
                     new_fingerprint_json = json.loads(new_fingerprint_json)
                     for item in fingerprint_json['files']:
                         files += 1
@@ -591,14 +604,14 @@ def maniupulate_brawl_file(dir, brawl_versioning):
                             # Create the directory and its parent directories if they do not already exist
                             directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
                             makedirs(directory_to_save_to, exist_ok=True)
-                            tqdm_download(f'https://game-assets.brawlstarsgame.com/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                            tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
                         else:
                             print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
                 else:
                     print(f"Skipping file {file} as it does not have a supported extension or it will not work.")
         else:
             archives += 1
-            new_fingerprint_json = str(archive.read('Payload/Brawl Stars.app/res/fingerprint.json'), encoding="UTF-8")
+            new_fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
             new_fingerprint_json = json.loads(new_fingerprint_json)
             for item in fingerprint_json['files']:
                 files += 1
@@ -617,31 +630,41 @@ def maniupulate_brawl_file(dir, brawl_versioning):
                     # Create the directory and its parent directories if they do not already exist
                     directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
                     makedirs(directory_to_save_to, exist_ok=True)
-                    tqdm_download(f'https://game-assets.brawlstarsgame.com/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                    tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
                 else:
                     print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
-        print(f"Found {hits} hits across {files} total files in {archives} available archives.")
+        print(f"Found {hits} matching files across {files} total files in {archives} available archives.\n")
     if x == "6":
         Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}"')
     else:
         autobrawlextractor()
 
-    maniupulate_brawl_file(dir, brawl_versioning)
+    maniupulate_brawl_file(dir, brawl_versioning, app_folder)
 
 
 def autobrawlextractor():
     Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
     Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
     if not path.exists(f"{Brawl_AppData_Directory}\\Versions"):
-        mkdir(f"{Brawl_AppData_Directory}\\Versions")
+        makedirs(f"{Brawl_AppData_Directory}\\Versions")
+    if not path.exists(Downloaded_Builds_AppData_Directory):
+        makedirs(Downloaded_Builds_AppData_Directory)
+
     def init_filetype(dir):
         """
-        Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.
+        Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.\nMay return the game.
         """
         try:
+            with zipfile.ZipFile(dir, "r") as zip_ref:
+                for name in zip_ref.namelist():
+                    if 'Payload' in name:
+                        app_folder = name.split("/")[1]
+
             archive = zipfile.ZipFile(dir, 'r')
+            if not app_folder:
+                return print("Unable to get the file name.")
             try:
-                string = str(archive.read('Payload/Brawl Stars.app/res/version.number'), encoding="UTF-8")
+                string = str(archive.read(f'Payload/{app_folder}/res/version.number'), encoding="UTF-8")
                 store_type = "IPA"
 
                 # Split the string into a list of lines
@@ -658,7 +681,7 @@ def autobrawlextractor():
                 print(f"Parsed build from file: {brawl_version}.{brawl_build}")
                 if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_version}.{brawl_build}"):
                     mkdir(f"{Brawl_AppData_Directory}\\Versions\\{brawl_version}.{brawl_build}")
-                maniupulate_brawl_file(dir, f"{brawl_version}.{brawl_build}")
+                maniupulate_brawl_file(dir, f"{brawl_version}.{brawl_build}", app_folder)
                 
             except KeyError:
                 archive.read('classes.dex')
@@ -671,10 +694,45 @@ def autobrawlextractor():
         except Exception as e:
             print(f"Error occured: {e}")
 
+    def csv_decoder():
+        import os
+
+        # Credit: https://github.com/proydakov/supercell_resource_decoder/blob/master/lib_csv.py
+
+        path = input("Enter the path to the encrypted CSV file:\n\n>>> ")
+        basename, _ = os.path.splitext(path)
+        decodedname = basename + "_DECODED.csv"
+
+        print("process:", path, "->", decodedname)
+
+        with open(path, 'rb') as f:
+            data = f.read()
+
+        tempdata = bytearray()
+
+        for i in range(0, 8):
+            tempdata.append(data[i])
+
+        for i in range(0, 4):
+            tempdata.append(0)
+
+        for i in range(8, len(data)):
+            tempdata.append(data[i])
+
+        try:
+            with open(decodedname, 'wb') as f:
+                decompressor = lzma.LZMADecompressor()
+                unpack_data = decompressor.decompress(tempdata)
+                f.write(unpack_data)
+                print(f"Successfully processes the file. You can now view it at {decodedname}")
+        except:
+            print("invalid input:", path)
+        autobrawlextractor()
+
     def number_one():
-        print(r"Enter the location of your Brawl Stars archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
+        print(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.\n")
         print("Use an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
-        print("Alternatively, press 1 to search for all downloadable versions.\nType 0 to go back")
+        print("[0] Go back.\n[1] Search for all downloadable versions.\n[2] Decode CSV Files with LZMA.")
 
         amount_of_files = 0
 
@@ -682,13 +740,13 @@ def autobrawlextractor():
             amount_of_files = amount_of_files + 1
 
         if amount_of_files >= 1:
-            print(f"\nYou have {amount_of_files} files already downloaded inside the DownloadedBuilds folder, [Enter] to go there.")
+            print(f"\n[Enter] Select one of the {amount_of_files} downloaded files.")
 
         location = input("\n>>> ")
 
         if location == "1":
             print("Fetching a list of all trusted versions from GitHub...")
-            git_brawl_builds = get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/brawl_builds.txt")
+            git_brawl_builds = get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
             git_brawl_builds = git_brawl_builds.text
             urls = git_brawl_builds.splitlines()
             version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
@@ -701,21 +759,27 @@ def autobrawlextractor():
                 downloaded_amount = 0
                 for line in urls:
                     source = line.strip().split(' (')
-                    source = source[0].strip(')')
-                    real_file_name = path.basename(urlsplit(line).path)
-                    if "Baguette Brigaders" in source:
-                        source = (f"[VERIFIED] {source}")
-                    print(f"Downloading the build {real_file_name}. This file comes from {source}")
-                    tqdm_download(line, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                    source_url = source[0]
+                    source_loc = source[1].strip(')')
+                    real_file_name = path.basename(urlsplit(source_url).path)
+                    if "Baguette Brigaders" in source_loc:
+                        source_loc = (f"a verified source: {source_loc}")
+                    print(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                    tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
                     downloaded_amount += 1
-                    print(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} ({round(downloaded_amount/amount)}%)")
+                    print(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
                 print(f"{downloaded_amount} builds have been saved!\n\n")
                 number_one()
 
             selected_url = urls[int(selected_version) - 1]
-            real_file_name = path.basename(urlsplit(selected_url).path)
-
-            tqdm_download(selected_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+            source = selected_url.strip().split(' (')
+            source_url = source[0]
+            source_loc = source[1].strip(')')
+            real_file_name = path.basename(urlsplit(source_url).path)
+            if "Baguette Brigaders" in source_loc:
+                source_loc = (f"a verified source: {source_loc}")
+                print(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+            tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
             print(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
             number_one()
 
@@ -749,7 +813,8 @@ def autobrawlextractor():
 
                 print(f"Error occured! Resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
                 init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
-            
+        if location == "2":
+            csv_decoder()
         if location == "0":
             main()
         else:
@@ -944,10 +1009,10 @@ def dev_menu():
 def choice1():
     global language
     if language == french:
-        x = input("\n\n1) Installer cela sur le bureau\n2) Installer cela dans un répertoire personnalisé\n3) Actualiser les mises à jour\n4) Changer de langue\n5) Afficher le code source\n6) Modifier les paramètres de Fortnite\n7) AWTD\n8) Téléchargeur de torrent\n9) AutoBrawlExtractor\n0) Quitter\n\n>>> ")
+        x = input("\n\n[0] Quitter\n[1] Installer cela sur le bureau\n[2] Installer cela dans un répertoire personnalisé\n[3] Actualiser les mises à jour\n[4] Changer de langue\n[5] Afficher le code source\n[6] Modifier les paramètres de Fortnite\n[7] AWTD\n[8] Téléchargeur de torrent\n[9] Intéragir avec les fichiers de \n\n>>> ")
     else: 
         language = english
-        x = input("\n\n1) Install this to desktop\n2) Install this to custom directory\n3) Refresh updates\n4) Change language\n5) View source code\n6) Modify Fortnite Settings\n7) AWTD\n8) Torrent Downloader\n9) AutoBrawlExtractor\n0) Quit\n\n>>> ")
+        x = input("\n\n[0] Quit\n[1] Install this to desktop\n[2] Install this to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] AWTD\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n\n>>> ")
     if x == "0":
         print("\n\n\n\n\n\nQuitting...")
         sys.exit()
