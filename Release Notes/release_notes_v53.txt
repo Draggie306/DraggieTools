@@ -1,0 +1,4 @@
+- Added Ctrl+C compatibility. You can now force close anything and return to the main menu.
+- Added enhancements to downloading files.
+- Added support to directly upload logs to my servers.
+- Improved finding files in IPA assets.

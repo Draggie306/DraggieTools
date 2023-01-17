@@ -1,8 +1,8 @@
 from subprocess import Popen
-from requests import get
+from requests import get, post
 from datetime import datetime
 from os import path, startfile, mkdir, environ, listdir, remove, makedirs
-from time import monotonic, sleep, time
+from time import sleep, time
 from uuid import uuid4
 from tqdm import tqdm
 from shutil import copyfile, SameFileError
@@ -21,15 +21,17 @@ import hashlib
 import re
 import lzma
 from urllib.parse import urlsplit
+import getpass
 #import libtorrent as lt
 
 dev_mode = False
 
 global build
 
-build = 52
-version = "0.7.2"
-build_date = 1673718061
+build = 53
+version = "0.7.3"
+build_date = 1673990000
+username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
 
@@ -73,7 +75,6 @@ def loading_icon(stop_event, text):
             print(f"\r{text} {i}", end="")
             sleep(0.1)
 
-
 if not path.exists(f"{DraggieTools_AppData_Directory}\\Logs"):
     mkdir(f"{DraggieTools_AppData_Directory}\\Logs")
 
@@ -115,16 +116,23 @@ def replace_line(file_name, line_num, text):
 
 
 def tqdm_download(download_url, save_dir):
-    response = get(download_url, stream=True)
+    try:
+        response = get(download_url, stream=True)
 
-    total_size = int(response.headers.get("content-length", 0))
-    block_size = 1024  # 1 Kibibyte
-    written = 0
+        total_size = int(response.headers.get("content-length", 0))
+        block_size = 1024  # 1 Kibibyte
+        written = 0
 
-    with open(save_dir, "wb") as f:
-        for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
-            written = written + len(data)
-            f.write(data)
+        with open(save_dir, "wb") as f:
+            for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
+                written = written + len(data)
+                f.write(data)
+    except KeyboardInterrupt:
+        print("Keyboard interrupt: going back to first choice.")
+        return choice1()
+    except Exception as e:
+        print(f"\n[DownloadError] An error has occured downloading the file. {download_url}\n{e}\n{traceback.format_exc()}")
+        logging.error(f"[DownloadError] An error has occured downloading the file. {download_url}\n{e}\n{traceback.format_exc()}")
 
 
 def log_print(text):
@@ -160,7 +168,7 @@ if dev_mode:
     print(f"application_path: {path.dirname(path.abspath(__file__))}\n\nDevmode is ON, therefore enhanced logging is active.\nThe log file is located in the Roaming AppData directory")
     sleep(0.05)
 
-logging.basicConfig(filename=f'{DraggieTools_AppData_Directory}\\Logs\\{version}-{build}-{time()}.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename=f'{DraggieTools_AppData_Directory}\\Logs\\[{username}]_{version}-{build}-{time()}.log', encoding='utf-8', level=logging.DEBUG)
 logging.debug(f'Established uplink at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
 directory = sys.executable
@@ -316,7 +324,12 @@ def cleanup_files():
     # Get the current time in seconds
     current_time = time()
     file_amount = 0
-
+    x = (input("Would you like to upload log files before deleting them? (Y/N)")).lower()
+    if x == "y":
+        upload_log = True
+    else:
+        upload_log = False
+    
     for dir in dir_paths:
         # Loop through all the files in the directory
         if path.exists(dir):
@@ -332,6 +345,9 @@ def cleanup_files():
                 time_diff_days = time_diff / (60 * 60 * 24)
                 # If the file is older than 7 days
                 if time_diff_days > 7:
+                    if file.endswith(".log"):
+                        if upload_log:
+                            upload_log_file(f"{dir}\\{file}")
                     # Delete the file
                     remove(file_path)
                     log_print(f"[FileCleanup] Cleaned up file at {file_path}")
@@ -538,7 +554,7 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
     fingerprint_json = json.loads(fingerprint_json)
 
     if "Brawl Stars" in app_folder:
-        game_download_url = "game.brawlstarsgame.com"
+        game_download_url = "game-assets.brawlstarsgame.com"
     if "Boom Beach" in app_folder:
         game_download_url = "game-assets.boombeach.com"
     if "Clash of Clans" in app_folder:
@@ -548,15 +564,15 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
     if "Clash Mini" in app_folder:
         game_download_url = "game-assets.clashminigame.com"
 
-    x = input ("Select options:\n\n1) Grab fingerprint hash\n2) Compare music to old version and extract\n3) Compare all files\n4) Download all background music files\n5) Download all with custom string\n6) Open brawl downloaded file directory\n0) Go back   \n\n>>> ")
+    x = input ("Select options:\n\n1) Grab fingerprint hash and basic info\n2) Compare music to old version and extract\n3) Compare all files\n4) Download all background music files\n5) Download all with custom string\n6) Open brawl downloaded file directory\n0) Go back   \n\n>>> ")
     if x == "1":
-        print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}")
+        print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}\n\n")
     if x == "4":
         fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
         fingerprint_json = json.loads(fingerprint_json)
         for item in fingerprint_json['files']:
             if 'music/background' in item['file']:
-                print(f"File: {item}")
+                logging.debug(f"Found 'music/background' in file: {item}")
                 # The file field contains 'music/background'
                 print(f'Found "music/background" in file: {item["file"]}')
                 # Split the file field on the '\' character and take the first two elements
@@ -582,15 +598,18 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
         if file_cycle:
             available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             for file in available_archives:
+                logging.info(f"Checked file '{file}' in {available_archives}")
                 if file.lower().endswith(".ipa") or file.lower().endswith(".zip"):
                     archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
                     archives += 1
                     new_fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
                     new_fingerprint_json = json.loads(new_fingerprint_json)
                     for item in fingerprint_json['files']:
+                        print(f"Searching file: {item}", end='\r')
+                        print("\n")
                         files += 1
                         if search_term in item['file']:
-                            print(f"File: {item}")
+                            logging.info(f"Found '{search_term}' in file: {item}")
                             # The file field contains search_term
                             print(f'Found "{search_term}" in file: {item["file"]}')
                             hits += 1
@@ -615,10 +634,12 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
             new_fingerprint_json = json.loads(new_fingerprint_json)
             for item in fingerprint_json['files']:
                 files += 1
+                print(f"Searching file: {item}", end='\r')
                 if search_term in item['file']:
-                    print(f"File: {item}")
+                    print("\n")
+                    print(f"Matched in: {item}")
                     # The file field contains search_term
-                    print(f'Found "{search_term}" in file: {item["file"]}')
+                    #print(f'Found "{search_term}" in file: {item["file"]}')
                     hits += 1
 
                     # Split the file path on the '\' character and take all elements except the last one
@@ -631,9 +652,14 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
                     directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
                     makedirs(directory_to_save_to, exist_ok=True)
                     tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                    sys.stdout.write("\033[F") # Cursor up one line
+                    sys.stdout.write("\033[K") # clear the current line
                 else:
-                    print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
-        print(f"Found {hits} matching files across {files} total files in {archives} available archives.\n")
+                    pass
+                    #print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
+                sys.stdout.write("\033[F") # Cursor up one line
+                sys.stdout.write("\033[K") # clear the current line
+        print(f"\nFound {hits} matching files across {files} total files in {archives} available archives.\n")
     if x == "6":
         Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}"')
     else:
@@ -692,7 +718,8 @@ def autobrawlextractor():
                 print("Unknown version type please use the other OS' version")
                 sleep(4)
         except Exception as e:
-            print(f"Error occured: {e}")
+            print(f"\n[WARNING] An error has occured which cannot be resolved: {e}")
+            logging.error(e)
 
     def csv_decoder():
         import os
@@ -730,8 +757,8 @@ def autobrawlextractor():
         autobrawlextractor()
 
     def number_one():
-        print(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.\n")
-        print("Use an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
+        print(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
+        print("\nUse an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
         print("[0] Go back.\n[1] Search for all downloadable versions.\n[2] Decode CSV Files with LZMA.")
 
         amount_of_files = 0
@@ -811,7 +838,7 @@ def autobrawlextractor():
                             highest_version = archive_version
                             highest_version_file = f
 
-                print(f"Error occured! Resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
+                print(f"No valid build specified, resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
                 init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
         if location == "2":
             csv_decoder()
@@ -820,7 +847,6 @@ def autobrawlextractor():
         else:
             init_filetype(location)
     number_one()
-
 
 
 def awtd():
@@ -996,6 +1022,16 @@ def awtd():
                 log_print(e)
                 awtd()
 
+def upload_log_file(file_path):
+    url = "https://iB-Errors.draggie.repl.co/upload"
+    files = {'file': open(file_path, 'rb')}
+    response = post(url, files=files)
+    print(f"Uploading the logfile {file_path}. Status code: {response.status_code}")
+def upload_logs():
+    logging_dir = f"{DraggieTools_AppData_Directory}\\Logs"
+    for file in listdir(logging_dir):
+        upload_log_file(f"{logging_dir}\\{file}")
+
 def dev_menu():
     global build
     x = input("\n\n1) Set build\n2) Set version\nSet unix time\n\n>>> ")
@@ -1007,89 +1043,98 @@ def dev_menu():
 
 
 def choice1():
-    global language
-    if language == french:
-        x = input("\n\n[0] Quitter\n[1] Installer cela sur le bureau\n[2] Installer cela dans un répertoire personnalisé\n[3] Actualiser les mises à jour\n[4] Changer de langue\n[5] Afficher le code source\n[6] Modifier les paramètres de Fortnite\n[7] AWTD\n[8] Téléchargeur de torrent\n[9] Intéragir avec les fichiers de \n\n>>> ")
-    else: 
-        language = english
-        x = input("\n\n[0] Quit\n[1] Install this to desktop\n[2] Install this to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] AWTD\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n\n>>> ")
-    if x == "0":
-        print("\n\n\n\n\n\nQuitting...")
-        sys.exit()
-    if x == "1":
-        desktop_dir = pathlib.Path.home() / 'Desktop'
-        if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
-            with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
-                install_dir = e.read()
-                if install_dir == str(desktop_dir):
-                    print("Existing desktop file preference exists.")
-                    print("The file will now no longer be located on the desktop.\n")
-                    with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
-                        e.close()
-                        choice1()
+    try:
+        global language
+        if language == french:
+            x = input("\n\n[0] Quitter\n[1] Installer cela sur le bureau\n[2] Installer cela dans un répertoire personnalisé\n[3] Actualiser les mises à jour\n[4] Changer de langue\n[5] Afficher le code source\n[6] Modifier les paramètres de Fortnite\n[7] AWTD\n[8] Téléchargeur de torrent\n[9] Intéragir avec les fichiers de \n\n>>> ")
+        else: 
+            language = english
+            x = input("\n\n[0] Quit\n[1] Install this to desktop\n[2] Install this to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] AWTD\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n\n>>> ")
+        if x == "0":
+            print("\n\n\n\n\n\nQuitting...")
+            sys.exit()
+        if x == "1":
+            desktop_dir = pathlib.Path.home() / 'Desktop'
+            if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
+                with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
+                    install_dir = e.read()
+                    if install_dir == str(desktop_dir):
+                        print("Existing desktop file preference exists.")
+                        print("The file will now no longer be located on the desktop.\n")
+                        with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+                            e.close()
+                            choice1()
 
-        start_anim_loading("Initialising.")
-        #print(f"Current directory: {directory}")
-        try:
-            copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
-            stop_anim_loading()
-            print("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
-            with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
-                e.write(f"{desktop_dir}")
-            
-        except FileNotFoundError:
-            stop_anim_loading()
-            print("\nRunning from PYTHON file. Not executable. This should print only in the development stage.")
-            copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
-            print("I am very dumb. This will be improved later.")
-        except SameFileError:
-            stop_anim_loading()
-            print("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
-    if x == "2":
-        try:
-            e = r"C:\Program Files"
-            c = r"C:\Program Files\Draggie"
-            y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
-            print(f"Current directory: {directory}")
+            start_anim_loading("Initialising.")
+            #print(f"Current directory: {directory}")
             try:
-                mkdir(f"{y}\\Draggie\\")
-            except Exception:
-                pass
-            copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
+                copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
+                stop_anim_loading()
+                print("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
+                with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+                    e.write(f"{desktop_dir}")
+                
+            except FileNotFoundError:
+                stop_anim_loading()
+                print("\nRunning from PYTHON file. Not executable. This should print only in the development stage.")
+                copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
+                print("I am very dumb. This will be improved later.")
+            except SameFileError:
+                stop_anim_loading()
+                print("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
+        if x == "2":
+            try:
+                e = r"C:\Program Files"
+                c = r"C:\Program Files\Draggie"
+                y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
+                print(f"Current directory: {directory}")
+                try:
+                    mkdir(f"{y}\\Draggie\\")
+                except Exception:
+                    pass
+                copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
 
-            print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
-            logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
-        except Exception as e:
-            print(f"An error occured. {e}")
-            print("Please make sure that the file has not been renamed.")
-            logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+                print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
+                logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
+            except Exception as e:
+                print(f"An error occured. {e}")
+                print("Please make sure that the file has not been renamed.")
+                logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+                choice1()
+        if x == "3":
+            check_for_update()
+        if x == "4":
+            change_language()
+        if x == "5":
+            view_source()
+        if x == "6":
+            fort_file_mod()
+        if x == "7":
+            awtd()
+        if x == "8":
+            torrent_downloader()
+        if x == "9":
+            autobrawlextractor()
+        if x == "10":
+            cleanup_files()
+        if x == "69":
+            print(";)")
+            secret_menu()
+        if x == "dev":
+            dev_menu()
+        if x == "log":
+            upload_logs()
+
+        else:
             choice1()
-    if x == "3":
-        check_for_update()
-    if x == "4":
-        change_language()
-    if x == "5":
-        view_source()
-    if x == "6":
-        fort_file_mod()
-    if x == "7":
-        awtd()
-    if x == "8":
-        torrent_downloader()
-    if x == "9":
-        autobrawlextractor()
-    if x == "10":
-        cleanup_files()
-    if x == "69":
-        print(";)")
-        secret_menu()
-    if x == "dev":
-        dev_menu()
 
-    else:
         choice1()
-
-    choice1()
+    except KeyboardInterrupt as e:
+        logging.warning(f"Handled general keyboard interrupt: \n{traceback.format_exc()}")
+        return choice1()
+    except Exception as e:
+        logging.error(f"General exception has occured: \n{traceback.format_exc()}")
+        return choice1() 
 
 
 def main():
