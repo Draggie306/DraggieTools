@@ -43,14 +43,18 @@ sha = fingerprint_json['sha']
 print (sha)
 ```
 
-Next, you will need to get the download URL of the files. Note that this is the same syntax for all the supercell games.
+Next, you will need to get the download URL of the files. Note that this is the same syntax for all the Supercell games.
+
 The base URL for Brawl Stars' assets is `game-assets.brawlstarsgame.com`. You can see this by looking at DNS requests while opening up the game for the first time.
 You will then need to use the `sha` value from `fingerprint.json` as the initial path. This would look like `https://<base dir>/<sha>/`
-Then finally, you will need to put the location of the target file on the end of this path. This can be seen in the `files` key and subkeys in `fingerprint.json`, or by knowing a little about where a target file may be located in the archive. For example, `robot_factory_brawl_menu_01.ogg` would be in the `/music/` folder.
+
+Finally, you will need to put the location of the target file on the end of this path. This can be seen in the `files` key and subkeys in `fingerprint.json`, or by knowing a little about where a target file may be located in the archive. For example, `robot_factory_brawl_menu_01.ogg` would be in the `/music/` folder.
 The final URL would then be this:
 
-> https://<base url>/<sha>/<path>/<to>/<file.ext>
+> `https://<base url>/<sha>/<path>/<to>/<file.ext>`
+ 
 Or, populated, as an example:
+ 
 > https://game-assets.brawlstarsgame.com/117431f533a659d4a02a29d2e56b7ef74006d781/music/robot_factory_brawl_menu_01.ogg
 
 This can be automated within DraggieTools.py by simply searching for the filename, it will download it automatically with no other inputs necessary. You can even type in `/music` or even `.ogg`.
