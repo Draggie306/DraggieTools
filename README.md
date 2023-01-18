@@ -1,10 +1,12 @@
 # DraggieTools
  
-This is a set of useful tools which helps me do things. You can either download the Python source file and run yourself with the required imports, or go to /dist/DraggieTools.exe and download the executable, no imports required.
+This is a set of useful tools packaged into a quick and easy CLI which helps me do things, and also may be useful for anyone else! You can either download the Python source file and run yourself with the required imports, or go to /dist/DraggieTools.exe and download the executable, no imports required.
 
 This has been optimised for Windows (using Windows paths and PyInstaller) so other systems may not work correctly. (Merge requests are always welcome though if you want to change this!)
 
 For AutoBrawlExtractor, scroll down to see how it works.
+
+> The file automatically updates to wherever it has been installed, so I recommend installing it to the desktop. As a result, it will require itself to be connected to github servers or it will throw errors, so cannot be used offline. It just checks the current build in this repo's `build.txt` and compares it to the one defined in the python code. If `githubusercontent.com` is blocked on the network, it will most likely fail.
 
 # FortniteUserSettings
 
@@ -59,6 +61,10 @@ The final URL would then be this:
 Or, populated, as an example:
  
 > https://game-assets.brawlstarsgame.com/117431f533a659d4a02a29d2e56b7ef74006d781/music/robot_factory_brawl_menu_01.ogg
+
+For Clash of Clans, here's an example:
+
+> https://game-assets.clashofclans.com/55a54c313c4040c8568df2a58074549818934df2/music/capital_music.ogg
 
 This can be automated within DraggieTools.py by simply searching for the filename, it will download it automatically with no other inputs necessary. You can even type in `/music` or even `.ogg`.
 
