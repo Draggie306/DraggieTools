@@ -28,9 +28,9 @@ dev_mode = False
 
 global build
 
-build = 53
-version = "0.7.3"
-build_date = 1673990000
+build = 54
+version = "0.7.4"
+build_date = 1674071649
 username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
@@ -148,11 +148,11 @@ global language, language_chosen
 #   Remember - the index starts at 0 lol
 english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "\nRunning from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX/KALI LINUX and location: RUSSIAN FEDERATION",
            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "\nRunning version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
-           "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n"]# Index number 23 -   ENGLISH
+           "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n", "Welcome to the secret menu.", "Skipping file", "as it does not have a supported extension or it will not work."]# Index number[24] -   ENGLISH
 
 french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "fini, avec vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "\nEn cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX/KALI LINUX et emplacement : FÉDÉRATION DE RUSSIE",
           r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "\nVersion en cours d'exécution est : ", "@", "mini-version", "Le serveur dit que la nouvelle version est", "\nMise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez entre pour la télécharger.", "This is index 20 in french (defined under **language[19]**), if you see this then report as error.",
-          "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter...", "\nBonjour! Vous etes sur un mini-version plus récente que la version pour le public. Vous etes vraiment spécial, UwU\n"]# Index number 23 - FRENCH
+          "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter...", "\nBonjour! Vous etes sur un mini-version plus récente que la version pour le public. Vous etes vraiment spécial, UwU\n"]# Index number[23] - FRENCH
 
 """
 Here are the prints for directory determining.
@@ -564,7 +564,7 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
     if "Clash Mini" in app_folder:
         game_download_url = "game-assets.clashminigame.com"
 
-    x = input ("Select options:\n\n1) Grab fingerprint hash and basic info\n2) Compare music to old version and extract\n3) Compare all files\n4) Download all background music files\n5) Download all with custom string\n6) Open brawl downloaded file directory\n0) Go back   \n\n>>> ")
+    x = input ("Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract additions\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ")
     if x == "1":
         print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}\n\n")
     if x == "4":
@@ -590,11 +590,12 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
         print("ok")
     if x == "5":
         search_term = input("Enter the term to search all files for and it will be downloaded:\n\n>>> ")
-        x = input(f"Enter 1 to search through ALL archives located in the DownloadedBuilds directory\nHit enter and it will be searched for in current version: {fingerprint_json['version']}\n\n>>> ")
+        x = input(f"[1] to search through ALL archives located in the DownloadedBuilds directory. Only select if you want to download multiple versions' assets.\n[Enter] Search for '{search_term}' only in current version: {fingerprint_json['version']}\n\n>>> ")
         file_cycle = True if x == "1" else False
         hits = 0
         files = 0
         archives = 0
+        skips = 0
         if file_cycle:
             available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             for file in available_archives:
@@ -602,11 +603,13 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
                 if file.lower().endswith(".ipa") or file.lower().endswith(".zip"):
                     archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
                     archives += 1
+                    print(f"Searching archive: {file}")
                     new_fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
                     new_fingerprint_json = json.loads(new_fingerprint_json)
-                    for item in fingerprint_json['files']:
-                        print(f"Searching file: {item}", end='\r')
-                        print("\n")
+                    fingerprint_sha = new_fingerprint_json["sha"]
+                    for item in new_fingerprint_json['files']:
+                        #print(f"Searching file: {item}", end='\r')
+                        #print("\n")
                         files += 1
                         if search_term in item['file']:
                             logging.info(f"Found '{search_term}' in file: {item}")
@@ -621,11 +624,17 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
                             dir_path = '\\'.join(dir_path)
 
                             # Create the directory and its parent directories if they do not already exist
-                            directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
+                            directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{dir_path}'
                             makedirs(directory_to_save_to, exist_ok=True)
-                            tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+
+                            if not path.isfile(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'):
+                                tqdm_download(f'https://{game_download_url}/{fingerprint_sha}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}')
+                            else:
+                                print(f"Not downloading the file due to it already being present. Please remove {item['file']} if you want it to be redownloaded.")
+                                skips += 1
                         else:
-                            print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
+                            pass
+                            #print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
                 else:
                     print(f"Skipping file {file} as it does not have a supported extension or it will not work.")
         else:
@@ -659,7 +668,7 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
                     #print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
                 sys.stdout.write("\033[F") # Cursor up one line
                 sys.stdout.write("\033[K") # clear the current line
-        print(f"\nFound {hits} matching files across {files} total files in {archives} available archives.\n")
+        print(f"\nFound {hits} matching files across {files} total files in {archives} available archives. {skips} files already exist.\n")
     if x == "6":
         Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}"')
     else:

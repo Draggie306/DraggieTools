@@ -1,0 +1,9 @@
+- Added more language features which will be enabled later.
+- Updated French language.
+
+[AutoBrawlExtractor]
+- Fixed an issue where assets would not download correctly.
+- Fixed an issue where assets would refer to the previously active fingerprint hash version.
+- Fixed an issue where assets would be continually redownloaded.
+- Improved efficiency of indexing and downloading files by reducing the amount of printing.
+- Updated friendlyness of text.
