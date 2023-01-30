@@ -29,9 +29,9 @@ dev_mode = False
 
 global build
 
-build = 55
-version = "0.7.5"
-build_date = 1675111370
+build = 56
+version = "0.7.6"
+build_date = 1675112633
 username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
@@ -159,7 +159,17 @@ global language, language_chosen
 
 #   The following are new line separated every 10 index entries
 #   Remember - the index starts at 0 lol
-english = ["Key error occured: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "\nRunning from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX/KALI LINUX and location: RUSSIAN FEDERATION",
+
+# Change to JSON with TIDs like in Brawl?
+
+"""
+english = {
+    key_error: "Key error occurred",
+    resort_to_backup: "\n\nResorting to backup",
+}
+"""
+
+english = ["Key error occurred: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "\nRunning from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX/KALI LINUX and location: RUSSIAN FEDERATION",
            r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "\nRunning version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
            "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n", "Welcome to the secret menu.", "Skipping file", "as it does not have a supported extension or it will not work."]# Index number[24] -   ENGLISH
 
@@ -559,31 +569,31 @@ def check_for_update():
 
 check_for_update()
 
-def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
-    brawl_versioning = str(brawl_versioning)
-    print(f"Allowing manipulation of '{app_folder}' file. [{brawl_versioning}]")
+def maniupulate_brawl_file(dir, app_version, app_name, arch_type):
+    app_version = str(app_version)
+    print(f"Interacting allowed for '{app_name}' file. [v{app_version}]")
     archive = zipfile.ZipFile(dir, 'r')
     if arch_type == "IPA":
-        fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
+        fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
     else:
         fingerprint_json = str(archive.read(f'assets/fingerprint.json'), encoding="UTF-8")
     fingerprint_json = json.loads(fingerprint_json)
-    if "Brawl Stars" in app_folder:
+    if "Brawl Stars" in app_name:
         game_download_url = "game-assets.brawlstarsgame.com"
-    if "Boom Beach" in app_folder:
+    if "Boom Beach" in app_name:
         game_download_url = "game-assets.boombeach.com"
-    if "Clash of Clans" in app_folder:
+    if "Clash of Clans" in app_name:
         game_download_url = "game-assets.clashofclans.com"
-    if "Clash Royale" in app_folder:
+    if "Clash Royale" in app_name:
         game_download_url = "game-assets.clashroyaleapp.com"
-    if "Clash Mini" in app_folder:
+    if "Clash Mini" in app_name:
         game_download_url = "game-assets.clashminigame.com"
 
     x = input ("Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract additions\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ")
     if x == "1":
         print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}\n\n")
     if x == "4":
-        fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
+        fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
         fingerprint_json = json.loads(fingerprint_json)
         for item in fingerprint_json['files']:
             if 'music/background' in item['file']:
@@ -597,8 +607,8 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
                 dir_path = '\\'.join(dir_path)
 
                 # Create the directory and its parent directories if they do not already exist
-                makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}', exist_ok=True)
-                tqdm_download(f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}', exist_ok=True)
+                tqdm_download(f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}')
             else:
                 #print(f"Not in file {item}")
                 pass
@@ -619,7 +629,7 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
                     archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
                     archives += 1
                     print(f"Searching archive: {file}")
-                    new_fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
+                    new_fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
                     new_fingerprint_json = json.loads(new_fingerprint_json)
                     fingerprint_sha = new_fingerprint_json["sha"]
                     for item in new_fingerprint_json['files']:
@@ -654,7 +664,7 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
                     print(f"Skipping file {file} as it does not have a supported extension or it will not work.")
         else:
             archives += 1
-            new_fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
+            new_fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
             new_fingerprint_json = json.loads(new_fingerprint_json)
             for item in fingerprint_json['files']:
                 files += 1
@@ -673,9 +683,9 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
                     dir_path = '\\'.join(dir_path)
 
                     # Create the directory and its parent directories if they do not already exist
-                    directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{dir_path}'
+                    directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}'
                     makedirs(directory_to_save_to, exist_ok=True)
-                    tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}\\{item["file"]}')
+                    tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}')
                     sys.stdout.write("\033[F") # Cursor up one line
                     sys.stdout.write("\033[K") # clear the current line
                 else:
@@ -685,11 +695,11 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
                 sys.stdout.write("\033[K") # clear the current line
         print(f"\nFound {hits} matching files across {files} total files in {archives} available archives. {skips} files already exist.\n")
     if x == "6":
-        Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_versioning}"')
+        Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}"')
     else:
         autobrawlextractor()
 
-    maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type)
+    maniupulate_brawl_file(dir, app_version, app_name, arch_type)
 
 
 def autobrawlextractor():
@@ -704,17 +714,20 @@ def autobrawlextractor():
         """
         Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.\nMay return the game.
         """
-        app_folder = False
+        app_name = None
         archive = zipfile.ZipFile(dir, 'r')
         try:
             arch_type = None
-            
-            def get_ipa():
-                for file in archive.filelist:
-                    if file.is_dir() and file.filename.endswith("/Payload") or file.is_dir() and file.filename.endswith("/META-INF"):
-                        return "IPA"
 
-            arch_type = get_ipa()
+            for file in archive.filelist:
+                if file.is_dir() and file.filename.endswith("Payload/"):
+                    arch_type = "IPA"
+                if file.filename.endswith("fingerprint.json"):
+                    new_fingerprint_json = str(archive.read(file), encoding="UTF-8")
+                    new_fingerprint_json = json.loads(new_fingerprint_json)
+                    version_name = new_fingerprint_json['version']
+                if file.filename.endswith('.app/'):
+                    app_name = path.splitext(file.filename)[0]
                     
             if not arch_type:
                 arch_type = "APK"
@@ -722,16 +735,15 @@ def autobrawlextractor():
                 new_fingerprint_json = json.loads(new_fingerprint_json)
                 version_name = new_fingerprint_json['version']
                 print(f"Read the following asset version from APK file: v{version_name}")
+                app_name = "Brawl Stars"
+                print("[IMPORTANT] As this is an APK file, the name has been set to default to Brawl Stars. ")
 
+            if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
+                mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
+                log_print(f"Made directory: {Brawl_AppData_Directory}\\Versions\\{version_name}")
 
-                print(f"Detected Architecture: {arch_type}")
-                print(f"Parsed build from file: {version_name}")
-                if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
-                    mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
-                maniupulate_brawl_file(dir, f"{version_name}", app_folder, arch_type)
-            else:
-                print("Unknown version type please use the other OS' version")
-                sleep(4)
+            print(f"Detected Architecture: {arch_type}")
+            maniupulate_brawl_file(dir, f"{version_name}", app_name, arch_type)
         except Exception as e:
             print(f"\n[WARNING] An error has occured which cannot be resolved: {e}")
             logging.error(e)
@@ -1086,7 +1098,7 @@ def discord_parse():
         Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse"')
         return print(f"An error has occurred. No valid file or improperly formatted json file exists. {e}")
 
-    x = input("[1] Parse current file and output everything.\n[2] Organise current file and output JSON files for each server")
+    x = input("[1] Parse current file and output everything.\n[2] Organise current file and output JSON files for each server\n\n")
 
     if x == "1":
         print("loading...\n")
@@ -1128,56 +1140,36 @@ def discord_parse():
         print(f"Operation completed ({round((perf_counter() - start_time), 7)}s)")
     
     if x == "2":
+        server_num = 0
+        channel_num = 0
+        server_data = {}
         for line in file.splitlines():
-            # check if line starts with '['
             if line.strip().startswith("["):
                 discord_file = json.loads(line)
-                print("============== NEW GUILD ==============")
                 for channel in discord_file:
-                    channel_type = channel.get("type")
-                    id = channel.get("id")
-                    name = channel.get("name")
-                    position = channel.get("position_")
-                    topic = channel.get("topic_")
-                    lastMessageId = channel.get("lastMessageId")
-                    lastPinTimestamp = channel.get("lastPinTimestamp", "N/A")
-                    nsfw = channel.get("nsfw_")
-                    rate_limit_per_user = channel.get("rateLimitPerUser_")
-                    topic = channel.get("topic_")
+                    print(f"Got channel ({channel_num})")
+                    channel_num = channel_num + 1
                     guild_id = channel.get("guild_id")
-
-        channel_data = {}
-        channel_data['id'] = id
-        channel_data['name'] = name
-        channel_data['position'] = position
-        channel_data['topic'] = topic
-        channel_data['lastMessageId'] = lastMessageId
-        channel_data['lastPinTimestamp'] = lastPinTimestamp
-        channel_data['nsfw'] = nsfw
-        channel_data['rate_limit_per_user'] = rate_limit_per_user
-        channel_data['topic'] = topic
-        channel_data['guild_id'] = guild_id
-
-        # Create a dictionary to store all server IDs and their associated channel data
-        server_data = {}
-
-        # If the server ID doesn't exist in the dictionary, add it and initialize its value as a list
-        if guild_id not in server_data:
-            server_data[guild_id] = []
-
-        # Append the channel data to the list associated with the server ID
-        server_data[guild_id].append(channel_data)
-
-        # Sort the channels in each list by the 'position' key in ascending order
-        for server_id in server_data:
-            server_data[server_id] = sorted(server_data[server_id], key=lambda x: x['position'])
-
-        # Write the data for each server ID to a separate JSON file
+                    if guild_id not in server_data:
+                        server_data[guild_id] = []
+                    server_data[guild_id].append({
+                        'name': channel.get("name"),
+                        'id': channel.get("id"),
+                        'position': channel.get("position_"),
+                        'topic': channel.get("topic_"),
+                        'lastMessageId': channel.get("lastMessageId"),
+                        'lastPinTimestamp': channel.get("lastPinTimestamp", "N/A"),
+                        'nsfw': channel.get("nsfw_"),
+                        'rate_limit_per_user': channel.get("rateLimitPerUser_"),
+                        'topic': channel.get("topic_"),
+                        'guild_id': guild_id,
+                    })
         for server_id, channels in server_data.items():
-            with open(f'{server_id}.json', 'w') as outfile:
-                json.dump(channels, outfile, indent=4)
-        with open(f'{DraggieTools_AppData_Directory}\\DiscordParse\\{channels["guild_id"]}.json', "w") as f:
-            f.write(json.dumps(channels, indent=4))
+            with open(f'{DraggieTools_AppData_Directory}\\DiscordParse\\{server_id}.json', 'w') as outfile:
+                json.dump(sorted(channels, key=lambda x: x['position']), outfile, indent=4)
+                print(f"Writing data... ({server_num})")
+                server_num = server_num + 1
+
 
 def choice1():
     try:

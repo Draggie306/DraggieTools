@@ -1,0 +1,11 @@
+- Improved naming schemes.
+- Added some test language things for later.
+
+[DiscordParse]
+- Improved friendliness.
+- Added JSON all servers export.
+- Added some GPT-aided optimisations ;)
+
+[AutoBrawlExtractor]
+- Full implementation of fixes to the code.
+- Fixed APK and IPA files not working
