@@ -2,7 +2,7 @@ from subprocess import Popen
 from requests import get, post
 from datetime import datetime
 from os import path, startfile, mkdir, environ, listdir, remove, makedirs
-from time import sleep, time
+from time import sleep, time, perf_counter
 from uuid import uuid4
 from tqdm import tqdm
 from shutil import copyfile, SameFileError
@@ -21,6 +21,7 @@ import hashlib
 import re
 import lzma
 from urllib.parse import urlsplit
+from typing import Optional
 import getpass
 #import libtorrent as lt
 
@@ -28,9 +29,9 @@ dev_mode = False
 
 global build
 
-build = 54
-version = "0.7.4"
-build_date = 1674071649
+build = 55
+version = "0.7.5"
+build_date = 1675111370
 username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
@@ -135,12 +136,24 @@ def tqdm_download(download_url, save_dir):
         logging.error(f"[DownloadError] An error has occured downloading the file. {download_url}\n{e}\n{traceback.format_exc()}")
 
 
-def log_print(text):
+def log_print(text, log_level: Optional[int] = 2) -> None:
     """
-    Logs and prints the text inputted. The logging level is INFO.
+    Logs and prints the text inputted. The logging level is\n1: DEBUG\n2 (default): INFO\n3: WARNING\n4: ERROR\n5: CRITICAL
     """
-    logging.info(text)
+    if log_level == 1:
+        logging.debug(text)
+    elif log_level == 2:
+        logging.info(text)
+    elif log_level == 3:
+        logging.warning(text)
+    elif log_level == 4:
+        logging.error(text)
+    elif log_level == 5:
+        logging.critical(text)
+    else:
+        logging.info(text)
     print(text)
+
 
 global language, language_chosen
 
@@ -546,13 +559,15 @@ def check_for_update():
 
 check_for_update()
 
-def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
+def maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type):
     brawl_versioning = str(brawl_versioning)
     print(f"Allowing manipulation of '{app_folder}' file. [{brawl_versioning}]")
     archive = zipfile.ZipFile(dir, 'r')
-    fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
+    if arch_type == "IPA":
+        fingerprint_json = str(archive.read(f'Payload/{app_folder}/res/fingerprint.json'), encoding="UTF-8")
+    else:
+        fingerprint_json = str(archive.read(f'assets/fingerprint.json'), encoding="UTF-8")
     fingerprint_json = json.loads(fingerprint_json)
-
     if "Brawl Stars" in app_folder:
         game_download_url = "game-assets.brawlstarsgame.com"
     if "Boom Beach" in app_folder:
@@ -674,7 +689,7 @@ def maniupulate_brawl_file(dir, brawl_versioning, app_folder):
     else:
         autobrawlextractor()
 
-    maniupulate_brawl_file(dir, brawl_versioning, app_folder)
+    maniupulate_brawl_file(dir, brawl_versioning, app_folder, arch_type)
 
 
 def autobrawlextractor():
@@ -689,40 +704,31 @@ def autobrawlextractor():
         """
         Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.\nMay return the game.
         """
+        app_folder = False
+        archive = zipfile.ZipFile(dir, 'r')
         try:
-            with zipfile.ZipFile(dir, "r") as zip_ref:
-                for name in zip_ref.namelist():
-                    if 'Payload' in name:
-                        app_folder = name.split("/")[1]
+            arch_type = None
+            
+            def get_ipa():
+                for file in archive.filelist:
+                    if file.is_dir() and file.filename.endswith("/Payload") or file.is_dir() and file.filename.endswith("/META-INF"):
+                        return "IPA"
 
-            archive = zipfile.ZipFile(dir, 'r')
-            if not app_folder:
-                return print("Unable to get the file name.")
-            try:
-                string = str(archive.read(f'Payload/{app_folder}/res/version.number'), encoding="UTF-8")
-                store_type = "IPA"
+            arch_type = get_ipa()
+                    
+            if not arch_type:
+                arch_type = "APK"
+                new_fingerprint_json = str(archive.read(f'assets/fingerprint.json'), encoding="UTF-8")
+                new_fingerprint_json = json.loads(new_fingerprint_json)
+                version_name = new_fingerprint_json['version']
+                print(f"Read the following asset version from APK file: v{version_name}")
 
-                # Split the string into a list of lines
-                lines = string.split('\n')
 
-                # Iterate through the lines and extract the version and build values
-                brawl_version = None
-                brawl_build = None
-                for line in lines:
-                    if line.startswith('version='):
-                        brawl_version = line.split('=')[1]
-                    elif line.startswith('build='):
-                        brawl_build = line.split('=')[1]
-                print(f"Parsed build from file: {brawl_version}.{brawl_build}")
-                if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{brawl_version}.{brawl_build}"):
-                    mkdir(f"{Brawl_AppData_Directory}\\Versions\\{brawl_version}.{brawl_build}")
-                maniupulate_brawl_file(dir, f"{brawl_version}.{brawl_build}", app_folder)
-                
-            except KeyError:
-                archive.read('classes.dex')
-                store_type = "APK"
-            if store_type:
-                print(f"Detected Verson: {store_type}")
+                print(f"Detected Architecture: {arch_type}")
+                print(f"Parsed build from file: {version_name}")
+                if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
+                    mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
+                maniupulate_brawl_file(dir, f"{version_name}", app_folder, arch_type)
             else:
                 print("Unknown version type please use the other OS' version")
                 sleep(4)
@@ -739,10 +745,14 @@ def autobrawlextractor():
         basename, _ = os.path.splitext(path)
         decodedname = basename + "_DECODED.csv"
 
-        print("process:", path, "->", decodedname)
+        print("Processing:", path, "->", decodedname)
 
-        with open(path, 'rb') as f:
-            data = f.read()
+        try:
+            with open(path, 'rb') as f:
+                data = f.read()
+        except Exception as e:
+            log_print(f"Error: File not found. {e}")
+            print(traceback.format_exc())
 
         tempdata = bytearray()
 
@@ -760,7 +770,7 @@ def autobrawlextractor():
                 decompressor = lzma.LZMADecompressor()
                 unpack_data = decompressor.decompress(tempdata)
                 f.write(unpack_data)
-                print(f"Successfully processes the file. You can now view it at {decodedname}")
+                print(f"\n\nSuccessfully unpacked the file. You can now view it at {decodedname}\n")
         except:
             print("invalid input:", path)
         autobrawlextractor()
@@ -1050,6 +1060,124 @@ def dev_menu():
     else:
         choice1()
 
+def calculate_time_discord(snowflake):
+    if snowflake == "N/A" or snowflake == None:
+        return "Unknown"
+    else:
+        snowflake = int(snowflake)
+        unix_timestamp = 1420070400000 + int((f"{snowflake:b}")[:-22], 2)
+        stringe = datetime.utcfromtimestamp(unix_timestamp/1000).strftime('%d/%m/%Y, %H:%M:%S')
+        return stringe
+
+def discord_parse():
+    try:
+        for file in listdir(f"{DraggieTools_AppData_Directory}\\DiscordParse"):
+            if not file.endswith("bak"):
+                with open (f"{DraggieTools_AppData_Directory}\\DiscordParse\\{file}", 'r', encoding="utf-8") as f:
+                    file = f.read()
+            else:
+                print("Invalid file detected")
+                return Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse\\{file}"')
+        print(f"Loaded file")
+    except Exception as e:
+        print("I'm opening up the discord parser directory. Please paste in your file which is to be processed")
+        if not path.isfile(f"{DraggieTools_AppData_Directory}\\DiscordParse"):
+            makedirs(f"{DraggieTools_AppData_Directory}\\DiscordParse", exist_ok=True)
+        Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse"')
+        return print(f"An error has occurred. No valid file or improperly formatted json file exists. {e}")
+
+    x = input("[1] Parse current file and output everything.\n[2] Organise current file and output JSON files for each server")
+
+    if x == "1":
+        print("loading...\n")
+
+        start_time= perf_counter()
+
+        for line in file.splitlines():
+            # check if line starts with '['
+            if line.strip().startswith("["):
+                discord_file = json.loads(line)
+                print("============== NEW GUILD ==============")
+                for channel in sorted(discord_file, key=lambda discord_file: discord_file["position_"]):
+                    channel_type = channel.get("type")
+                    extra_text="----------------"
+                    if channel_type == 4:
+                        extra_text = "CATEGORY CHANNEL"
+                    elif channel_type == 2 or channel_type == 0:
+                        extra_text = "--TEXT CHANNEL--"
+                    elif channel_type == 5:
+                        extra_text = "--RULES CHANNEL--"
+                    elif channel_type == 15:
+                        extra_text = "--FORUM CHANNEL--"
+                    else:
+                        print(f"Channel type: {channel_type}")
+                    id = channel.get("id")
+                    name = channel.get("name")
+                    position = channel.get("position_")
+                    topic = channel.get("topic_")
+                    lastMessageId = channel.get("lastMessageId")
+                    lastPinTimestamp = channel.get("lastPinTimestamp", "N/A")
+                    nsfw = channel.get("nsfw_")
+                    rate_limit_per_user = channel.get("rateLimitPerUser_")
+                    topic = channel.get("topic_")
+                    guild_id = channel.get("guild_id")
+
+                    print(f"\n----------------{extra_text}----------------\n\nServer: {guild_id}\nName: {name}\nID: {id}\nLast Message ID: {lastMessageId} ({calculate_time_discord(lastMessageId)})\nLast Pin Timestamp: {lastPinTimestamp}\nNSFW: {nsfw}\nPosition: {position}\nRate Limit Per User: {rate_limit_per_user}\nTopic: {topic}\n")
+                    #sleep(0.1)
+        
+        print(f"Operation completed ({round((perf_counter() - start_time), 7)}s)")
+    
+    if x == "2":
+        for line in file.splitlines():
+            # check if line starts with '['
+            if line.strip().startswith("["):
+                discord_file = json.loads(line)
+                print("============== NEW GUILD ==============")
+                for channel in discord_file:
+                    channel_type = channel.get("type")
+                    id = channel.get("id")
+                    name = channel.get("name")
+                    position = channel.get("position_")
+                    topic = channel.get("topic_")
+                    lastMessageId = channel.get("lastMessageId")
+                    lastPinTimestamp = channel.get("lastPinTimestamp", "N/A")
+                    nsfw = channel.get("nsfw_")
+                    rate_limit_per_user = channel.get("rateLimitPerUser_")
+                    topic = channel.get("topic_")
+                    guild_id = channel.get("guild_id")
+
+        channel_data = {}
+        channel_data['id'] = id
+        channel_data['name'] = name
+        channel_data['position'] = position
+        channel_data['topic'] = topic
+        channel_data['lastMessageId'] = lastMessageId
+        channel_data['lastPinTimestamp'] = lastPinTimestamp
+        channel_data['nsfw'] = nsfw
+        channel_data['rate_limit_per_user'] = rate_limit_per_user
+        channel_data['topic'] = topic
+        channel_data['guild_id'] = guild_id
+
+        # Create a dictionary to store all server IDs and their associated channel data
+        server_data = {}
+
+        # If the server ID doesn't exist in the dictionary, add it and initialize its value as a list
+        if guild_id not in server_data:
+            server_data[guild_id] = []
+
+        # Append the channel data to the list associated with the server ID
+        server_data[guild_id].append(channel_data)
+
+        # Sort the channels in each list by the 'position' key in ascending order
+        for server_id in server_data:
+            server_data[server_id] = sorted(server_data[server_id], key=lambda x: x['position'])
+
+        # Write the data for each server ID to a separate JSON file
+        for server_id, channels in server_data.items():
+            with open(f'{server_id}.json', 'w') as outfile:
+                json.dump(channels, outfile, indent=4)
+        with open(f'{DraggieTools_AppData_Directory}\\DiscordParse\\{channels["guild_id"]}.json', "w") as f:
+            f.write(json.dumps(channels, indent=4))
 
 def choice1():
     try:
@@ -1126,6 +1254,8 @@ def choice1():
             autobrawlextractor()
         if x == "10":
             cleanup_files()
+        if x == "11":
+            discord_parse()
         if x == "69":
             print(";)")
             secret_menu()

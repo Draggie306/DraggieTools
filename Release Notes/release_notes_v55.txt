@@ -1,0 +1,9 @@
+- Improved logging levels function
+- New function: discord_parse
+- You can use discord_parse to view information about hidden channels in servers you are in.
+- Tutorial coming soon but it is very powerful.
+
+[AutoBrawlExtractor]
+- Partial implementation of app file fixing for com.supercell.board
+- Improved architecture type detection
+- Updated friendliness of text.
