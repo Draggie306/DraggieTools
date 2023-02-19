@@ -1,5 +1,7 @@
 # DraggieTools
- 
+
+[![pypresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=discord&logoWidth=20)](https://github.com/qwertyquerty/pypresence)
+
 This is a set of useful tools packaged into a quick and easy CLI which helps me do things, and also may be useful for anyone else! You can either download the Python source file and run yourself with the required imports, or go to /dist/DraggieTools.exe and download the executable, no imports required.
 
 This has been optimised for Windows (using Windows paths and PyInstaller) so other systems may not work correctly. (Merge requests are always welcome though if you want to change this!)
