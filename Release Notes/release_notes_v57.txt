@@ -1,0 +1,5 @@
+- Added Discord Rich Presence to all modules.
+- Reduced compiled code size by 85%.
+- Now using virtual ENV.
+- Now showing more pyinstaller source code files.
+- Overall optimisations

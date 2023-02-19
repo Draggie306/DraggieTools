@@ -23,18 +23,55 @@ import lzma
 from urllib.parse import urlsplit
 from typing import Optional
 import getpass
+from pypresence import Presence
 #import libtorrent as lt
 
 dev_mode = False
 
-global build
+global build, client
 
-build = 56
-version = "0.7.6"
-build_date = 1675112633
+build = 57
+version = "0.7.7"
+build_date = 1676824632
 username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
+
+discord_client_id = 1076873298501173269 
+
+start_time = time()
+
+def load_presence():
+    global client
+    # Create a new instance of the client
+    client = Presence(discord_client_id)
+
+    # Connect to the Discord API
+    client.connect()
+
+    # Set your presence
+    status_update()
+
+def status_update(details: Optional[str] = f"Selecting what to do... (v{build})",
+                    state: Optional[str] = "In the main menu", 
+                    large_image: Optional[str] = "https://cdn.ibaguette.com/cdn/RotatingCats_128.gif",
+                    large_text: Optional[str] = f"Build: {build} // Version {version}",
+                    small_image: Optional[str] = "https://cdn.ibaguette.com/cdn/BrigadersRotating_512.gif",
+                    small_text: Optional[str] = "Be active in Baguette Brigaders for a prize",
+                    buttons: Optional[list] = [{"label": "Join Server", "url": "https://discord.com/invite/7zaRexVaH5"}, 
+                                                {"label": "Download DraggieTools", "url": "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe"}],
+                    start=start_time,
+                 ):
+    """
+    `details`: The first thing that should be chosen. It is the top of the presence.\n
+    `state`: Appears below the details.
+    `start`: Do not change unless it's important. Should be `time()`.
+    """
+    global client
+    client.update(state=state,details=details,large_image=large_image,large_text=large_text,small_image=small_image,small_text=small_text,buttons=buttons, start=start)
+
+print("Loading Discord RPC...")
+load_presence()
 
 if not dev_mode:
     DraggieTools_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\DraggieTools")
@@ -123,6 +160,7 @@ def tqdm_download(download_url, save_dir):
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         written = 0
+        status_update(details="Downloading a file", state=f"{total_size} bytes")
 
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
@@ -203,6 +241,7 @@ def change_language():
     global language, language_chosen
     language = None
     while language is None:
+        status_update(details="Choosing language", state="English or French?")
         x = input("Choose language\nChoisissez la langue\nEnglish = 1, French = 2\n\n>>> ")
         if x == "2":
             print("La langue est maintenant francais.")
@@ -227,6 +266,8 @@ def change_language():
                 x.close()
             logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'English'")
             language_chosen = "English"
+    status_update(details="Choosing language", state=f"Set language to {language_chosen}!")
+    sleep(0.1)
     if dev_mode:
         logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
 
@@ -543,7 +584,7 @@ def check_for_update():
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
                 version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
-                string = (string + f"\nv{current_build_version}:\n{version_patch}")
+                string = (string + f"\nv{current_build_version}:\n{version_patch}\n\n")
             print(f"\n{string}\n")
 
         update_choice = input(">>> ")
@@ -580,14 +621,23 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type):
     fingerprint_json = json.loads(fingerprint_json)
     if "Brawl Stars" in app_name:
         game_download_url = "game-assets.brawlstarsgame.com"
-    if "Boom Beach" in app_name:
+        app_realname = "Brawl Stars"
+    elif "Boom Beach" in app_name:
         game_download_url = "game-assets.boombeach.com"
-    if "Clash of Clans" in app_name:
+        app_realname = "Boom Beach"
+    elif "Clash of Clans" in app_name:
         game_download_url = "game-assets.clashofclans.com"
-    if "Clash Royale" in app_name:
+        app_realname = "Clash of Clans"
+    elif "Clash Royale" in app_name:
         game_download_url = "game-assets.clashroyaleapp.com"
-    if "Clash Mini" in app_name:
+        app_realname = "Clash Royale"
+    elif "Clash Mini" in app_name:
         game_download_url = "game-assets.clashminigame.com"
+        app_realname = "Clash Mini"
+    else:
+        app_realname = "[null]"
+
+    status_update(details="Extracting Supercell game assets", state=f"Loaded: {app_realname} (v{app_version}) - {arch_type}")
 
     x = input ("Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract additions\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ")
     if x == "1":
@@ -694,6 +744,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type):
                 sys.stdout.write("\033[F") # Cursor up one line
                 sys.stdout.write("\033[K") # clear the current line
         print(f"\nFound {hits} matching files across {files} total files in {archives} available archives. {skips} files already exist.\n")
+        status_update(details="Extracting Supercell game assets", state=f"{files} files searched, {hits} downloaded.")
     if x == "6":
         Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}"')
     else:
@@ -783,8 +834,8 @@ def autobrawlextractor():
                 unpack_data = decompressor.decompress(tempdata)
                 f.write(unpack_data)
                 print(f"\n\nSuccessfully unpacked the file. You can now view it at {decodedname}\n")
-        except:
-            print("invalid input:", path)
+        except Exception as e:
+            log_print(f"invalid input: {traceback.format_exc()}")
         autobrawlextractor()
 
     def number_one():
@@ -1179,10 +1230,12 @@ def choice1():
         else: 
             language = english
             x = input("\n\n[0] Quit\n[1] Install this to desktop\n[2] Install this to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] AWTD\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n\n>>> ")
+        status_update(details="Selecting what to do...")
         if x == "0":
             print("\n\n\n\n\n\nQuitting...")
+            client.close()
             sys.exit()
-        if x == "1":
+        elif x == "1":
             desktop_dir = pathlib.Path.home() / 'Desktop'
             if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
                 with open (f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
@@ -1211,7 +1264,7 @@ def choice1():
             except SameFileError:
                 stop_anim_loading()
                 print("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
-        if x == "2":
+        elif x == "2":
             try:
                 e = r"C:\Program Files"
                 c = r"C:\Program Files\Draggie"
@@ -1230,30 +1283,43 @@ def choice1():
                 print("Please make sure that the file has not been renamed.")
                 logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
                 choice1()
-        if x == "3":
+        elif x == "3":
             check_for_update()
-        if x == "4":
+        elif x == "4":
             change_language()
-        if x == "5":
+        elif x == "5":
+            status_update(details="Viewing DraggieTools source code.")
             view_source()
-        if x == "6":
+        elif x == "6":
+            status_update(details="Modifying GameUserSettings.ini...")
             fort_file_mod()
-        if x == "7":
+        elif x == "7":
+            status_update(details="Installing software")
             awtd()
-        if x == "8":
+        elif x == "8":
+            status_update(details="Downloading a torrent")
             torrent_downloader()
-        if x == "9":
+        elif x == "9":
+            status_update(details="Extracting Supercell game assets")
             autobrawlextractor()
-        if x == "10":
+        elif x == "10":
+            status_update(details="Cleaning up files")
             cleanup_files()
-        if x == "11":
+        elif x == "11":
+            status_update(details="Parsing Discord files")
             discord_parse()
-        if x == "69":
+        elif x == "12":
+            print("Reloading Discord RPC...")
+            load_presence()
+        elif x == "69":
             print(";)")
+            status_update(details="In the secret menu", state="")
             secret_menu()
-        if x == "dev":
+        elif x == "dev":
+            status_update(details="In the developer menu")
             dev_menu()
-        if x == "log":
+        elif x == "log":
+            status_update(details="Uploading some logs")
             upload_logs()
 
         else:
