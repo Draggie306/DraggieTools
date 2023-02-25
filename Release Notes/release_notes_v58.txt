@@ -1,0 +1,2 @@
+- General polishing when code starts.
+- Preparations for new version.

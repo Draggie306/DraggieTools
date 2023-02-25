@@ -2,3 +2,4 @@
 DraggieTools-*.exe
 draggietools.spec
 /venv
+build/DraggieTools/xref-DraggieTools.html

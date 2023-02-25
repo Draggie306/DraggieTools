@@ -1,38 +1,83 @@
+print("Loading modules...")
+
+import sys, time
+
+start_time = time.time()
+
+def print_loading_message(module_name):
+    sys.stdout.write(f"Loading module {module_name}...                  ")
+    sys.stdout.flush()
+    sys.stdout.write("\r")
+    sys.stdout.flush()
+
+print_loading_message("subprocess.Popen")
 from subprocess import Popen
+print_loading_message("requests.get, requests.post")
 from requests import get, post
+print_loading_message("datetime.datetime")
 from datetime import datetime
+print_loading_message("os.path (+ 4 more)")
 from os import path, startfile, mkdir, environ, listdir, remove, makedirs
+print_loading_message("time.sleep, time.time, time.perf_counter")
 from time import sleep, time, perf_counter
+print_loading_message("uuid.uuid4")
 from uuid import uuid4
+print_loading_message("tqdm.tqdm")
 from tqdm import tqdm
+print_loading_message("shutil.copyfile shutil.SameFileError")
 from shutil import copyfile, SameFileError
+print_loading_message("pathlib")
 import pathlib
-import sys
-import random
-import traceback
-import logging
-import zipfile
-from threading import Event, Thread
-from base64 import b64decode
-from math import ceil
-from cryptography.fernet import Fernet
-import json
-import hashlib
-import re
-import lzma
-from urllib.parse import urlsplit
+print_loading_message("typing.Optional")
 from typing import Optional
+print_loading_message("sys")
+import sys
+print_loading_message("random")
+import random
+print_loading_message("traceback")
+import traceback
+print_loading_message("logging")
+import logging
+print_loading_message("zipfile")
+import zipfile
+print_loading_message("threading.Event, threading.Thread")
+from threading import Event, Thread
+print_loading_message("base64")
+from base64 import b64decode
+print_loading_message("math.ceil")
+from math import ceil
+print_loading_message("cryptography.fernet.Fernet")
+from cryptography.fernet import Fernet
+print_loading_message("json")
+import json
+print_loading_message("hashlib")
+import hashlib
+print_loading_message("re")
+import re
+print_loading_message("lzma")
+import lzma
+print_loading_message("urllib.parse.urlsplit")
+from urllib.parse import urlsplit
+print_loading_message("getpass")
 import getpass
+print_loading_message("pypresence.Presence")
 from pypresence import Presence
-#import libtorrent as lt
+
+end_time = time()
+
+elapsed_time = end_time - start_time
+
+sys.stdout.write("\r")
+sys.stdout.flush()
+print(f"All modules loaded! Took {round(elapsed_time, 7)}s      ")
 
 dev_mode = False
 
 global build, client
 
-build = 57
-version = "0.7.7"
-build_date = 1676824632
+build = 58
+version = "0.7.8"
+build_date = 1677356587
 username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
@@ -70,7 +115,7 @@ def status_update(details: Optional[str] = f"Selecting what to do... (v{build})"
     global client
     client.update(state=state,details=details,large_image=large_image,large_text=large_text,small_image=small_image,small_text=small_text,buttons=buttons, start=start)
 
-print("Loading Discord RPC...")
+print("\nLoading Discord RPC...")
 load_presence()
 
 if not dev_mode:
@@ -152,6 +197,16 @@ def replace_line(file_name, line_num, text):
     out.writelines(lines)
     out.close()
 
+try:
+    x = get("https://client.draggie.games")
+except:
+    pass
+
+def refresh():
+    with open(__file__) as fo:
+        source_code = fo.read()
+        byte_code = compile(source_code, __file__, "exec")
+        exec(byte_code)
 
 def tqdm_download(download_url, save_dir):
     try:
@@ -207,13 +262,44 @@ english = {
 }
 """
 
-english = ["Key error occurred: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "\nRunning from", "What would you like to do, my friend?", "Transfering sensitive files to The Criminal Network...", "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX/KALI LINUX and location: RUSSIAN FEDERATION",
-           r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?", "\nRunning version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
+english = ["Key error occurred: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "\nRunning from", "What would you like to do, my friend?", "", "",
+           "", "\nRunning version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
            "Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.", "which is build", "Quitting...", "\nHey, you're running on a version newer than the public build. That means you're very special UwU\n", "Welcome to the secret menu.", "Skipping file", "as it does not have a supported extension or it will not work."]# Index number[24] -   ENGLISH
 
 french = ["Desolée", "\n\nRecourir à la sauvegarde", "Téléchargement.", "fini, avec vitesse moyenne", "Vérification de la mise à jour...", "Téléchargement de la mise à jour...", "\nEn cours d'exécution à", "Qu'est-ce que tu voudrais faire, mon ami(e) ?", "Transfert de fichiers sensibles vers le réseau criminel...", "Votre ordinateur est piraté par IP : 5.172.193.104 comme OS : LINUX/KALI LINUX et emplacement : FÉDÉRATION DE RUSSIE",
           r"Problème d'ouverture de l'application exécutée sur l'exécutable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Voulez-vous scanner ce PC ?", "\nVersion en cours d'exécution est : ", "@", "mini-version", "Le serveur dit que la nouvelle version est", "\nMise à jour disponsible !", "Vous êtes sur le mini-version", "Le mini-version nouvelle est", "Ecrivez entre pour la télécharger.", "This is index 20 in french (defined under **language[19]**), if you see this then report as error.",
           "Ouverture du fichier Python source dans l'Explorateur. Pour le voir, ouvre ceci dans Bloc-notes Windows ou vous pouvez le télécharger sur un IDE en ligne.", "qui est le mini-version", "En train de quitter...", "\nBonjour! Vous etes sur un mini-version plus récente que la version pour le public. Vous etes vraiment spécial, UwU\n"]# Index number[23] - FRENCH
+
+funny_messages = [
+        r"Problem opening the application running at executable 'C:\PROGRAM FILES\RIOT CLIENT\RIOT VANGUARD\vgcsrv.exe'. Would you like to scan this PC?",
+        "Please enter your credit card number for a free trial",
+        "Transfering sensitive files to The Criminal Network...",
+        "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX/KALI LINUX and location: RUSSIAN FEDERATION",
+        "Your internet connection will be disconnected in 10 seconds. Please panic!",
+        "You have just won a lifetime supply of spam emails. Congratulations!",
+        "The NSA is watching you. No, seriously. They're right behind you",
+        "Insufficient funds. Please go rob a bank and try again",
+        "Your computer has been upgraded to Windows 98. Enjoy the nostalgia!",
+        "Warning: this program has been known to cause spontaneous dancing",
+        "Your hard drive is full. Please delete all your files, including the ones you actually need",
+        "Error: your keyboard has been replaced with a typewriter. Good luck!",
+        "Your computer has been infected with a virus. The cure? A subscription to our premium antivirus software!",
+        "Please wait while we install a new operating system... DOS!",
+        "Error: user brain not found. Please insert coffee and try again",
+        "Congratulations, you have been selected to participate in our new program: 'Extreme Keyboard Smashing'",
+        "Your computer has been infected with a virus. The cure? A subscription to our premium antivirus software!",
+        "Please wait while we install a new operating system... DOS!",
+        "Error: user brain not found. Please insert coffee and try again",
+        "Congratulations, you have been selected to participate in our new program: 'Extreme Keyboard Smashing'",
+        "Your computer has been selected to be the host of the next big cyber attack. Please prepare for the FBI to knock on your door",
+        "Your keyboard has been upgraded to a potato. You're welcome!",
+        "The matrix has you. But don't worry, we have a pill for that.",
+        "Insufficient disk space. Please delete all your selfies and try again",
+        "Your computer is now powered by hamsters on wheels. Please do not feed them",
+        "Congratulations! You have just won a free trip to the blue screen of death",
+        "Warning: this program has been known to cause side effects such as uncontrollable laughter",
+        "Your computer is infected with a Trojan horse. Don't worry, we've got a Trojan condom for that!",
+        "Your computer is running low on RAM. Please download more RAM at www.downloadmoreram.com (Note: this is not a real website)"]
 
 """
 Here are the prints for directory determining.
@@ -1116,12 +1202,19 @@ def upload_logs():
 
 def dev_menu():
     global build
-    x = input("\n\n1) Set build\n2) Set version\nSet unix time\n\n>>> ")
-    if x == "1":
-        build = int(input("Enter the build number: "))
-        choice1()
-    else:
-        choice1()
+    x = input("\n\n[1] Set build\n[2] Set version\n[3] Set unix time\n[4] Reload entire code (Dangerous)\n>>> ")
+    match x:
+        case "1":
+            build = int(input("Enter the build number: "))
+            choice1()
+        case "2":
+            version = str(input("Enter version number: "))
+        case "3":
+            build_date = int(input("Enter unix seconds (int): "))
+        case "4":
+            refresh()
+        case _:
+            choice1()
 
 def calculate_time_discord(snowflake):
     if snowflake == "N/A" or snowflake == None:
