@@ -60,6 +60,8 @@ print_loading_message("urllib.parse.urlsplit")
 from urllib.parse import urlsplit
 print_loading_message("getpass")
 import getpass
+print_loading_message("concurrent.futures")
+import concurrent.futures as cf
 print_loading_message("pypresence.Presence")
 from pypresence import Presence
 
@@ -75,9 +77,9 @@ dev_mode = False
 
 global build, client
 
-build = 58
-version = "0.7.8"
-build_date = 1677356587
+build = 59
+version = "0.7.9"
+build_date = 1677689774
 username = getpass.getuser()
 
 environ_dir = environ['USERPROFILE']
@@ -215,7 +217,7 @@ def tqdm_download(download_url, save_dir):
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         written = 0
-        status_update(details="Downloading a file", state=f"{total_size} bytes")
+        #status_update(details="Downloading a file", state=f"{total_size} bytes")
 
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
@@ -255,12 +257,61 @@ global language, language_chosen
 
 # Change to JSON with TIDs like in Brawl?
 
-"""
-english = {
-    key_error: "Key error occurred",
-    resort_to_backup: "\n\nResorting to backup",
+
+phrases = {
+    'english': {
+        'key_error': 'Key error occurred: ',
+        'backup': '\n\nResorting to backup',
+        'downloading': 'Downloading.',
+        'done_speed': 'done, average speed',
+        'check_update': 'Checking for update...',
+        'download_update': 'Downloading update...',
+        'run_from': '\nRunning from',
+        'menu_prompt': 'What would you like to do, my friend?',
+        'server_says': 'The server says the newest build is',
+        'running_version': '\nRunning version',
+        'at': '@',
+        'build': 'build',
+        'update_available': '\nUpdate available!',
+        'on_version': 'You are on version',
+        'newest_version_build': 'The newest version is build',
+        'press_enter_update': 'Press enter to download the update!',
+        'error_message': 'This is index 20 (defined under **language[19]**), if you see this then report as error.',
+        'downloading_opening': 'Downloading and opening up the source Python file in Explorer. To view it, open it in Notepad or you could upload it to an IDE online.',
+        'which_build': 'which is build',
+        'quitting': 'Quitting...',
+        'newer_version': '\nHey, you\'re running on a version newer than the public build. That means you\'re very special UwU\n',
+        'secret_menu': 'Welcome to the secret menu.',
+        'skipping_file': 'Skipping file',
+        'unsupported_extension': 'as it does not have a supported extension or it will not work.'
+    },
+    'french': {
+        'key_error': 'Erreur de clé: ',
+        'backup': '\n\nRecourir à la sauvegarde',
+        'downloading': 'Téléchargement.',
+        'done_speed': 'terminé, vitesse moyenne',
+        'check_update': 'Vérification des mises à jour...',
+        'download_update': 'Téléchargement de la mise à jour...',
+        'run_from': '\nLancement à partir de',
+        'menu_prompt': 'Que souhaitez-vous faire, mon ami?',
+        'server_says': 'Le serveur indique que la dernière version est',
+        'running_version': '\nVersion en cours d\'exécution',
+        'at': '@',
+        'build': 'build',
+        'update_available': '\nMise à jour disponible !',
+        'on_version': 'Vous êtes sur la version',
+        'newest_version_build': 'La dernière version est la build',
+        'press_enter_update': 'Appuyez sur Entrée pour télécharger la mise à jour !',
+        'error_message': 'Ceci est l\'index 20 (défini sous **language[19]**), si vous voyez cela, signalez-le comme une erreur.',
+        'downloading_opening': 'Téléchargement et ouverture du fichier Python source dans l\'Explorateur. Pour le voir, ouvrez-le dans le Bloc-notes ou vous pouvez le télécharger dans une IDE en ligne.',
+        'which_build': 'qui est la build',
+        'quitting': 'Quitter...',
+        'newer_version': '\nHé, vous utilisez une version plus récente que la version publique. Cela signifie que vous êtes très spécial UwU\n',
+        'secret_menu': 'Bienvenue dans le menu secret.',
+        'skipping_file': 'Ignorer le fichier',
+        'unsupported_extension': 'car il n\'a pas d\'extension prise en charge ou ne fonctionnera pas.'
+    }
 }
-"""
 
 english = ["Key error occurred: ", "\n\nResorting to backup", "Downloading.", "done, average speed", "Checking for update...", "Downloading update...", "\nRunning from", "What would you like to do, my friend?", "", "",
            "", "\nRunning version", "@", "build", "The server says the newest build is", "\nUpdate available!", "You are on version", "The newest version is build", "Press enter to download the update!", "This is index 20 (defined under **language[19]**), if you see this then report as error.",
@@ -724,7 +775,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type):
         app_realname = "[null]"
 
     status_update(details="Extracting Supercell game assets", state=f"Loaded: {app_realname} (v{app_version}) - {arch_type}")
-
+    threads = int(input("Input the amount of threads to use to download files with:\n\n>>> "))
     x = input ("Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract additions\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ")
     if x == "1":
         print(f"Read the following information from file\nsha: {fingerprint_json['sha']}\nAmount of files: {len(fingerprint_json['files'])}\n\n")
@@ -800,35 +851,19 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type):
                     print(f"Skipping file {file} as it does not have a supported extension or it will not work.")
         else:
             archives += 1
-            new_fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
-            new_fingerprint_json = json.loads(new_fingerprint_json)
-            for item in fingerprint_json['files']:
-                files += 1
-                print(f"Searching file: {item}", end='\r')
-                if search_term in item['file']:
-                    print("\n")
-                    print(f"Matched in: {item}")
-                    # The file field contains search_term
-                    #print(f'Found "{search_term}" in file: {item["file"]}')
-                    hits += 1
-
-                    # Split the file path on the '\' character and take all elements except the last one
-                    dir_path = item["file"].split('/')[:-1]
-
-                    # Join the elements back together with the '\' character
-                    dir_path = '\\'.join(dir_path)
-
-                    # Create the directory and its parent directories if they do not already exist
-                    directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}'
-                    makedirs(directory_to_save_to, exist_ok=True)
-                    tqdm_download(f'https://{game_download_url}/{new_fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}')
-                    sys.stdout.write("\033[F") # Cursor up one line
-                    sys.stdout.write("\033[K") # clear the current line
-                else:
-                    pass
-                    #print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
-                sys.stdout.write("\033[F") # Cursor up one line
-                sys.stdout.write("\033[K") # clear the current line
+            with cf.ThreadPoolExecutor(max_workers=threads) as executor:
+                futures = []
+                for item in fingerprint_json['files']:
+                    files = files + 1
+                    if search_term in item['file']:
+                        hits = hits + 1
+                        dir_path = item["file"].split('/')[:-1]
+                        dir_path = '\\'.join(dir_path)
+                        directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}'
+                        makedirs(directory_to_save_to, exist_ok=True)
+                        url = f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}'
+                        path = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}'
+                        futures.append(executor.submit(tqdm_download, url, path))
         print(f"\nFound {hits} matching files across {files} total files in {archives} available archives. {skips} files already exist.\n")
         status_update(details="Extracting Supercell game assets", state=f"{files} files searched, {hits} downloaded.")
     if x == "6":

@@ -3,3 +3,6 @@ DraggieTools-*.exe
 draggietools.spec
 /venv
 build/DraggieTools/xref-DraggieTools.html
+build/DraggieTools/xref-DraggieTools.html
+build/DraggieTools/*.toc
+build/DraggieTools/*.pyz

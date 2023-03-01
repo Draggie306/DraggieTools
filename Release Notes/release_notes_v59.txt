@@ -1,0 +1,6 @@
+- Added asynchronous downloading.
+- Preparations for new version.
+- reduced filesize
+
+[AutoBrawlExtractor]
+- Async downloads when searching for string and downloading from specified build.
