@@ -1,0 +1,1 @@
+pyinstaller.exe --onefile --icon=app.ico DraggieTools.py

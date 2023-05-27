@@ -1,0 +1,3 @@
+pyinstaller.exe --onefile --icon=app.ico --clean DraggieTools.py
+
+Optional:  --splash sussy_balls.png
