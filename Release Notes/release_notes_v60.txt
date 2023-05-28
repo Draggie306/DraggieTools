@@ -1,0 +1,16 @@
+- Rewrite of many older (and newer!) features to improve stability, with better logging.
+- Improved and migrating language strings.
+- Improved async Discord presence loading.
+- Improved error handling and logging throughout the program
+- New feat: ".bank" File Extraction
+- Improved cleanup_files config
+- Updated AutoBrawlExtractor with a load of new enhancements, including fingerprint.json usage
+- Improved logfile uploading
+- New feat: videomaker
+- New feat: YouTube Downloader
+- New feat: DraggieClient compatibility and auto-updating
+- New feat: vbs scripts
+- Improved and upgraded logic of the main function to new Python
+- Added async event loops
+- Added more robustness
+- And more!
