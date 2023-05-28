@@ -1,0 +1,2 @@
+@echo off
+start powershell -NoProfile -ExecutionPolicy Bypass -Command "cd 'D:\Draggie Programs\Tools\DraggieTools\'; & python -m nuitka --follow-imports .\DraggieTools.py --onefile --windows-icon-from-ico="app.ico" --standalone"

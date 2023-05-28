@@ -133,9 +133,9 @@ dev_mode = False
 
 global build, client
 
-build = 61
-version = "0.8.1"
-build_date = 1685280976
+build = 62
+version = "0.8.2"
+build_date = 1685293757
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -1077,7 +1077,7 @@ def check_for_update():
     if current_build_version < build:
         print(phrases[language]['newer_version'])
     else:
-        print(f"{phrases[language]['running_version']} {version} - {phrases[language]['build']} {build} - {phrases[language]['at']} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {phrases[language]['on_version']} {current_build_version}.")
+        print(f"{phrases[language]['running_version']} {version} - {phrases[language]['build']} {build} - {phrases[language]['at']} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {phrases[language]['server_says']} {current_build_version}.")
 
 
 def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_json: Optional[dict] = None):
