@@ -133,8 +133,8 @@ dev_mode = False
 
 global build, client
 
-build = 62
-version = "0.8.2"
+build = 61
+version = "0.8.3"
 build_date = 1685293757
 username = getpass.getuser()
 current_exe_path = sys.executable
@@ -572,6 +572,31 @@ def change_language():
     return language_chosen
 
 
+def get_language():
+    """Returns the user's language. Currently `english` or `french`.\nIf the language file doesn't exist, it will be created."""
+    if path.exists(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt"):
+        try:
+            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", encoding="UTF-8") as x:
+                language_read = x.read()
+
+            if language_read == "french":
+                language = 'french'
+                print("Langue mise a jour: francais.")
+            else:
+                language = 'english'
+                print("Language set to English.")
+        except Exception:
+            language = change_language()
+    else:
+        log_print("[get_language] Language file doesn't exist when checking, using blocking change_language function", 3, False)
+        language = change_language()
+    return language
+
+
+language = get_language()
+log_print(f"[MainInit] Language set to {language}", 2, False)
+
+
 def cmini_extraction():
     print("CMINI_EXTRACTION")
     import subprocess
@@ -723,31 +748,6 @@ def cmini_extraction():
 
 
 # end of cmini function. phew! that was a lot of code. finished at 11:30pm
-
-
-def get_language():
-    """Returns the user's language. Currently `english` or `french`.\nIf the language file doesn't exist, it will be created."""
-    if path.exists(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt"):
-        try:
-            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", encoding="UTF-8") as x:
-                language_read = x.read()
-
-            if language_read == "french":
-                language = 'french'
-                print("Langue mise a jour: francais.")
-            else:
-                language = 'english'
-                print("Language set to English.")
-        except Exception:
-            language = change_language()
-    else:
-        log_print("[get_language] Language file doesn't exist when checking, using blocking change_language function", 3, False)
-        language = change_language()
-    return language
-
-
-language = get_language()
-log_print(f"[MainInit] Language set to {language}", 2, False)
 
 
 def download_update(current_build_version):
@@ -1044,7 +1044,7 @@ def check_for_update():
     if build < current_build_version: # if build is less than current version - so there's an update available.
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         log_print(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n")
-        if language_chosen == "english":
+        if language == "english":
             versions_to_get = current_build_version - build
             if versions_to_get == 1:
                 print(f"You're {versions_to_get} build behind latest")
@@ -2454,7 +2454,7 @@ if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
         log_print(f"[MainInit] Determined install_dir {install_dir}. Read from file InstallDir_Pref", 2, False)
 else:
     log_print("[MainInit] Setting new file preference exists.", 2, False)
-    with open("{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'w+') as f:
+    with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'w+') as f:
         f.close()
     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'w') as f:
         f.write(f"{DraggieTools_AppData_Directory}\n{build}")
@@ -2478,10 +2478,6 @@ thread.start()
 current_directory = path.dirname(path.realpath(__file__))
 if dev_mode:
     log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: variable currrent_directory assigned with value {current_directory}")
-
-
-language = get_language()
-log_print(f"[MainInit] Language set to {language}", 2, False)
 
 
 try:

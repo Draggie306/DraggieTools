@@ -1,0 +1,2 @@
+- Fixed major issue on first-time run due to missing f-string
+- Fixed incorrect language variable logic
