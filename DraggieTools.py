@@ -133,9 +133,9 @@ dev_mode = False
 
 global build, client
 
-build = 64
-version = "0.8.3"
-build_date = 1685293757
+build = 65
+version = "0.8.4"
+build_date = 1685304285
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -2268,27 +2268,48 @@ def save_json():
 
 
 def vbs_script_launcher():
-    vbs_funny_long = r"https://cdn.ibaguette.com/cdn/Tools/Important%20Disk%20Data.vbs"
-    keyboard_rgb = r"https://cdn.ibaguette.com/cdn/Tools/keyboard%20rgb.vbs"
-    choice_vbs = input("What VBS script do you want to download?\n[1] Keyboard RGB\n[2] Important Disk Data\n\n>>> ")
+    vbs_funny_long = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/Important-Disk-Data.vbs"
+    keyboard_rgb = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/keyboard-rgb.vbs"
+    amazing_site = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/Have-you-heard-of-this-amazing-website.bat"
+    cd_eject = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/cd.vbs"
+    delete = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/delete.bat"
+    fool = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/fool.vbs"
+    hackingmatrix = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/Hackingmatrix.bat"
+    infinite_bat = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/infinite.bat"
+    l = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/L.vbs"
+    no = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/no.bat"
+
+    choice_vbs = input("What script do you want to download?\n1. Important Disk Data\n2. Keyboard RGB\n3. Have you heard of this amazing website?\n4. CD Eject\n5. Delete\n6. Fool\n7. Hacking Matrix\n8. Infinite\n9. L\n10. No\n\nChoice: ")
+    log_print("Downloading script...")
     match choice_vbs:
         case "1":
-            log_print("Downloading VBS script...")
-            try:
-                tqdm_download(vbs_funny_long, f"{DraggieTools_AppData_Directory}\\Important Disk Data.vbs")
-                os.startfile(f"{DraggieTools_AppData_Directory}\\Important Disk Data.vbs")
-            except Exception as e:
-                log_print(f"Error: {e}")
+            filename = "Important-Disk-Data.vbs"; url = vbs_funny_long
         case "2":
-            log_print("Downloading VBS script...")
-            try:
-                tqdm_download(keyboard_rgb, f"{DraggieTools_AppData_Directory}\\keyboard rgb.vbs")
-                os.startfile(f"{DraggieTools_AppData_Directory}\\keyboard rgb.vbs")
-            except Exception as e:
-                log_print(f"Error: {e}")
+            filename = "keyboard-rgb.vbs"; url = keyboard_rgb
+        case "3":
+            filename = "Have-you-heard-of-this-amazing-website.bat"; url = amazing_site
+        case "4":
+            filename = "cd.vbs"; url = cd_eject
+        case "5":
+            filename = "delete.bat"; url = delete
+        case "6":
+            filename = "fool.vbs"; url = fool
+        case "7":
+            filename = "Hackingmatrix.bat"; url = hackingmatrix
+        case "8":
+            filename = "infinite.bat"; url = infinite_bat
+        case "9":
+            filename = "L.vbs"; url = l
+        case "10":
+            filename = "no.bat"; url = no
         case _:
             print("Invalid choice. Quitting...")
             choice1()
+    try:
+        tqdm_download(url, f"{DraggieTools_AppData_Directory}\\{filename}")
+        os.startfile(f"{DraggieTools_AppData_Directory}\\{filename}")
+    except Exception as e:
+        log_print(f"Error: {e}")
 
 
 def choice1():
