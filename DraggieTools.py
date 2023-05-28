@@ -133,7 +133,7 @@ dev_mode = False
 
 global build, client
 
-build = 61
+build = 64
 version = "0.8.3"
 build_date = 1685293757
 username = getpass.getuser()

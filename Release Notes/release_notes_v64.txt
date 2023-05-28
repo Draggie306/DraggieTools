@@ -1,0 +1,1 @@
+- Fixed error with previous version not updating its build number
