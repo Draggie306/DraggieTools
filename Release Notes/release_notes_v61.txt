@@ -1,0 +1,2 @@
+- Fixed a couple of issues, particularly with the Discord Presence integration.
+- Fixed log print displaying the level of the log message.

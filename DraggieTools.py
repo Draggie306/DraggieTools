@@ -133,9 +133,9 @@ dev_mode = False
 
 global build, client
 
-build = 60
-version = "0.8.0"
-build_date = 1677689774
+build = 61
+version = "0.8.1"
+build_date = 1685280976
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -345,7 +345,7 @@ async def load_presence():
         status_update()
         log_print("Loaded the presence.", 2, False)
     except Exception as e:
-        print(f"Unable to load the Discord rich presence: {e}", 4, True)
+        log_print(f"Unable to load the Discord rich presence: {e}", 4, True)
 
 
 def status_update(details: Optional[str] = f"Selecting what to do... (v{build})",
@@ -364,10 +364,13 @@ def status_update(details: Optional[str] = f"Selecting what to do... (v{build})"
     `start`: Do not change unless it's important. Should be `time()`.
     """
 
-    if client:
-        client.update(state=state, details=details, large_image=large_image, large_text=large_text, small_image=small_image, small_text=small_text, buttons=buttons, start=start)
-    else:
-        return #print("Not updating status due to Discord not being present.")
+    try:
+        if client:
+            client.update(state=state, details=details, large_image=large_image, large_text=large_text, small_image=small_image, small_text=small_text, buttons=buttons, start=start)
+        else:
+            return log_print("Not updating status due to Discord not being present.", 3, False)
+    except Exception as e:
+        return log_print(f"Unable to update the Discord rich presence: {e}", 4, True)
 
 
 """
