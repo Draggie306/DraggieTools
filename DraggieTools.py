@@ -129,18 +129,15 @@ sys.stdout.write("\r")
 sys.stdout.flush()
 print(f"All modules loaded! Took {round(elapsed_time, 7)}s      ")
 
-dev_mode = False
+dev_mode = True
 
 global build, client
 
-build = 65
-version = "0.8.4"
-build_date = 1685304285
+build = 66
+version = "0.8.5"
+build_date = 1685353963
 username = getpass.getuser()
 current_exe_path = sys.executable
-
-print("\n\nWelcome to Tools, build 60!\nThis is the best version yet, and it's the first version to be released to the public!\n\n")
-
 
 environ_dir = environ['USERPROFILE']
 
@@ -1864,7 +1861,7 @@ def discord_parse():
         if not path.isfile(f"{DraggieTools_AppData_Directory}\\DiscordParse"):
             makedirs(f"{DraggieTools_AppData_Directory}\\DiscordParse", exist_ok=True)
         Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse"')
-        return print(f"An error has occurred. No valid file or improperly formatted json file exists. {e}")
+        return print(f"No valid file or improperly formatted json file exists! You have to put the file in the folder {DraggieTools_AppData_Directory}\\DiscordParse\n\n{e}")
 
     x = input("[1] Parse current file and output everything.\n[2] Organise current file and output JSON files for each server\n\n")
 
