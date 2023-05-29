@@ -129,13 +129,13 @@ sys.stdout.write("\r")
 sys.stdout.flush()
 print(f"All modules loaded! Took {round(elapsed_time, 7)}s      ")
 
-dev_mode = True
+dev_mode = False
 
 global build, client
 
-build = 66
+build = 67
 version = "0.8.5"
-build_date = 1685353963
+build_date = 1685353104
 username = getpass.getuser()
 current_exe_path = sys.executable
 
