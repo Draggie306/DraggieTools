@@ -27,7 +27,7 @@ print_loading_message("datetime.datetime")
 from datetime import datetime
 
 print_loading_message("os.path (+ 4 more)")
-from os import environ, listdir, makedirs, mkdir, path, remove, startfile
+from os import environ, listdir, makedirs, mkdir, path, remove, startfile, system
 
 print_loading_message("time.sleep, time.time, time.perf_counter")
 from time import perf_counter, sleep, time
@@ -61,8 +61,8 @@ print_loading_message("zipfile")
 import zipfile
 
 print_loading_message("threading.Event, threading.Thread")
-from threading import Event, Thread
 import threading
+from threading import Event, Thread
 
 print_loading_message("base64")
 from base64 import b64decode
@@ -106,6 +106,12 @@ import asyncio
 print_loading_message("shutil")
 import shutil
 
+print_loading_message("psutil")
+import psutil
+
+print_loading_message("winshell")
+import winshell
+
 # import moviepy.editor
 print_loading_message("nest_asyncio")
 import nest_asyncio
@@ -133,11 +139,13 @@ dev_mode = False
 
 global build, client
 
-build = 67
-version = "0.8.5"
-build_date = 1685353104
+build = 68
+version = "0.8.6"
+build_date = 1685529225
 username = getpass.getuser()
 current_exe_path = sys.executable
+
+system(f"title DraggieTools v{version} (build {build})")
 
 environ_dir = environ['USERPROFILE']
 
@@ -330,15 +338,10 @@ print("Loading functions...")
 async def load_presence():
     discord_client_id = 1076873298501173269
     try:
-        # Create a new instance of the client
         global client
-        # Create a new instance of the client
         client = Presence(discord_client_id)
 
-        # Connect to the Discord API
         client.connect()
-
-        # Set your presence
         status_update()
         log_print("Loaded the presence.", 2, False)
     except Exception as e:
@@ -759,7 +762,7 @@ def download_update(current_build_version):
             file.close()
 
     except KeyError as e:
-        print(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be usedm saving to default directory.")
+        print(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be used, saving to default directory.")
         print(f"{language[0]}{e}{language[1]}")
         r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
@@ -835,7 +838,7 @@ def cleanup_files():
     file_amount = 0
 
     things_to_delete = input("What do you want to delete?\n\n[1] = Logs\n[2] = UpdatedBuilds\n[3] = UpdatedBuildsCache\n[4] = SourceCode\n[5] = AutoBrawlExtractor\\DownloadedBuilds\n[6] = All\n\n>>> ")
-
+    dir_paths = None
     if things_to_delete == "1":
         dir_paths = [f"{DraggieTools_AppData_Directory}\\Logs"]
     elif things_to_delete == "2":
@@ -854,6 +857,8 @@ def cleanup_files():
                      f"{Draggie_AppData_Directory}\\AutoBrawlExtractor\\DownloadedBuilds"
                      ]
     upload_log = None
+    if not dir_paths:
+        return log_print(f"[FileCleanup] No directories to delete from.")
     # Loop through all the directories
 
     for dir in dir_paths:
@@ -2223,32 +2228,112 @@ def yt_download():
 
 
 def draggieclient():
-    try:
-        target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
-        Ensure_Client_AppData_Directory = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
-    except Exception as e:
-        log_print(f"There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n\nRetrying with other directory")
+    choice_client_manage = input("\nWhat do you want to do?\n[0] Go back\n[1] Install\n[2] Uninstall\n[3] View Logs\n[4] Manage Settings\n\n>>> ")
+    if choice_client_manage == "1":
+        try:
+            target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+            Ensure_Client_AppData_Directory = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
+        except Exception as e:
+            return log_print(f"There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n")
 
-    # -*-*-*-*-* DIRECTORY CREATION *-*-*-*-*-
+        # -*-*-*-*-* DIRECTORY CREATION *-*-*-*-*-
 
-    if not os.path.exists(Ensure_Client_AppData_Directory):
-        os.makedirs(Ensure_Client_AppData_Directory, exist_ok=True)
-        log_print(f"makedirs: {Ensure_Client_AppData_Directory}")
+        if not os.path.exists(Ensure_Client_AppData_Directory):
+            os.makedirs(Ensure_Client_AppData_Directory, exist_ok=True)
+            log_print(f"makedirs: {Ensure_Client_AppData_Directory}")
 
-    if not os.path.exists(f"{Ensure_Client_AppData_Directory}\\Logs"):
-        os.mkdirs(f"{Ensure_Client_AppData_Directory}\\Logs", exist_ok=True)
-        log_print(f"mkdir: {Ensure_Client_AppData_Directory}\\Logs")
+        if not os.path.exists(f"{Ensure_Client_AppData_Directory}\\Logs"):
+            os.makedirs(f"{Ensure_Client_AppData_Directory}\\Logs", exist_ok=True)
+            log_print(f"mkdir: {Ensure_Client_AppData_Directory}\\Logs")
 
-    log_print("Prerequisites installed.\nDownloading client...")
-    try:
-        tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate20.exe", target_path)
-    except PermissionError as e:
-        return print(f"{e}\nMaybe you already have DraggieClient installed?")
-    except Exception as e:
-        return print(f"An error occured: {e}: {traceback.format_exc()}")
-    os.startfile(target_path)
-    save_json()
-    log_print("Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
+        log_print("Prerequisites installed.\nDownloading client...")
+        try:
+            tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate20.exe", target_path)
+        except PermissionError as e:
+            return print(f"{e}\nMaybe you already have DraggieClient installed?")
+        except Exception as e:
+            return print(f"An error occured: {e}: {traceback.format_exc()}")
+        os.startfile(target_path)
+        save_json()
+        log_print("Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
+    elif choice_client_manage == "2":
+        startup_path = os.path.join(winshell.startup(), "Client.lnk")
+        if os.path.exists(startup_path):
+            os.remove(startup_path)
+        try:
+            os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
+        except Exception as e:
+            log_print(f"Unable to remove client.exe - it is likely that it is running: {e}")
+
+        for proc in psutil.process_iter():
+            try:
+                target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+                process = psutil.Process(proc.pid)
+                procname = "client.exe"
+                if proc.name() == procname:
+                    process_exe = process.exe()
+                    log_print(f"Found client.exe running at {process_exe}\nAttempting to kill process...")
+                    if process_exe.lower() == target_path:
+                        proc.kill()
+                        log_print("Client has been killed.")
+                    os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
+                    log_print("Client has been uninstalled.")
+            except Exception as e:
+                return log_print(f"Unable to kill and completely remove client.exe: {e}")
+        log_print("Client has been uninstalled and removed from startup successfully.")
+    elif choice_client_manage == "3":
+        log_subdir = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\Logs")
+        if not os.path.exists(log_subdir):
+            os.makedirs(log_subdir, exist_ok=True)
+        os.startfile(log_subdir)
+    elif choice_client_manage == "4":
+        # return log_print("This is not yet implemented.")
+        json_settings_dir = os.path.join(DraggieTools_AppData_Directory, "Client_Settings.json")
+        if not os.path.exists(json_settings_dir):
+            with open(json_settings_dir, 'w') as f:
+                json.dump({
+                    "startup": True,
+                    "autoupdate": True,
+                    "autoupdate_interval": "default",
+                    "autoupdate_interval_unit": "default",
+                }, f)
+        with open(json_settings_dir, 'r') as f:
+            json_settings = json.load(f)
+            for key, value in json_settings.items():
+                print(f"{key}: {value}")
+            print("\n")
+            choice_client_settings = input("What do you want to do?\n[1] Change startup\n[2] Change autoupdate\n>>> ")
+            match choice_client_settings:
+                case "1":
+                    choice_client_settings_startup = input("Do you want to enable or disable startup?\n[1] Enable\n[2] Disable\n>>> ")
+                    match choice_client_settings_startup:
+                        case "1":
+                            json_settings["startup"] = True
+                            with open(json_settings_dir, 'w') as f:
+                                json.dump(json_settings, f)
+                            log_print("Startup enabled.")
+                        case "2":
+                            json_settings["startup"] = False
+                            with open(json_settings_dir, 'w') as f:
+                                json.dump(json_settings, f)
+                            log_print("Startup disabled.")
+                            draggieclient()
+                case "2":
+                    choice_client_settings_autoupdate = input("Do you want to enable or disable autoupdate?\n[1] Enable\n[2] Disable\n>>> ")
+                    match choice_client_settings_autoupdate:
+                        case "1":
+                            json_settings["autoupdate"] = True
+                            with open(json_settings_dir, 'w') as f:
+                                json.dump(json_settings, f)
+                            log_print("Autoupdate enabled.")
+                        case "2":
+                            json_settings["autoupdate"] = False
+                            with open(json_settings_dir, 'w') as f:
+                                json.dump(json_settings, f)
+                            log_print("Autoupdate disabled.")
+                            draggieclient()
+    else:
+        choice1()
 
 
 def save_json():
@@ -2401,7 +2486,7 @@ def choice1():
                 print("Reloading Discord RPC...")
                 asyncio.run(load_presence())
             case "13":
-                status_update(details="Installing DraggieClient")
+                status_update(details="Installing AutoUpdater")
                 draggieclient()
             case "14":
                 status_update(details="In the YouTube downloader")

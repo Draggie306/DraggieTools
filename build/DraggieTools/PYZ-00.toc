@@ -242,6 +242,10 @@
   ('__future__',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\__future__.py',
    'PYMODULE'),
+  ('__winshell_version__',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\__winshell_version__.py',
+   'PYMODULE'),
   ('_aix_support',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\_aix_support.py',
    'PYMODULE'),
@@ -521,6 +525,10 @@
   ('colorama.winterm',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\colorama\\winterm.py',
+   'PYMODULE'),
+  ('commctrl',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\lib\\commctrl.py',
    'PYMODULE'),
   ('concurrent',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\concurrent\\__init__.py',
@@ -850,6 +858,12 @@
    'PYMODULE'),
   ('ctypes.wintypes',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\ctypes\\wintypes.py',
+   'PYMODULE'),
+  ('curses',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\curses\\__init__.py',
+   'PYMODULE'),
+  ('curses.has_key',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\curses\\has_key.py',
    'PYMODULE'),
   ('dataclasses',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\dataclasses.py',
@@ -1646,6 +1660,46 @@
   ('pprint',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\pprint.py',
    'PYMODULE'),
+  ('psutil',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\__init__.py',
+   'PYMODULE'),
+  ('psutil._common',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_common.py',
+   'PYMODULE'),
+  ('psutil._compat',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_compat.py',
+   'PYMODULE'),
+  ('psutil._psaix',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_psaix.py',
+   'PYMODULE'),
+  ('psutil._psbsd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_psbsd.py',
+   'PYMODULE'),
+  ('psutil._pslinux',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_pslinux.py',
+   'PYMODULE'),
+  ('psutil._psosx',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_psosx.py',
+   'PYMODULE'),
+  ('psutil._psposix',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_psposix.py',
+   'PYMODULE'),
+  ('psutil._pssunos',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_pssunos.py',
+   'PYMODULE'),
+  ('psutil._pswindows',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_pswindows.py',
+   'PYMODULE'),
   ('pty',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\pty.py',
    'PYMODULE'),
@@ -1732,6 +1786,51 @@
   ('pypresence.utils',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pypresence\\utils.py',
+   'PYMODULE'),
+  ('pythoncom',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pythoncom.py',
+   'PYMODULE'),
+  ('pywin',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\__init__.py',
+   'PYMODULE'),
+  ('pywin.dialogs',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\dialogs\\__init__.py',
+   'PYMODULE'),
+  ('pywin.dialogs.list',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\dialogs\\list.py',
+   'PYMODULE'),
+  ('pywin.dialogs.status',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\dialogs\\status.py',
+   'PYMODULE'),
+  ('pywin.mfc',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\mfc\\__init__.py',
+   'PYMODULE'),
+  ('pywin.mfc.dialog',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\mfc\\dialog.py',
+   'PYMODULE'),
+  ('pywin.mfc.object',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\mfc\\object.py',
+   'PYMODULE'),
+  ('pywin.mfc.thread',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\mfc\\thread.py',
+   'PYMODULE'),
+  ('pywin.mfc.window',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\pywin\\mfc\\window.py',
+   'PYMODULE'),
+  ('pywin32_system32', '-', 'PYMODULE'),
+  ('pywintypes',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\lib\\pywintypes.py',
    'PYMODULE'),
   ('queue',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\queue.py',
@@ -2844,6 +2943,106 @@
   ('websockets.version',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets\\version.py',
+   'PYMODULE'),
+  ('win32com',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\__init__.py',
+   'PYMODULE'),
+  ('win32com.client',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\__init__.py',
+   'PYMODULE'),
+  ('win32com.client.CLSIDToClass',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\CLSIDToClass.py',
+   'PYMODULE'),
+  ('win32com.client.build',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\build.py',
+   'PYMODULE'),
+  ('win32com.client.dynamic',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\dynamic.py',
+   'PYMODULE'),
+  ('win32com.client.gencache',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\gencache.py',
+   'PYMODULE'),
+  ('win32com.client.genpy',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\genpy.py',
+   'PYMODULE'),
+  ('win32com.client.makepy',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\makepy.py',
+   'PYMODULE'),
+  ('win32com.client.selecttlb',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\selecttlb.py',
+   'PYMODULE'),
+  ('win32com.client.util',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\client\\util.py',
+   'PYMODULE'),
+  ('win32com.server',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\server\\__init__.py',
+   'PYMODULE'),
+  ('win32com.server.dispatcher',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\server\\dispatcher.py',
+   'PYMODULE'),
+  ('win32com.server.exception',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\server\\exception.py',
+   'PYMODULE'),
+  ('win32com.server.policy',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\server\\policy.py',
+   'PYMODULE'),
+  ('win32com.server.util',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\server\\util.py',
+   'PYMODULE'),
+  ('win32com.shell',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32comext\\shell\\__init__.py',
+   'PYMODULE'),
+  ('win32com.shell.shellcon',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32comext\\shell\\shellcon.py',
+   'PYMODULE'),
+  ('win32com.storagecon',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\storagecon.py',
+   'PYMODULE'),
+  ('win32com.universal',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\universal.py',
+   'PYMODULE'),
+  ('win32com.util',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32com\\util.py',
+   'PYMODULE'),
+  ('win32con',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\lib\\win32con.py',
+   'PYMODULE'),
+  ('win32timezone',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\lib\\win32timezone.py',
+   'PYMODULE'),
+  ('win32traceutil',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\lib\\win32traceutil.py',
+   'PYMODULE'),
+  ('winerror',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\lib\\winerror.py',
+   'PYMODULE'),
+  ('winshell',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\winshell.py',
    'PYMODULE'),
   ('xml',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\xml\\__init__.py',

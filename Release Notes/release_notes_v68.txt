@@ -1,0 +1,2 @@
+- A variety of changes and improvements
+- Now can manage some Client settings
