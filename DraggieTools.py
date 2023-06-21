@@ -65,7 +65,7 @@ import threading
 from threading import Event, Thread
 
 print_loading_message("base64")
-from base64 import b64decode
+import base64
 
 print_loading_message("math.ceil")
 from math import ceil
@@ -139,9 +139,9 @@ dev_mode = False
 
 global build, client
 
-build = 68
-version = "0.8.6"
-build_date = 1685529225
+build = 69
+version = "0.8.7"
+build_date = 1687372611
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -155,7 +155,7 @@ client = None
 
 phrases = {
     'english': {
-        'menu_options': '\n\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] AWTD\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n[13] Install DraggieClient\n[14] YouTube Downloader\n[15] Bank Files Extractor\n[16] VideoMaker\n[17] VBS Script Launcher\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
+        'menu_options': '\n\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] ProjectSaturnian\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n[13] Install DraggieClient\n[14] YouTube Downloader\n[15] Bank Files Extractor\n[16] VideoMaker\n[17] VBS Script Launcher\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
         'key_error': 'Key error occurred: ',
         'backup': '\n\nResorting to backup',
         'downloading': 'Downloading.',
@@ -247,7 +247,7 @@ phrases = {
         'skipping_file': 'Ignorer le fichier',
         'unsupported_extension': 'car il n\'a pas d\'extension prise en charge ou ne fonctionnera pas.',
         'log_notice': 'Voulez-vous téléverser les fichiers avant de les supprimer ? (O/N)',
-        'menu_options': '\n\n[0] Quitter\n[1] Installer sur le bureau\n[2] Installer dans un répertoire personnalisé\n[3] Actualiser les mises à jour\n[4] Changer de langue\n[5] Voir le code source\n[6] Modifier les paramètres de Fortnite\n[7] AWTD\n[8] Téléchargeur de torrents\n[9] Extracteur AutoBrawl\n\n>>> ',
+        'menu_options': '\n\n[0] Quitter\n[1] Installer sur le bureau\n[2] Installer dans un répertoire personnalisé\n[3] Actualiser les mises à jour\n[4] Changer de langue\n[5] Voir le code source\n[6] Modifier les paramètres de Fortnite\n[7] ProjectSaturnian\n[8] Téléchargeur de torrents\n[9] Extracteur AutoBrawl\n\n>>> ',
         'download_new_files': "Voulez-vous télécharger de nouveaux fichiers ?",
     }
 }
@@ -478,9 +478,12 @@ def refresh2():
     exec(open(__file__).read())
 
 
-def tqdm_download(download_url, save_dir, desc: Optional[str] = None):
+def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False):
     try:
         response = get(download_url, stream=True)
+        if overwrite:
+            if os.path.isfile(save_dir):
+                remove(save_dir)
 
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
@@ -1616,175 +1619,223 @@ def autobrawlextractor():
     number_one()
 
 
-def awtd():
-    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n-*-*-*-*-*-*-*-*-*-*-*-* Welcome to the Advanced Water Tech Demo Secret Area! *-*-*-*-*-*-*-*-*-*-*-*-\n")
-    # print("Searching for installed versions...")
-    if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD"):
-        mkdir(f"{DraggieTools_AppData_Directory}\\AWTD")
-    if path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\Config"):
-        print("Found a config file.")
-    else:
-        # Create a stop event
-        stop_event = Event()
+def ProjectSaturnian():
+    saturnian_environ_dir = os.environ['USERPROFILE']
+    saturnian_appdir = f"{saturnian_environ_dir}\\AppData\\Roaming\\Draggie\\Saturnian"
+    print("You must log in to your Draggie Games account to use this tool.")
+    print("If you do not have an account, you can create one at https://alpha.draggiegames.com/register")
 
-        # Start the loading icon in a separate thread
-        thread = Thread(target=loading_icon, args=(stop_event, "Checking for an installed version..."))
-        thread.start()
-
-        sleep(random.randint(1, 3))
-
-        # Set the stop event to stop the loading icon
-        stop_event.set()
-
-        # Wait for the thread to finish
-        thread.join()
-
-        print("\nUnable to detect an installed version.")
-        print("Please enter your ACCESS KEY given to you.\nNote: this may only be used ONCE. It 'self-destructs' when entered.\nUpdates will still be applied automatically with a valid key!")
-        inputted_key = input("Press right click to paste.\n\n>>> ")
-        stop_event = Event()
-
-        thread = Thread(target=loading_icon, args=(stop_event, f"Requesting the server to validate {inputted_key}"))
-        thread.start()
-
-        log_print(f"Requesting the server to validate {inputted_key}")
-        code_response = get(f"https://awtd.ibaguette.com/keys/{inputted_key}/type.awtd")
-
-        stop_event.set()
-        thread.join()
-
-        if code_response.status_code == 404:
-            log_print("\nThis is an invalid key. Please try again.")
-            sleep(1.5)
-            awtd()
+    """clear_cache = input("Would you like to clear your cached token? (y/n)\n\n>>> ")
+    if clear_cache == "y":
+        if not os.path.isdir(saturnian_appdir):
+            os.makedirs(saturnian_appdir, exist_ok=True)
+            print(f"[write_token] Created directory: {saturnian_appdir}")
+        if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
+            os.remove(f"{saturnian_appdir}\\token.bin")
+            print(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
         else:
-            log_print("\n404 not received.")
-            log_print("Reading and validating code")
+            print(f"[write_token] File not found: {saturnian_appdir}\\token.bin")"""
 
-            # Open the JSON file
-            raw_version_info = get("https://awtd.ibaguette.com/staticKeys/a5e81fe8_4e21_4d58_a0db_ea0c25ee9086").content
-            # Get the raw version info from the specified URL
-            # The content is returned as bytes, so it needs to be converted to a string
-            raw_version_info = str(raw_version_info).strip('b"b').strip("'")
-            # Base64 decode the version info
-            raw_version_info = b64decode(raw_version_info)
+    cached_token = None
+    username = getpass.getuser()
+    username = f"{username.lower()}.3d060a9b-f248-4e2b-babd-e6d5d2c2ab8b"
+    # generate a key from the username
+    hash_key = hashlib.sha256(username.encode()).digest()
+    # create a Fernet key from the hash
+    fernet_key = Fernet(base64.urlsafe_b64encode(hash_key))
+    print(f"fernet_key: {fernet_key}")
 
-            # Load the JSON data into a Python object
-            versions = json.loads(raw_version_info)
-            # Get the current alpha, beta, and release versions
-            current_alpha_version = versions['alpha']
-            current_beta_version = versions['beta']
-            current_release_version = versions['stable']
+    def encrypt_token(token):
+        print("[encrypt_token] encrypting token")
+        encrypted_binary_token = fernet_key.encrypt(token.encode())
+        print(f"[encrypt_token] encrypted_binary_token: {encrypted_binary_token}")
+        # convert the binary token to a string
+        encrypted_token = encrypted_binary_token.decode()
+        print(f"[encrypt_token] encrypted_token: {encrypted_token}")
+        return encrypted_token
 
-            # Get the text of the response and split it into lines
-            code_response = code_response.text
-            response_lines = code_response.splitlines()
+    def decrypt_token(encrypted_token):
+        print("[decrypt_token] decrypting token")
+        token = encrypted_token
+        return fernet_key.decrypt(token)
 
-            # Get the download URL from the second line of the response
-            download_url = response_lines[1]
-            # Get the first line of the response and convert it to a string
-            response_line_0 = str(response_lines[0])
+    def read_tokenfile_contents():
+        """
+        Gets the encrypted token, if it exists.
+        """
+        print("[read_tokenfile_contents] Reading token file contents")
+        if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
+            with open(f"{saturnian_appdir}\\token.bin", "r") as f:
+                cached_token = f.read()
+                print(f"[read_tokenfile_contents] Found cached token: {cached_token}")
+                return cached_token
+        return None
 
-            # Check the first line of the response and set the branch and current version accordingly
-            if response_line_0 == 'alpha':
-                branch = "ALPHA"
-                current_version = current_alpha_version
-            elif response_line_0 == "beta":
-                branch = "BETA"
-                current_version = current_beta_version
-            elif response_line_0 == "stable":
-                branch = "STABLE"
-                current_version = current_release_version
-            else:
-                branch = "Unknown"
-                current_version = "Unknown"
+    def write_token(encrypted_token):
+        """
+        Writes the unencrypted token to a file. YOU MUST ENCRYPT THE TOKEN BEFORE PASSING IT TO THIS FUNCTION.
+        """
+        print("[write_token] writing encrypted token")
+        if not os.path.isdir(saturnian_appdir):
+            os.makedirs(saturnian_appdir, exist_ok=True)
+            print(f"[write_token] Created directory: {saturnian_appdir}")
+        with open(f"{saturnian_appdir}\\token.bin", "wb") as f:
+            f.write(encrypted_token.encode())
+            print(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
 
-            # Print a message indicating that the validation has completed and the branch has been determined
-            log_print(f"[AWTD] Validation completed! The branch is {branch}.")
-            log_print(f"Current Version to Download: {current_version}")
+    cached_token = read_tokenfile_contents()
 
-            # If the BuildCache directory does not exist, create it
-            if not path.exists(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache"):
-                mkdir(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache")
+    if not cached_token:
+        print("No cached token found. Please log in.")
+        email = input("Email: ")
+        password = getpass.getpass("Password: ")
+        print("Logging in...")
+        login = requests.post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
+        if login.status_code == 200:
+            print("Login successful.")
+            server_token = login.json()["auth_token"]
+            print(f"Server returned token: {server_token}")
+            newly_encrypted_token = encrypt_token(server_token)
+            print(f"newly_encrypted_token: {newly_encrypted_token}")
+            write_token(newly_encrypted_token)
+            print("Token written to file.")
+        else:
+            print("Login failed. Please try again.")
+            ProjectSaturnian()
 
-            # Print a message indicating that the download URL is being validated
-            log_print("Validating Download URL.")
-            # Base64 decode the download URL (pass 1)
-            download_url = b64decode(download_url)
-            # Print the result of the first base64 decoding
-            log_print(f"[b64decode#1] [DECRYPT/thread1] binaryFCalc:{download_url}")
-            # Base64 decode the download URL again (pass 2)
-            download_url = b64decode(download_url)
-            # Print the result of the second base64 decoding
-            log_print(f"[b64decode#2] [STATIC KEY VALID] binaryValue:{download_url}")
+    try:
+        encrypted_token = read_tokenfile_contents()
+        print(f"encrypted_token: {encrypted_token}")
+        decrypted_token = decrypt_token(encrypted_token)
+        print(f"token: {decrypted_token}")
+        token = decrypted_token.decode()
+        print(f"Final read token: {decrypted_token}")
+    except Exception:
+        clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
+        match clear_token:
+            case "y":
+                if not os.path.isdir(saturnian_appdir):
+                    os.makedirs(saturnian_appdir, exist_ok=True)
+                    print(f"[write_token] Created directory: {saturnian_appdir}")
+                if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
+                    os.remove(f"{saturnian_appdir}\\token.bin")
+                    print(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
+                else:
+                    print(f"[write_token] File not found: {saturnian_appdir}\\token.bin")
+                ProjectSaturnian()
+            case "n":
+                print("Exiting...")
+                return choice1()
+        return choice1()
 
-            # Retrieve the key from the URL
-            response = get(download_url)                    # make request to download_url and store the response in response
-            log_print(f"[sha512pass2] {response.content}")
-            key = (response.content).decode("utf-8")        # decode the content of response from bytes to a string and store it in key
-            log_print(f"[sha512decryptor] [KeyThreadingInfo] {key}")
+    # After validating the token, we can use it to log in.
 
-            # Use the key to create a Fernet object
-            fernet_key = response_lines[3].strip("b'").strip("'")  # remove leading and trailing characters from fourth line of original response and store the result in fernet_key
-            fernet = Fernet(fernet_key)                            # create a Fernet object using fernet_key as the key
+    print(f"\n\nValidation successful, logging in with token {token}")
 
-            # Decrypt the message
-            encrypted_message = f'{response_lines[2]}'      # store the third line of the original response in encrypted_message
-            decrypted_message = fernet.decrypt(encrypted_message)   # decrypt encrypted_message using the Fernet object and store the result in decrypted_message
-            # log_print(f"[sha512decryptor] {decrypted_message}")
-            log_print("Successfully decrypted and resolved endpoint download url.")
-            # print("Decrypted message:", decrypted_message)
+    def token_login(token):
+        endpoint = "https://client.draggie.games/token_login"
+        login = requests.post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
+        if login.status_code == 200:
+            response = json.loads(login.content)
+            # print(f"Token login successful. Received response: {response}")
+            # print(f"Username and email: {response['username']} ({response['email']})")
+            return token
+        else:
+            print("Token login failed.")
+            #print(f"Received token login status code: {login.status_code}")
+            #ProjectSaturnian()
+            choice1()
+        # print(f"Received token login content: {login.content}")
 
-            download_url = str(decrypted_message).strip("b'").strip("'")  # remove leading and trailing characters from decrypted_message and store the result in download_url
+    new_token = token_login(token)
+    known_token = new_token
+    # print(f"new_token: {known_token}")
+    print("Logged in successfuly using a token!")
 
-            log_print(f"\n\nThe files are ready to be downloaded. Note that this will be downloaded temporarily to {DraggieTools_AppData_Directory}\\AWTD\\BuildCache.\nInput 1 to start downloading.")
-
-            x = input("\n\n>>> ")
-            log_print(f"Input: {x}")
-
-            if x != "1":
-                main()
-
-            response = get(download_url, stream=True)
-
-            total_size = int(response.headers.get("content-length", 0))
-            block_size = 1024  # 1 Kibibyte
-            written = 0
-
-            with open(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech.DraggiePAK", "wb") as f:
-                for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=download_url.split("/")[-1]):
-                    written = written + len(data)
-                    f.write(data)
-
-            start_anim_loading("Successsfully downloaded the game's PAK file. Decrypting, unpacking and verifying contents...")
-
+    def get_saturnian_info(known_token):
+        print("Getting Saturnian info...")
+        endpoint = "https://client.draggie.games/api/v1/saturnian/game/gameData/licenses/validation"
+        x = requests.get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
+        if x.status_code == 200:
             try:
-                with zipfile.ZipFile(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech.DraggiePAK', 'r') as zip_ref:
-                    zip_ref.extractall(f"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech", pwd=b"beans")
-                    stop_anim_loading()
-                    # Loop through the files in the folder
-
-                    for filename in listdir(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech'):
-                        # Compute the full path of the file
-                        filepath = path.join(f'{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech', filename)
-
-                        # Open the file in binary mode
-                        with open(filepath, 'rb') as f:
-                            # Read the contents of the file
-                            data = f.read()
-
-                            # Compute the SHA1 hash of the file
-                            sha1 = hashlib.sha1(data).hexdigest()
-
-                            # Print the filename and hash
-                            log_print(f'[HashVerification] Hash of "{filename}": {sha1}')
-
-                    log_print("\nSuccessfully extracted all.")
-                    Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\AWTD\\BuildCache\\Watertech"')
-                    main()
+                response = json.loads(x.content)
+                print(f"[OnlineAccount] Your tier: {response['type']}")
+                print(f"[OnlineAccount] Saturnian current version: {response['currentVersion']}")
+                return response
             except Exception as e:
-                log_print(e)
-                awtd()
+                print(f"Exception: {e}")
+                print(f"Received Saturnian version status code: {x.status_code}")
+                choice1()
+        else:
+            print(f"ERROR: Received Saturnian version status code: {x.status_code}")
+            error_message = json.loads(x.content)
+            print(f"ERROR: {error_message['message']}")
+            sleep(4)
+            choice1()
+
+    server_json_response = get_saturnian_info(known_token)
+    saturnian_current_version = server_json_response["currentVersion"]
+
+    if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
+        print("No Saturnian data file found. Creating one now.")
+        with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
+            first_info = {"current_version": None, "tier": None}
+            json.dump(first_info, f)
+            print("Saturnian data file created.")
+
+    # Read the json file
+    try:
+        with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
+            saturnian_data = json.load(f)
+            print(f"Saturnian data: {saturnian_data}")
+    except Exception as e:
+        return print(f"Error reading Saturnian data file: {e}")
+
+    # Now, if the server version is different from the local version, we need to update Saturnian.
+
+    def download_saturnian_build():
+        download_url = server_json_response["downloadUrl"]
+        print(f"Downloading Saturnian build from {download_url}")
+
+        tqdm_download(download_url, f"{saturnian_appdir}\\Saturnian.zip", overwrite=True)
+
+        print("Download complete. Extracting Saturnian...")
+        with zipfile.ZipFile(f"{saturnian_appdir}\\Saturnian.zip", "r") as zip_ref:
+            zip_ref.extractall(f"{saturnian_appdir}\\SaturnianGame")
+        print("Saturnian extracted.")
+
+    if saturnian_current_version != saturnian_data["current_version"]:
+        print("Saturnian is out of date. Would you like to update it now?")
+        choice = input("Y/N: ")
+        if choice.lower() == "y":
+            print("Updating Saturnian...")
+            download_saturnian_build()
+            print("Saturnian updated.")
+            saturnian_data["current_version"] = saturnian_current_version
+            saturnian_data["tier"] = server_json_response["type"]
+            with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
+                json.dump(saturnian_data, f)
+                print("Saturnian data file updated.")
+
+            to_open = input("Would you like to open Saturnian now? Y/N: ")
+            if to_open.lower() == "y":
+                os.startfile(f"{saturnian_appdir}\\SaturnianGame")
+                os.startfile(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe")
+            else:
+                print("Saturnian not opened.")
+    else:
+        print("Saturnian is up to date. you can play it now.")
+        Popen(f'explorer /select,"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"')
+
+    print("Make sure to check out the Saturnian Discord server: https://discord.gg/GfetCXH")
+    client = input("Note: Saturnian is still in development, so there may be bugs.\nTo auto update the project, make sure you have DraggieClient installed.\nWould you like to open the Client menu now? Y/N\n\n>>> ")
+    match client.lower():
+        case "y":
+            draggieclient()
+        case "n":
+            return log_print("Okay. Exiting...")    
+
+    sleep(2)
 
 
 def upload_log_file(file_path):
@@ -2469,7 +2520,7 @@ def choice1():
                 fort_file_mod()
             case "7":
                 status_update(details="Installing software")
-                awtd()
+                ProjectSaturnian()
             case "8":
                 status_update(details="Downloading a torrent")
                 # torrent_downloader()
@@ -2517,7 +2568,26 @@ def choice1():
 
         choice1()
     except KeyboardInterrupt:
-        logging.warning(f"Handled general keyboard interrupt: \n{traceback.format_exc()}")
+        log_print("Abandoned by user request.", )
+        try:
+            sleep(1)
+        except KeyboardInterrupt:
+            log_print("Press Ctrl+C 3 more times to exit")
+            try:
+                sleep(2)
+            except KeyboardInterrupt:
+                log_print("Press Ctrl+C 2 more times to exit...")
+                try:
+                    sleep(3)
+                except KeyboardInterrupt:
+                    log_print("Press Ctrl+C 1 more time to exit...")
+                    try:
+                        sleep(4)
+                    except KeyboardInterrupt:
+                        log_print("Goodbye!")
+                        return sys.exit(0)
+
+        log_print("Okay, I'll stay.")
         return choice1()
     except Exception as e:
         log_print(f"\n[WARNING] An unknown exception has occured: {e}\n\n{traceback.format_exc()}", 4)

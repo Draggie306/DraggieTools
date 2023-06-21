@@ -1,0 +1,4 @@
+- Changes to option 7 - my other project.
+- Compatibility with the Draggie Games API.
+- Tokenisation and encryption has been readded.
+- Nice build number!
