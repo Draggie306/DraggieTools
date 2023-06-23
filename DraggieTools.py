@@ -5,15 +5,19 @@ import time
 
 start_time = time.time()
 
+import os
+from os import environ, listdir, makedirs, mkdir, path, remove, startfile, system
+
 
 def print_loading_message(module_name):
-    sys.stdout.write(f"Loading module {module_name}...                  ")
+    """sys.stdout.write(f"Loading module {module_name}...                  ")
     sys.stdout.flush()
     sys.stdout.write("\r")
-    sys.stdout.flush()
+    sys.stdout.flush()"""
+    system(f"title DraggieTools: Loading module {module_name}...")
 
 
-import os
+system("title DraggieTools: Importing modules...")
 
 # import pyi_splash
 
@@ -25,9 +29,6 @@ from requests import get, post
 
 print_loading_message("datetime.datetime")
 from datetime import datetime
-
-print_loading_message("os.path (+ 4 more)")
-from os import environ, listdir, makedirs, mkdir, path, remove, startfile, system
 
 print_loading_message("time.sleep, time.time, time.perf_counter")
 from time import perf_counter, sleep, time
@@ -115,9 +116,7 @@ import winshell
 # import moviepy.editor
 print_loading_message("nest_asyncio")
 import nest_asyncio
-
 nest_asyncio.apply()
-
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -139,9 +138,9 @@ dev_mode = False
 
 global build, client
 
-build = 70
-version = "0.8.8"
-build_date = 1687515889
+build = 71
+version = "0.8.9"
+build_date = 1687558012
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -478,30 +477,31 @@ def refresh2():
     exec(open(__file__).read())
 
 
-def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False):
-    try:
+def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False, return_exceptions: Optional[bool] = False):
+    def download_file(download_url, save_dir):
         response = get(download_url, stream=True)
-        if overwrite:
-            if os.path.isfile(save_dir):
-                remove(save_dir)
-
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         written = 0
-        # status_update(details="Downloading a file", state=f"{total_size} bytes")
-        if desc is None:
-            desc = download_url.split("/")[-1]
+        desc = download_url.split("/")[-1]
         log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False)
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc):
                 written = written + len(data)
                 f.write(data)
         log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False)
-    except KeyboardInterrupt:
-        log("Keyboard interrupt: going back to first choice.", 3)
-        return choice1()
-    except Exception as e:
-        log(f"\n[DownloadError] An error has occured downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4)
+
+    if return_exceptions:
+        download_file(download_url, save_dir)
+    else:
+        try:
+            download_file(download_url, save_dir)
+        except KeyboardInterrupt:
+            log("Keyboard interrupt: going back to first choice.", 3)
+            return choice1()
+        except Exception as e:
+            log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4)
+
 
 
 def download_chunk(url, start, end, save_dir, pbar):
@@ -1622,8 +1622,6 @@ def autobrawlextractor():
 def ProjectSaturnian():
     saturnian_environ_dir = os.environ['USERPROFILE']
     saturnian_appdir = f"{saturnian_environ_dir}\\AppData\\Roaming\\Draggie\\Saturnian"
-    log("You must log in to your Draggie Games account to use this tool.")
-    log("If you do not have an account, you can create one at https://alpha.draggiegames.com/register")
 
     """clear_cache = input("Would you like to clear your cached token? (y/n)\n\n>>> ")
     if clear_cache == "y":
@@ -1686,11 +1684,14 @@ def ProjectSaturnian():
     cached_token = read_tokenfile_contents()
 
     if not cached_token:
-        log("No cached token found. Please log in.")
-        email = input("Email: ")
-        password = getpass.getpass("Password: ")
-        log("Logging in...")
+        log("[ProjectSaturnian] You must log in to download builds from the gameserver, and to validate your license.")
+        log("[ProjectSaturnian] If you do not have an account, you can create one at https://alpha.draggiegames.com/register")
+        log("Please enter your login credentials below.")
+        email = input("\nEmail: ")
+        password = getpass.getpass("\nPassword: ")
+        start_anim_loading(text="Logging in...")
         login = requests.post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
+        stop_anim_loading()
         if login.status_code == 200:
             log("Login successful.")
             server_token = login.json()["auth_token"]
@@ -1737,13 +1738,10 @@ def ProjectSaturnian():
         login = requests.post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
         if login.status_code == 200:
             response = json.loads(login.content)
-            # log(f"Token login successful. Received response: {response}")
-            # log(f"Username and email: {response['username']} ({response['email']})")
+            log(f"Token login successful. Received response: {response}", output=False)
             return token
         else:
             log("Token login failed.")
-            #log(f"Received token login status code: {login.status_code}")
-            #ProjectSaturnian()
             choice1()
         # log(f"Received token login content: {login.content}")
 
@@ -1759,17 +1757,17 @@ def ProjectSaturnian():
         if x.status_code == 200:
             try:
                 response = json.loads(x.content)
-                log(f"[OnlineAccount] Your tier: {response['type']}")
-                log(f"[OnlineAccount] Saturnian current version: {response['currentVersion']}")
+                log(f"[saturnian/OnlineAccount] Your tier: {response['type']}")
+                log(f"[saturnian/OnlineAccount] Saturnian current version: {response['currentVersion']}")
                 return response
             except Exception as e:
-                log(f"Exception: {e}")
-                log(f"Received Saturnian version status code: {x.status_code}")
+                log(f"[saturnian/errors.account] Exception: {e}")
+                log(f"[saturnian/errors] Received version status code: {x.status_code}")
                 choice1()
         else:
-            log(f"ERROR: Received Saturnian version status code: {x.status_code}")
+            log(f"[saturnian/errors.account] ERROR: Received Saturnian version status code: {x.status_code}")
             error_message = json.loads(x.content)
-            log(f"ERROR: {error_message['message']}")
+            log(f"[saturnian/errors.account] ERROR: {error_message['message']}")
             sleep(4)
             choice1()
 
@@ -1777,64 +1775,72 @@ def ProjectSaturnian():
     saturnian_current_version = server_json_response["currentVersion"]
 
     if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
-        log("No Saturnian data file found. Creating one now.")
+        log("[saturnian] No data file found. Creating one now...")
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
             first_info = {"current_version": None, "tier": None}
             json.dump(first_info, f)
-            log("Saturnian data file created.")
+            log("[saturnian] Gamedata file created successfully.")
 
     # Read the json file
     try:
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
             saturnian_data = json.load(f)
-            log(f"Saturnian data: {saturnian_data}")
+            log(f"[saturnian] Successfully read datafile: {saturnian_data}")
     except Exception as e:
-        return log(f"Error reading Saturnian data file: {e}")
+        return log(f"[saturnian/errors] Error reading Saturnian data file: {e}")
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
 
     def download_saturnian_build():
         download_url = server_json_response["downloadUrl"]
-        log(f"Downloading Saturnian build from {download_url}")
+        log("[saturnian/buildDL] Grabbing authenticated build...")
+        log(f"[saturnian/buildDL] Grabbing authenticated build from {download_url}", output=False)
 
-        tqdm_download(download_url, f"{saturnian_appdir}\\Saturnian.zip", overwrite=True)
+        tqdm_download(download_url, f"{saturnian_appdir}\\Saturnian.bin", overwrite=True)
 
-        log("Download complete. Extracting Saturnian...")
-        with zipfile.ZipFile(f"{saturnian_appdir}\\Saturnian.zip", "r") as zip_ref:
+        log("[saturnian/buildDL] Download complete. Decompressing...")
+        start_anim_loading("Decompressing...")
+        with zipfile.ZipFile(f"{saturnian_appdir}\\Saturnian.bin", "r") as zip_ref:
             zip_ref.extractall(f"{saturnian_appdir}\\SaturnianGame")
-        log("Saturnian extracted.")
+        stop_anim_loading()
+        log("\n[saturnian/buildDL] Extraction complete.")
 
     if saturnian_current_version != saturnian_data["current_version"]:
-        log("Saturnian is out of date. Would you like to update it now?")
+        log("[saturnian/Updater] Local game version is different from server version! Would you like to update? Y/N:\n\n>>> ")
         choice = input("Y/N: ")
         if choice.lower() == "y":
-            log("Updating Saturnian...")
+            log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
+            start_anim_loading("Downloading...")
             download_saturnian_build()
-            log("Saturnian updated.")
+            stop_anim_loading()
+            log("[saturnian/Updater] Update download was successful.")
+
             saturnian_data["current_version"] = saturnian_current_version
             saturnian_data["tier"] = server_json_response["type"]
             with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
                 json.dump(saturnian_data, f)
-                log("Saturnian data file updated.")
+                log("[saturnian/datafile] Data file updated")
+    if not os.path.isfile(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"):
+        log("[saturnian/Updater] The binary file is missing. Downloading build...")
+        download_saturnian_build()
+        log("[saturnian/Updater] Update complete!")
 
-            to_open = input("Would you like to open Saturnian now? Y/N: ")
-            if to_open.lower() == "y":
-                os.startfile(f"{saturnian_appdir}\\SaturnianGame")
-                os.startfile(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe")
-            else:
-                log("Saturnian not opened.")
-    else:
-        log("Saturnian is up to date. you can play it now.")
-        Popen(f'explorer /select,"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"')
+    to_open = input("\n\nWould you like to open the latest build now?\n[1] Yes\n[2] No\n[3] Open in Explorer\n\n>>> ")
+    match to_open.lower():
+        case "1":
+            Popen(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe")
+        case "2":
+            return log("Okay. Exiting...")
+        case "3":
+            Popen(f'explorer /select,"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"')
 
-    log("Make sure to check out the Saturnian Discord server: https://discord.gg/GfetCXH")
-    client = input("Note: Saturnian is still in development, so there may be bugs.\n\nTo auto update the project, make sure you have the AutoUpdate installed.\n\nWould you like to open the Client menu now? Y/N\n\n>>> ")
+    log("\nMake sure to check out the Discord server and assign roles for updates: https://discord.gg/GfetCXH")
+    client = input("Note: Saturnian is still in development, so there may be bugs.\n\nTo auto update the project, make sure you have the AutoUpdate installed.\nWould you like to open the Client menu now? Y/N\n\n>>> ")
     match client.lower():
         case "y":
             draggieclient()
         case "n":
-            return log("Okay. Exiting...")    
-
+            return log("Okay. Exiting...")
     sleep(2)
 
 
@@ -2279,42 +2285,49 @@ def yt_download():
 
 
 def draggieclient():
-    choice_client_manage = input("\nWhat do you want to do?\n[0] Go back\n[1] Install\n[2] Uninstall\n[3] View Logs\n[4] Manage Settings\n\n>>> ")
-    if choice_client_manage == "1":
+    # Project Lily: aka DraggieClient
+    lily_initial_choice = input("\nWhat do you want to do?\n[0] Go back\n[1] Install\n[2] Uninstall\n[3] View Logs\n[4] Manage Settings\n\n>>> ")
+
+    try:
+        target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+        lily_ensure_appdata_dir = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
+        lily_ensure_appdata_dir_via_expanded = (f"{os.path.expanduser('~')}\\AppData\\Local\\Draggie\\Client")
+    except Exception as e:
+        return log(f"[ProjectLily] There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n")
+
+    if not os.path.exists(lily_ensure_appdata_dir):
         try:
-            target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
-            Ensure_Client_AppData_Directory = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
+            log("[ProjectLily] Prerequisite directory does not exist. Creating it now...")
+            os.makedirs(lily_ensure_appdata_dir, exist_ok=True)
+            log(f"[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}")
         except Exception as e:
-            return log(f"There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n")
+            log(f"[ProjectLily] There was a critical error with trying to create a directory: {e}: {traceback.format_exc()}. Trying again with a different method...\n\n")
+            os.makedirs(lily_ensure_appdata_dir_via_expanded, exist_ok=True)
+            log(f"[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir_via_expanded}")
 
-        # -*-*-*-*-* DIRECTORY CREATION *-*-*-*-*-
+    if lily_initial_choice == "1":
+        if not os.path.exists(f"{lily_ensure_appdata_dir}\\Logs"):
+            os.makedirs(f"{lily_ensure_appdata_dir}\\Logs", exist_ok=True)
+            log(f"[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}\\Logs")
 
-        if not os.path.exists(Ensure_Client_AppData_Directory):
-            os.makedirs(Ensure_Client_AppData_Directory, exist_ok=True)
-            log(f"makedirs: {Ensure_Client_AppData_Directory}")
-
-        if not os.path.exists(f"{Ensure_Client_AppData_Directory}\\Logs"):
-            os.makedirs(f"{Ensure_Client_AppData_Directory}\\Logs", exist_ok=True)
-            log(f"mkdir: {Ensure_Client_AppData_Directory}\\Logs")
-
-        log("Prerequisites installed.\nDownloading Build 40 of client...")
+        log("Downloading Build 40 of client...")
         try:
-            tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate40.exe", target_path)
+            tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate40.exe", target_path, return_exceptions=True)
         except PermissionError as e:
-            return log(f"{e}\nMaybe you already have DraggieClient installed?")
+            return log(f"[ProjectLily] {e}\nThe client is likely running! We don't need to install it again.")
         except Exception as e:
-            return log(f"An error occured: {e}: {traceback.format_exc()}")
+            return log(f"[ProjectLily] An error occured: {e}: {traceback.format_exc()}")
         os.startfile(target_path)
         save_json()
         log("Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
-    elif choice_client_manage == "2":
+    elif lily_initial_choice == "2":
         startup_path = os.path.join(winshell.startup(), "Client.lnk")
         if os.path.exists(startup_path):
             os.remove(startup_path)
         try:
             os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
         except Exception as e:
-            log(f"Unable to remove client.exe - it is likely that it is running: {e}")
+            log(f"[ProjectLily] Unable to remove client.exe - it is likely that it is running: {e}")
 
         for proc in psutil.process_iter():
             try:
@@ -2330,16 +2343,16 @@ def draggieclient():
                     os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
                     log("Client has been uninstalled.")
             except Exception as e:
-                return log(f"Unable to kill and completely remove client.exe: {e}")
-        log("Client has been uninstalled and removed from startup successfully.")
-    elif choice_client_manage == "3":
+                return log(f"[ProjectLily] Unable to kill and completely remove client.exe: {e}")
+        log("[ProjectLily] Client has been uninstalled and removed from startup successfully.")
+    elif lily_initial_choice == "3":
         log_subdir = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\Logs")
         if not os.path.exists(log_subdir):
             os.makedirs(log_subdir, exist_ok=True)
         os.startfile(log_subdir)
-    elif choice_client_manage == "4":
+    elif lily_initial_choice == "4":
         # return log("This is not yet implemented.")
-        json_settings_dir = os.path.join(DraggieTools_AppData_Directory, "Client_Settings.json")
+        json_settings_dir = os.path.join(lily_ensure_appdata_dir, "Client_Settings.json")
         if not os.path.exists(json_settings_dir):
             with open(json_settings_dir, 'w') as f:
                 json.dump({
@@ -2351,8 +2364,7 @@ def draggieclient():
         with open(json_settings_dir, 'r') as f:
             json_settings = json.load(f)
             for key, value in json_settings.items():
-                log(f"{key}: {value}")
-            log("\n")
+                log(f"{key}: {value}", output=False)
             choice_client_settings = input("What do you want to do?\n[1] Change startup\n[2] Change autoupdate\n>>> ")
             match choice_client_settings:
                 case "1":
@@ -2362,12 +2374,12 @@ def draggieclient():
                             json_settings["startup"] = True
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log("Startup enabled.")
+                            log("[ProjectLily] Startup enabled.")
                         case "2":
                             json_settings["startup"] = False
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log("Startup disabled.")
+                            log("[ProjectLily] Startup disabled.")
                             draggieclient()
                 case "2":
                     choice_client_settings_autoupdate = input("Do you want to enable or disable autoupdate?\n[1] Enable\n[2] Disable\n>>> ")
@@ -2376,12 +2388,12 @@ def draggieclient():
                             json_settings["autoupdate"] = True
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log("Autoupdate enabled.")
+                            log("[ProjectLily] Autoupdate enabled.")
                         case "2":
                             json_settings["autoupdate"] = False
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log("Autoupdate disabled.")
+                            log("[ProjectLily] Autoupdate disabled.")
                             draggieclient()
     else:
         choice1()
@@ -2565,7 +2577,6 @@ def choice1():
 
             case _:
                 choice1()
-
         choice1()
     except KeyboardInterrupt:
         log("Abandoned by user request.", )
