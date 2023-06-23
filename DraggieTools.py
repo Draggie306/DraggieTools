@@ -139,9 +139,9 @@ dev_mode = False
 
 global build, client
 
-build = 69
-version = "0.8.7"
-build_date = 1687372611
+build = 70
+version = "0.8.8"
+build_date = 1687515889
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -261,7 +261,7 @@ def l10n_text(key: str) -> str:
             value = phrases[language][f'{key}']
         return value
     except Exception as e:
-        log_print(f"[LocalisedText] Error occurred when getting localised string: {e}\n{traceback.format_exc()}", 4)
+        log(f"[LocalisedText] Error occurred when getting localised string: {e}\n{traceback.format_exc()}", 4)
         return key
 
 
@@ -335,44 +335,6 @@ if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
 print("Loading functions...")
 
 
-async def load_presence():
-    discord_client_id = 1076873298501173269
-    try:
-        global client
-        client = Presence(discord_client_id)
-
-        client.connect()
-        status_update()
-        log_print("Loaded the presence.", 2, False)
-    except Exception as e:
-        log_print(f"Unable to load the Discord rich presence: {e}", 4, True)
-
-
-def status_update(details: Optional[str] = f"Selecting what to do... (v{build})",
-                  state: Optional[str] = "In the main menu",
-                  large_image: Optional[str] = "https://cdn.ibaguette.com/cdn/RotatingCats_128.gif",
-                  large_text: Optional[str] = f"Build: {build} // Version {version}",
-                  small_image: Optional[str] = "https://cdn.ibaguette.com/cdn/BrigadersRotating_512.gif",
-                  small_text: Optional[str] = "Be active in Baguette Brigaders for a prize",
-                  buttons: Optional[list] = [{"label": "Join Server", "url": "https://discord.com/invite/7zaRexVaH5"},
-                                             {"label": "Download DraggieTools", "url": "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe"}],
-                  start=start_time,
-                  ):
-    """
-    `details`: The first thing that should be chosen. It is the top of the presence.\n
-    `state`: Appears below the details.
-    `start`: Do not change unless it's important. Should be `time()`.
-    """
-
-    try:
-        if client:
-            client.update(state=state, details=details, large_image=large_image, large_text=large_text, small_image=small_image, small_text=small_text, buttons=buttons, start=start)
-        else:
-            return log_print("Not updating status due to Discord not being present.", 3, False)
-    except Exception as e:
-        return log_print(f"Unable to update the Discord rich presence: {e}", 4, True)
-
-
 """
 Here are the prints for directory determining.
 """
@@ -396,7 +358,7 @@ if dev_mode:
 logging.debug(f"[MainInit] Took {elapsed_time} to load modules")
 
 
-def log_print(text, log_level: Optional[int] = 2, output: Optional[bool] = True) -> None:
+def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True) -> None:
     """
     Logs and prints the text inputted. The logging level is\n1: DEBUG\n2: INFO (default)\n3: WARNING\n4: ERROR\n5: CRITICAL
     """
@@ -416,6 +378,44 @@ def log_print(text, log_level: Optional[int] = 2, output: Optional[bool] = True)
     if output:
         print(text)
     # if output else logging.info("The above log was not shown to the console")
+
+
+async def load_presence():
+    discord_client_id = 1076873298501173269
+    try:
+        global client
+        client = Presence(discord_client_id)
+
+        client.connect()
+        status_update()
+        log("Loaded the presence.", 2, False)
+    except Exception as e:
+        log(f"Unable to load the Discord rich presence: {e}", 4, True)
+
+
+def status_update(details: Optional[str] = f"Selecting what to do... (v{build})",
+                  state: Optional[str] = "In the main menu",
+                  large_image: Optional[str] = "https://cdn.ibaguette.com/cdn/RotatingCats_128.gif",
+                  large_text: Optional[str] = f"Build: {build} // Version {version}",
+                  small_image: Optional[str] = "https://cdn.ibaguette.com/cdn/BrigadersRotating_512.gif",
+                  small_text: Optional[str] = "Be active in Baguette Brigaders for a prize",
+                  buttons: Optional[list] = [{"label": "Join Server", "url": "https://discord.com/invite/7zaRexVaH5"},
+                                             {"label": "Download DraggieTools", "url": "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe"}],
+                  start=start_time,
+                  ):
+    """
+    `details`: The first thing that should be chosen. It is the top of the presence.\n
+    `state`: Appears below the details.
+    `start`: Do not change unless it's important. Should be `time()`.
+    """
+
+    try:
+        if client:
+            client.update(state=state, details=details, large_image=large_image, large_text=large_text, small_image=small_image, small_text=small_text, buttons=buttons, start=start)
+        else:
+            return log("Not updating status due to Discord not being present.", 3, False)
+    except Exception as e:
+        return log(f"Unable to update the Discord rich presence: {e}", 4, True)
 
 
 global stop_event, thread
@@ -491,17 +491,17 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
         # status_update(details="Downloading a file", state=f"{total_size} bytes")
         if desc is None:
             desc = download_url.split("/")[-1]
-        log_print(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False)
+        log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False)
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc):
                 written = written + len(data)
                 f.write(data)
-        log_print(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False)
+        log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False)
     except KeyboardInterrupt:
-        log_print("Keyboard interrupt: going back to first choice.", 3)
+        log("Keyboard interrupt: going back to first choice.", 3)
         return choice1()
     except Exception as e:
-        log_print(f"\n[DownloadError] An error has occured downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4)
+        log(f"\n[DownloadError] An error has occured downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4)
 
 
 def download_chunk(url, start, end, save_dir, pbar):
@@ -550,28 +550,28 @@ def change_language():
             language = 'french'
             with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
                 x.close()
-            log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
+            log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
             with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w", encoding="UTF-8") as x:
                 x.write("french")
                 x.close()
-            log_print(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'French'")
+            log(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'French'")
             language_chosen = "french"
         else:
             print("Language updated to English.")
             language = 'english'
             with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
                 x.close()
-            log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
+            log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
 
             with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w") as x:
                 x.write("english")
                 x.close()
-            log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'English'")
+            log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'English'")
             language_chosen = "english"
     status_update(details="Choosing language", state=f"Set language to {language_chosen}!")
     sleep(0.1)
     if dev_mode:
-        log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
+        log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
     return language_chosen
 
 
@@ -591,13 +591,13 @@ def get_language():
         except Exception:
             language = change_language()
     else:
-        log_print("[get_language] Language file doesn't exist when checking, using blocking change_language function", 3, False)
+        log("[get_language] Language file doesn't exist when checking, using blocking change_language function", 3, False)
         language = change_language()
     return language
 
 
 language = get_language()
-log_print(f"[MainInit] Language set to {language}", 2, False)
+log(f"[MainInit] Language set to {language}", 2, False)
 
 
 def cmini_extraction():
@@ -616,7 +616,7 @@ def cmini_extraction():
     if utils_path == "":
         utils_path = outputpath + r"\.utils" # create a folder called .utils in the output directory
         makedirs(utils_path, exist_ok=True)
-        log_print(f"Downloading utility prerequisite files to {utils_path} directory...", 1, True)
+        log(f"Downloading utility prerequisite files to {utils_path} directory...", 1, True)
         tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803066313322548/fmodex.dll", utils_path + r"\fmodex.dll")
         tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803066674028594/fmodL.dll", utils_path + r"\fmodL.dll")
         tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803067022159913/fsb_dec.bat", outputpath + r"\fsb_dec.bat") # batchfile must be in parent directory
@@ -624,14 +624,14 @@ def cmini_extraction():
         tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803068121067530/fmod_extr.exe", utils_path + r"\fmod_extr.exe")
         tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803068439830659/Script.bms", utils_path + r"\Script.bms")
         tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803068813135955/quickbms.exe", utils_path + r"\quickbms.exe")
-        log_print(f"All files downloaded! Utils path = {utils_path}", 1, False)
+        log(f"All files downloaded! Utils path = {utils_path}", 1, False)
 
     quickbms_exe = utils_path + r"\quickbms.exe"
     fsb_aud_extr_exe = utils_path + r"\fsb_aud_extr.exe"
     bmsfile = utils_path + r"\Script.bms"
     batchfile = outputpath + r"\fsb_dec.bat" # batchfile limitation: must be in the same directory as the fsb files
 
-    log_print(f"batchfile_path: {batchfile}")
+    log(f"batchfile_path: {batchfile}")
 
     # Check if all the files exist
 
@@ -654,7 +654,7 @@ def cmini_extraction():
     # Execute the quickbms extractor file with parameters
 
     command = f'& "{os.path.normpath(quickbms_exe)}" -d "{os.path.normpath(bmsfile)}" "{os.path.normpath(bankfilepath)}" "{os.path.normpath(outputpath)}"'
-    log_print(f"Executing command: {command}")
+    log(f"Executing command: {command}")
 
     # Start the subprocess and hide the window
 
@@ -670,21 +670,21 @@ def cmini_extraction():
 
     # Print the output
 
-    log_print(output_str, 1)
-    log_print("Successfully extracted some files!")
+    log(output_str, 1)
+    log("Successfully extracted some files!")
 
     # Run the batchfile
 
-    log_print("Running batchfile to extract all the files from the fsb files...", 2, False)
-    log_print(f"Executing command with subprocess.Popen: {batchfile}. working directory is {outputpath}", 2, True)
+    log("Running batchfile to extract all the files from the fsb files...", 2, False)
+    log(f"Executing command with subprocess.Popen: {batchfile}. working directory is {outputpath}", 2, True)
     start_anim_loading("Extracting waveform files from FSB... this make take some time...")
     proc = subprocess.Popen([batchfile], stdout=subprocess.PIPE, cwd=outputpath)
     output = proc.communicate()[0]
     output_str = output.decode()
     stop_anim_loading()
-    log_print(f"Extracting all was successfully completed.\n\nLog of files extracted:\n------\n{output_str}\n------\n", 2, True)
+    log(f"Extracting all was successfully completed.\n\nLog of files extracted:\n------\n{output_str}\n------\n", 2, True)
 
-    log_print("Performing additional cleanup...", 2, True)
+    log("Performing additional cleanup...", 2, True)
 
     wavfiles = 0
     oldpaths = 0
@@ -709,25 +709,25 @@ def cmini_extraction():
                     print(parentname, grandparentname, grandparentdir)
                     shutil.move(os.path.join(root, file), os.path.join(grandparentdir, file))
 
-                    log_print(f"Moved {os.path.join(root, file)} to {grandparentdir + file}", 2, True)
+                    log(f"Moved {os.path.join(root, file)} to {grandparentdir + file}", 2, True)
                     wavfiles = wavfiles + 1
 
                     if len(os.listdir(root)) <= 1:
-                        log_print("the root is only one file, removing the directory...")
+                        log("the root is only one file, removing the directory...")
                         shutil.rmtree(root, ignore_errors=True)
                         oldpaths = oldpaths + 1
                     """if len(os.listdir(os.path.dirname(root))) <= 1:
-                        log_print(f"the parent directory {os.path.dirname(root)} is only one file, removing the directory...")
+                        log(f"the parent directory {os.path.dirname(root)} is only one file, removing the directory...")
                         shutil.rmtree(os.path.dirname(root), ignore_errors=True)
                         oldpaths = oldpaths + 1"""
             except Exception as e:
-                log_print(f"Error while moving file: {e}", 3, True)
+                log(f"Error while moving file: {e}", 3, True)
 
     # check for bank folders and remove them
 
     for file in os.listdir(outputpath):
         if file.endswith(".bank"):
-            log_print(f"Removing bank folder {os.path.join(outputpath, file)}", 2, True)
+            log(f"Removing bank folder {os.path.join(outputpath, file)}", 2, True)
             shutil.rmtree(os.path.join(outputpath, file), ignore_errors=True)
             oldpaths = oldpaths + 1
 
@@ -737,17 +737,17 @@ def cmini_extraction():
     for root, dirs, files in os.walk(outputpath):
         for dir in dirs:
             if len(os.listdir(os.path.join(root, dir))) == 0:
-                log_print(f"Removing empty directory {os.path.join(root, dir)}", 2, True)
+                log(f"Removing empty directory {os.path.join(root, dir)}", 2, True)
                 shutil.rmtree(os.path.join(root, dir), ignore_errors=True)
                 oldpaths = oldpaths + 1
 
-    log_print("Additional cleanup completed!", 2, True)
-    log_print(f"\n.wav files created: {wavfiles}\nPaths prettified: {oldpaths}", 2, True)
+    log("Additional cleanup completed!", 2, True)
+    log(f"\n.wav files created: {wavfiles}\nPaths prettified: {oldpaths}", 2, True)
 
     open_in_explorer = input("Open the output folder in explorer? (y/n): ") # nice to have, but not necessary
     if open_in_explorer == "y":
         os.startfile(outputpath)
-    log_print("Done!", 1, True)
+    log("Done!", 1, True)
 
 
 # end of cmini function. phew! that was a lot of code. finished at 11:30pm
@@ -800,7 +800,7 @@ def secret_menu():
 
 
 """def torrent_downloader():
-    return log_print("The torrent downloader will be enabled in a later version of the program.")
+    return log("The torrent downloader will be enabled in a later version of the program.")
     # Create a session object
     s = lt.session()
 
@@ -861,12 +861,12 @@ def cleanup_files():
                      ]
     upload_log = None
     if not dir_paths:
-        return log_print(f"[FileCleanup] No directories to delete from.")
+        return log(f"[FileCleanup] No directories to delete from.")
     # Loop through all the directories
 
     for dir in dir_paths:
         if path.exists(dir):
-            log_print(f"[FileCleanup] Inspecting directory {dir}.")
+            log(f"[FileCleanup] Inspecting directory {dir}.")
             for file in listdir(dir):
                 file_path = path.join(dir, file)
                 mod_time = path.getmtime(file_path)
@@ -885,13 +885,13 @@ def cleanup_files():
                             upload_log_file(f"{dir}\\{file}")
                     # Delete the file
                     remove(file_path)
-                    log_print(f"[FileCleanup] Cleaned up file at {file_path}")
+                    log(f"[FileCleanup] Cleaned up file at {file_path}")
                     file_amount += 1
         else:
-            log_print("Skipped directory as it doesn't exist.")
+            log("Skipped directory as it doesn't exist.")
         sleep(0.2)
 
-    log_print(f"[FileCleanup] Purged {file_amount} file(s).")
+    log(f"[FileCleanup] Purged {file_amount} file(s).")
 
 
 def view_source():
@@ -1018,24 +1018,24 @@ def check_for_update():
         check_for_update()
     try:
         if path.isfile(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt"): # OverwriteOldVersion
-            log_print(f"[OverwriteOldVersion] {Draggie_AppData_Directory}\\OldExecutableDir.txt exists!", 1, False)
+            log(f"[OverwriteOldVersion] {Draggie_AppData_Directory}\\OldExecutableDir.txt exists!", 1, False)
             with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "r") as file:
                 old_sys_exe = file.read()
                 file.close()
             if old_sys_exe == str(sys.executable):
-                log_print("[WARNING] The update cannot be applied to the current directory as you are running the file in the same place! Please download the update and wait for it to be closed.", 4)
+                log("[WARNING] The update cannot be applied to the current directory as you are running the file in the same place! Please download the update and wait for it to be closed.", 4)
             else:
-                log_print("[OverwriteOldVersion] Removing OldExeDir.txt")
+                log("[OverwriteOldVersion] Removing OldExeDir.txt")
                 remove(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt")
-                log_print("[OverwriteOldVersion] Removing old exe")
+                log("[OverwriteOldVersion] Removing old exe")
                 remove(old_sys_exe)
-                log_print("[OverwriteOldVersion] Copying current exe to old sys exe")
+                log("[OverwriteOldVersion] Copying current exe to old sys exe")
                 copyfile(str(sys.executable), old_sys_exe)
-                log_print(f"[OverwriteOldVersion] Copying current exe ({sys.executable}) to old sys exe ({old_sys_exe})")
+                log(f"[OverwriteOldVersion] Copying current exe ({sys.executable}) to old sys exe ({old_sys_exe})")
         else:
-            log_print("[OverwriteOldVersion] OldExeFile does not exist!", 3, False)
+            log("[OverwriteOldVersion] OldExeFile does not exist!", 3, False)
     except Exception as e:
-        log_print(f"Unable to overwrite older version. {e}", 4)
+        log(f"Unable to overwrite older version. {e}", 4)
 
     try:
         current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
@@ -1044,11 +1044,11 @@ def check_for_update():
     except Exception as e:
         stop_event.set()
         thread.join()
-        log_print(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
+        log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
         current_build_version = build
     if build < current_build_version: # if build is less than current version - so there's an update available.
         release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
-        log_print(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n")
+        log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n")
         if language == "english":
             versions_to_get = current_build_version - build
             if versions_to_get == 1:
@@ -1069,9 +1069,9 @@ def check_for_update():
             print("Skipping update.")
             return
 
-        log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
+        log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
         download_update(current_build_version)
-        log_print("Update downloaded. Launching new version...")
+        log("Update downloaded. Launching new version...")
         if not desktop_install_path:
             startfile(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe')
         else:
@@ -1171,7 +1171,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                 fingerprint_json = json.loads(fingerprint_json)
             for item in fingerprint_json['files']:
                 if 'music/background' in item['file']:
-                    log_print(f"Found 'music/background' in file: {item}", 1, False)
+                    log(f"Found 'music/background' in file: {item}", 1, False)
                     # The file field contains 'music/background'
                     print(f"{phrases[language]['found_music_in_file']}{item['file']}")
                     # Split the file field on the '\' character and take the first two elements
@@ -1286,7 +1286,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
             print("Not implemented yet")
         case "5":
             threads = int(input(phrases[language]['input_threads']))
-            log_print(f"[AutoBrawlExtractor] Threads chosen to download: {threads}")
+            log(f"[AutoBrawlExtractor] Threads chosen to download: {threads}")
             search_term = input(phrases[language]['search_term_input'])
             x = input(f"{phrases[language]['search_all_archives']} '{search_term}' {phrases[language]['only_in_current_version']} {fingerprint_json['version']}\n\n>>> ")
             file_cycle = True if x == "1" else False
@@ -1297,12 +1297,12 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
             if file_cycle:
                 available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
                 for file in available_archives:
-                    log_print(f"Checked file '{file}' in {available_archives}")
+                    log(f"Checked file '{file}' in {available_archives}")
                     if file.lower().endswith(".ipa") or file.lower().endswith(".zip") or file.lower().endswith(".json"):
                         with cf.ThreadPoolExecutor(max_workers=threads) as executor:
                             futures = []
 
-                            log_print("An executor has been loaded", 1, False)
+                            log("An executor has been loaded", 1, False)
 
                             if not file.lower().endswith(".json"):
                                 archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
@@ -1322,7 +1322,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                                 # print("\n")
                                 files += 1
                                 if search_term in item['file']:
-                                    log_print(f"Found '{search_term}' in file: {item}")
+                                    log(f"Found '{search_term}' in file: {item}")
                                     # The file field contains search_term
                                     print(f"{phrases[language]['found']} {search_term} {phrases[language]['in_file']} {item['file']}")
                                     hits += 1
@@ -1350,7 +1350,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
             else:
                 archives += 1
                 with cf.ThreadPoolExecutor(max_workers=threads) as executor:
-                    log_print("An executor has been loaded", 1, False)
+                    log("An executor has been loaded", 1, False)
                     futures = []
                     for item in fingerprint_json['files']:
                         files = files + 1
@@ -1408,7 +1408,7 @@ def init_filetype(dir):
 
         if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
             mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
-            log_print(f"Made directory: {Brawl_AppData_Directory}\\Versions\\{version_name}")
+            log(f"Made directory: {Brawl_AppData_Directory}\\Versions\\{version_name}")
 
         print(f"{phrases[language]['detected_architecture']}{arch_type}")
         maniupulate_brawl_file(dir, f"{version_name}", app_name, arch_type, fingerprint_json=None)
@@ -1436,7 +1436,7 @@ def csv_decoder():
             with open(path, 'rb') as f:
                 data = f.read()
         except Exception as e:
-            log_print(f"Error: File not found. {e}")
+            log(f"Error: File not found. {e}")
             print(traceback.format_exc())
 
         tempdata = bytearray()
@@ -1457,10 +1457,10 @@ def csv_decoder():
                 f.write(unpack_data)
                 print(f"\n\nSuccessfully unpacked the file. You can now view it at {decodedname}\n")
         except Exception:
-            log_print(f"invalid input: {traceback.format_exc()}")
+            log(f"invalid input: {traceback.format_exc()}")
 
     if os.path.isdir(path):
-        log_print(f"Path is a directory. Parsing all CSV files in {path}", 2, True)
+        log(f"Path is a directory. Parsing all CSV files in {path}", 2, True)
         for file in os.listdir(path):
             if file.endswith(".csv"):
                 parse_csv(os.path.join(path, file))
@@ -1483,9 +1483,9 @@ def autobrawlextractor():
         makedirs(Downloaded_Builds_AppData_Directory)
 
     def number_one():
-        print(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
-        print("\nUse an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
-        print("[0] Go back.\n[1] Search for all downloadable versions.\n[2] Decode CSV Files with LZMA.")
+        log(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
+        log("\nUse an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
+        log("[0] Go back.\n[1] Search for all downloadable versions.\n[2] Decode CSV Files with LZMA.")
 
         amount_of_files = 0
 
@@ -1493,21 +1493,21 @@ def autobrawlextractor():
             amount_of_files = amount_of_files + 1
 
         if amount_of_files >= 1:
-            print(f"\n[Enter] Select one of the {amount_of_files} downloaded files.")
+            log(f"\n[Enter] Select one of the {amount_of_files} downloaded files.")
 
         location = input("\n>>> ")
 
         if location == "1":
-            print("Fetching a list of all trusted versions from GitHub...")
+            log("Fetching a list of all trusted versions from GitHub...")
             git_brawl_builds = get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
             git_brawl_builds = git_brawl_builds.text
             urls = git_brawl_builds.splitlines()
             version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
             for i, version_name in enumerate(version_names):
-                print(f"[{i + 1}]   {version_name}")
+                log(f"[{i + 1}]   {version_name}")
             selected_version = (input("\nPlease select a version to download: ('*' to download them all, '0' to see other apps.).\n\n>>> "))
             if selected_version == "*":
-                print("You have chosen to download ALL builds. If you would like to stop it, you will need to press Ctrl+C.")
+                log("You have chosen to download ALL builds. If you would like to stop it, you will need to press Ctrl+C.")
                 amount = len(urls)
                 downloaded_amount = 0
                 for line in urls:
@@ -1517,11 +1517,11 @@ def autobrawlextractor():
                     real_file_name = path.basename(urlsplit(source_url).path)
                     if "Baguette Brigaders" in source_loc:
                         source_loc = (f"a verified source: {source_loc}")
-                    print(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                    log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
                     tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
                     downloaded_amount += 1
-                    print(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
-                print(f"{downloaded_amount} builds have been saved!\n\n")
+                    log(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
+                log(f"{downloaded_amount} builds have been saved!\n\n")
                 number_one()
             if selected_version == "0":
                 clash_mini = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/board.txt"
@@ -1534,7 +1534,7 @@ def autobrawlextractor():
                 if game_choice == "2":
                     game = clash_of_clans
 
-                print("Fetching a list of all trusted versions from GitHub...")
+                log("Fetching a list of all trusted versions from GitHub...")
                 git_clash_mini_builds = get(game)
                 urls = (git_clash_mini_builds.text).splitlines()
 
@@ -1543,7 +1543,7 @@ def autobrawlextractor():
                 if game_choice == "2":
                     version_names = [re.search(r"magic-(\d+\.\d+)", url).group(1) for url in urls]
                 for i, version_name in enumerate(version_names):
-                    print(f"[{i + 1}]   {version_name}")
+                    log(f"[{i + 1}]   {version_name}")
 
                 selected_version = input("\nChoose a version to download: ('*' to download them all).\n\n>>> ")
 
@@ -1554,7 +1554,7 @@ def autobrawlextractor():
                     real_file_name = path.basename(urlsplit(source_url).path)
                     if "Baguette Brigaders" in source_loc:
                         source_loc = (f"a verified source: {source_loc}")
-                    print(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                    log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
                     tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
                 else:
                     selected_url = urls[int(selected_version) - 1]
@@ -1564,9 +1564,9 @@ def autobrawlextractor():
                     real_file_name = path.basename(urlsplit(source_url).path)
                     if "Baguette Brigaders" in source_loc:
                         source_loc = (f"a verified source: {source_loc}")
-                        print(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                        log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
                     tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-                    print(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+                    log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
 
             selected_url = urls[int(selected_version) - 1]
             source = selected_url.strip().split(' (')
@@ -1575,9 +1575,9 @@ def autobrawlextractor():
             real_file_name = path.basename(urlsplit(source_url).path)
             if "Baguette Brigaders" in source_loc:
                 source_loc = (f"a verified source: {source_loc}")
-                print(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
             tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-            print(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+            log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
             number_one()
 
         if location == "":
@@ -1586,7 +1586,7 @@ def autobrawlextractor():
             for file in listdir(Downloaded_Builds_AppData_Directory):
                 files.append(file)
             for i in files:
-                print(f"[{f}] {i}")
+                log(f"[{f}] {i}")
                 f += 1
             x = input("\nChoose file\n\n>>> ")
             try:
@@ -1608,7 +1608,7 @@ def autobrawlextractor():
                             highest_version = archive_version
                             highest_version_file = f
 
-                print(f"No valid build specified, resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
+                log(f"No valid build specified, resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
                 init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
         if location == "2":
             csv_decoder()
@@ -1622,19 +1622,19 @@ def autobrawlextractor():
 def ProjectSaturnian():
     saturnian_environ_dir = os.environ['USERPROFILE']
     saturnian_appdir = f"{saturnian_environ_dir}\\AppData\\Roaming\\Draggie\\Saturnian"
-    print("You must log in to your Draggie Games account to use this tool.")
-    print("If you do not have an account, you can create one at https://alpha.draggiegames.com/register")
+    log("You must log in to your Draggie Games account to use this tool.")
+    log("If you do not have an account, you can create one at https://alpha.draggiegames.com/register")
 
     """clear_cache = input("Would you like to clear your cached token? (y/n)\n\n>>> ")
     if clear_cache == "y":
         if not os.path.isdir(saturnian_appdir):
             os.makedirs(saturnian_appdir, exist_ok=True)
-            print(f"[write_token] Created directory: {saturnian_appdir}")
+            log(f"[write_token] Created directory: {saturnian_appdir}")
         if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
             os.remove(f"{saturnian_appdir}\\token.bin")
-            print(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
+            log(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
         else:
-            print(f"[write_token] File not found: {saturnian_appdir}\\token.bin")"""
+            log(f"[write_token] File not found: {saturnian_appdir}\\token.bin")"""
 
     cached_token = None
     username = getpass.getuser()
@@ -1643,19 +1643,19 @@ def ProjectSaturnian():
     hash_key = hashlib.sha256(username.encode()).digest()
     # create a Fernet key from the hash
     fernet_key = Fernet(base64.urlsafe_b64encode(hash_key))
-    print(f"fernet_key: {fernet_key}")
+    log(f"fernet_key: {fernet_key}")
 
     def encrypt_token(token):
-        print("[encrypt_token] encrypting token")
+        log("[encrypt_token] encrypting token")
         encrypted_binary_token = fernet_key.encrypt(token.encode())
-        print(f"[encrypt_token] encrypted_binary_token: {encrypted_binary_token}")
+        log(f"[encrypt_token] encrypted_binary_token: {encrypted_binary_token}")
         # convert the binary token to a string
         encrypted_token = encrypted_binary_token.decode()
-        print(f"[encrypt_token] encrypted_token: {encrypted_token}")
+        log(f"[encrypt_token] encrypted_token: {encrypted_token}")
         return encrypted_token
 
     def decrypt_token(encrypted_token):
-        print("[decrypt_token] decrypting token")
+        log("[decrypt_token] decrypting token")
         token = encrypted_token
         return fernet_key.decrypt(token)
 
@@ -1663,11 +1663,11 @@ def ProjectSaturnian():
         """
         Gets the encrypted token, if it exists.
         """
-        print("[read_tokenfile_contents] Reading token file contents")
+        log("[read_tokenfile_contents] Reading token file contents")
         if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
             with open(f"{saturnian_appdir}\\token.bin", "r") as f:
                 cached_token = f.read()
-                print(f"[read_tokenfile_contents] Found cached token: {cached_token}")
+                log(f"[read_tokenfile_contents] Found cached token: {cached_token}")
                 return cached_token
         return None
 
@@ -1675,101 +1675,101 @@ def ProjectSaturnian():
         """
         Writes the unencrypted token to a file. YOU MUST ENCRYPT THE TOKEN BEFORE PASSING IT TO THIS FUNCTION.
         """
-        print("[write_token] writing encrypted token")
+        log("[write_token] writing encrypted token")
         if not os.path.isdir(saturnian_appdir):
             os.makedirs(saturnian_appdir, exist_ok=True)
-            print(f"[write_token] Created directory: {saturnian_appdir}")
+            log(f"[write_token] Created directory: {saturnian_appdir}")
         with open(f"{saturnian_appdir}\\token.bin", "wb") as f:
             f.write(encrypted_token.encode())
-            print(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
+            log(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
 
     cached_token = read_tokenfile_contents()
 
     if not cached_token:
-        print("No cached token found. Please log in.")
+        log("No cached token found. Please log in.")
         email = input("Email: ")
         password = getpass.getpass("Password: ")
-        print("Logging in...")
+        log("Logging in...")
         login = requests.post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
         if login.status_code == 200:
-            print("Login successful.")
+            log("Login successful.")
             server_token = login.json()["auth_token"]
-            print(f"Server returned token: {server_token}")
+            log(f"Server returned token: {server_token}")
             newly_encrypted_token = encrypt_token(server_token)
-            print(f"newly_encrypted_token: {newly_encrypted_token}")
+            log(f"newly_encrypted_token: {newly_encrypted_token}")
             write_token(newly_encrypted_token)
-            print("Token written to file.")
+            log("Token written to file.")
         else:
-            print("Login failed. Please try again.")
+            log("Login failed. Please try again.")
             ProjectSaturnian()
 
     try:
         encrypted_token = read_tokenfile_contents()
-        print(f"encrypted_token: {encrypted_token}")
+        log(f"encrypted_token: {encrypted_token}")
         decrypted_token = decrypt_token(encrypted_token)
-        print(f"token: {decrypted_token}")
+        log(f"token: {decrypted_token}")
         token = decrypted_token.decode()
-        print(f"Final read token: {decrypted_token}")
+        log(f"Final read token: {decrypted_token}")
     except Exception:
         clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
         match clear_token:
             case "y":
                 if not os.path.isdir(saturnian_appdir):
                     os.makedirs(saturnian_appdir, exist_ok=True)
-                    print(f"[write_token] Created directory: {saturnian_appdir}")
+                    log(f"[write_token] Created directory: {saturnian_appdir}")
                 if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
                     os.remove(f"{saturnian_appdir}\\token.bin")
-                    print(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
+                    log(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
                 else:
-                    print(f"[write_token] File not found: {saturnian_appdir}\\token.bin")
+                    log(f"[write_token] File not found: {saturnian_appdir}\\token.bin")
                 ProjectSaturnian()
             case "n":
-                print("Exiting...")
+                log("Exiting...")
                 return choice1()
         return choice1()
 
     # After validating the token, we can use it to log in.
 
-    print(f"\n\nValidation successful, logging in with token {token}")
+    log(f"\n\nValidation successful, logging in with token {token}")
 
     def token_login(token):
         endpoint = "https://client.draggie.games/token_login"
         login = requests.post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
         if login.status_code == 200:
             response = json.loads(login.content)
-            # print(f"Token login successful. Received response: {response}")
-            # print(f"Username and email: {response['username']} ({response['email']})")
+            # log(f"Token login successful. Received response: {response}")
+            # log(f"Username and email: {response['username']} ({response['email']})")
             return token
         else:
-            print("Token login failed.")
-            #print(f"Received token login status code: {login.status_code}")
+            log("Token login failed.")
+            #log(f"Received token login status code: {login.status_code}")
             #ProjectSaturnian()
             choice1()
-        # print(f"Received token login content: {login.content}")
+        # log(f"Received token login content: {login.content}")
 
     new_token = token_login(token)
     known_token = new_token
-    # print(f"new_token: {known_token}")
-    print("Logged in successfuly using a token!")
+    # log(f"new_token: {known_token}")
+    log("Logged in successfuly using a token!")
 
     def get_saturnian_info(known_token):
-        print("Getting Saturnian info...")
+        log("Getting Saturnian info...")
         endpoint = "https://client.draggie.games/api/v1/saturnian/game/gameData/licenses/validation"
         x = requests.get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
         if x.status_code == 200:
             try:
                 response = json.loads(x.content)
-                print(f"[OnlineAccount] Your tier: {response['type']}")
-                print(f"[OnlineAccount] Saturnian current version: {response['currentVersion']}")
+                log(f"[OnlineAccount] Your tier: {response['type']}")
+                log(f"[OnlineAccount] Saturnian current version: {response['currentVersion']}")
                 return response
             except Exception as e:
-                print(f"Exception: {e}")
-                print(f"Received Saturnian version status code: {x.status_code}")
+                log(f"Exception: {e}")
+                log(f"Received Saturnian version status code: {x.status_code}")
                 choice1()
         else:
-            print(f"ERROR: Received Saturnian version status code: {x.status_code}")
+            log(f"ERROR: Received Saturnian version status code: {x.status_code}")
             error_message = json.loads(x.content)
-            print(f"ERROR: {error_message['message']}")
+            log(f"ERROR: {error_message['message']}")
             sleep(4)
             choice1()
 
@@ -1777,63 +1777,63 @@ def ProjectSaturnian():
     saturnian_current_version = server_json_response["currentVersion"]
 
     if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
-        print("No Saturnian data file found. Creating one now.")
+        log("No Saturnian data file found. Creating one now.")
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
             first_info = {"current_version": None, "tier": None}
             json.dump(first_info, f)
-            print("Saturnian data file created.")
+            log("Saturnian data file created.")
 
     # Read the json file
     try:
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
             saturnian_data = json.load(f)
-            print(f"Saturnian data: {saturnian_data}")
+            log(f"Saturnian data: {saturnian_data}")
     except Exception as e:
-        return print(f"Error reading Saturnian data file: {e}")
+        return log(f"Error reading Saturnian data file: {e}")
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
 
     def download_saturnian_build():
         download_url = server_json_response["downloadUrl"]
-        print(f"Downloading Saturnian build from {download_url}")
+        log(f"Downloading Saturnian build from {download_url}")
 
         tqdm_download(download_url, f"{saturnian_appdir}\\Saturnian.zip", overwrite=True)
 
-        print("Download complete. Extracting Saturnian...")
+        log("Download complete. Extracting Saturnian...")
         with zipfile.ZipFile(f"{saturnian_appdir}\\Saturnian.zip", "r") as zip_ref:
             zip_ref.extractall(f"{saturnian_appdir}\\SaturnianGame")
-        print("Saturnian extracted.")
+        log("Saturnian extracted.")
 
     if saturnian_current_version != saturnian_data["current_version"]:
-        print("Saturnian is out of date. Would you like to update it now?")
+        log("Saturnian is out of date. Would you like to update it now?")
         choice = input("Y/N: ")
         if choice.lower() == "y":
-            print("Updating Saturnian...")
+            log("Updating Saturnian...")
             download_saturnian_build()
-            print("Saturnian updated.")
+            log("Saturnian updated.")
             saturnian_data["current_version"] = saturnian_current_version
             saturnian_data["tier"] = server_json_response["type"]
             with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
                 json.dump(saturnian_data, f)
-                print("Saturnian data file updated.")
+                log("Saturnian data file updated.")
 
             to_open = input("Would you like to open Saturnian now? Y/N: ")
             if to_open.lower() == "y":
                 os.startfile(f"{saturnian_appdir}\\SaturnianGame")
                 os.startfile(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe")
             else:
-                print("Saturnian not opened.")
+                log("Saturnian not opened.")
     else:
-        print("Saturnian is up to date. you can play it now.")
+        log("Saturnian is up to date. you can play it now.")
         Popen(f'explorer /select,"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"')
 
-    print("Make sure to check out the Saturnian Discord server: https://discord.gg/GfetCXH")
-    client = input("Note: Saturnian is still in development, so there may be bugs.\nTo auto update the project, make sure you have DraggieClient installed.\nWould you like to open the Client menu now? Y/N\n\n>>> ")
+    log("Make sure to check out the Saturnian Discord server: https://discord.gg/GfetCXH")
+    client = input("Note: Saturnian is still in development, so there may be bugs.\n\nTo auto update the project, make sure you have the AutoUpdate installed.\n\nWould you like to open the Client menu now? Y/N\n\n>>> ")
     match client.lower():
         case "y":
             draggieclient()
         case "n":
-            return log_print("Okay. Exiting...")    
+            return log("Okay. Exiting...")    
 
     sleep(2)
 
@@ -1849,9 +1849,9 @@ def upload_log_file(file_path):
         'file': (new_filename, open(file_path, 'rb'))
     }
 
-    print(new_filename)
+    log(new_filename)
     response = post(url, files=files)
-    log_print(f"Uploading the logfile {file_path}. Status code: {response.status_code}", 2)
+    log(f"Uploading the logfile {file_path}. Status code: {response.status_code}", 2)
 
 
 def upload_logs(most_recent: Optional[int] = None):
@@ -1866,7 +1866,7 @@ def upload_logs(most_recent: Optional[int] = None):
     if most_recent:
         files = files[-most_recent:]
 
-    log_print(f"Files to upload: {files}", 1, False)
+    log(f"Files to upload: {files}", 1, False)
 
     # upload each file
     for file in files:
@@ -1909,20 +1909,20 @@ def discord_parse():
                 with open(f"{DraggieTools_AppData_Directory}\\DiscordParse\\{file}", 'r', encoding="utf-8") as f:
                     file = f.read()
             else:
-                print("Invalid file detected")
+                log("Invalid file detected")
                 return Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse\\{file}"')
-        print("Loaded file")
+        log("Loaded file")
     except Exception as e:
-        print("I'm opening up the Discord parser directory. Please paste in your file which is to be processed")
+        log("I'm opening up the Discord parser directory. Please paste in your file which is to be processed")
         if not path.isfile(f"{DraggieTools_AppData_Directory}\\DiscordParse"):
             makedirs(f"{DraggieTools_AppData_Directory}\\DiscordParse", exist_ok=True)
         Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse"')
-        return print(f"No valid file or improperly formatted json file exists! You have to put the file in the folder {DraggieTools_AppData_Directory}\\DiscordParse\n\n{e}")
+        return log(f"No valid file or improperly formatted json file exists! You have to put the file in the folder {DraggieTools_AppData_Directory}\\DiscordParse\n\n{e}")
 
     x = input("[1] Parse current file and output everything.\n[2] Organise current file and output JSON files for each server\n\n")
 
     if x == "1":
-        print("loading...\n")
+        log("loading...\n")
 
         start_time = perf_counter() # start timer
 
@@ -1930,7 +1930,7 @@ def discord_parse():
             # check if line starts with '['
             if line.strip().startswith("["):
                 discord_file = json.loads(line)
-                print("============== NEW GUILD ==============")
+                log("============== NEW GUILD ==============")
                 for channel in sorted(discord_file, key=lambda discord_file: discord_file["position_"]):
                     channel_type = channel.get("type")
                     extra_text = "----------------"
@@ -1943,7 +1943,7 @@ def discord_parse():
                     elif channel_type == 15:
                         extra_text = "--FORUM CHANNEL--"
                     else:
-                        print(f"Channel type: {channel_type}")
+                        log(f"Channel type: {channel_type}")
                     id = channel.get("id")
                     name = channel.get("name")
                     position = channel.get("position_")
@@ -1955,10 +1955,10 @@ def discord_parse():
                     topic = channel.get("topic_")
                     guild_id = channel.get("guild_id")
 
-                    print(f"\n----------------{extra_text}----------------\n\nServer: {guild_id}\nName: {name}\nID: {id}\nLast Message ID: {lastMessageId} ({calculate_time_discord(lastMessageId)})\nLast Pin Timestamp: {lastPinTimestamp}\nNSFW: {nsfw}\nPosition: {position}\nRate Limit Per User: {rate_limit_per_user}\nTopic: {topic}\n")
+                    log(f"\n----------------{extra_text}----------------\n\nServer: {guild_id}\nName: {name}\nID: {id}\nLast Message ID: {lastMessageId} ({calculate_time_discord(lastMessageId)})\nLast Pin Timestamp: {lastPinTimestamp}\nNSFW: {nsfw}\nPosition: {position}\nRate Limit Per User: {rate_limit_per_user}\nTopic: {topic}\n")
                     # sleep(0.1)
 
-        print(f"Operation completed ({round((perf_counter() - start_time), 7)}s)")
+        log(f"Operation completed ({round((perf_counter() - start_time), 7)}s)")
 
     if x == "2":
         server_num = 0
@@ -1968,7 +1968,7 @@ def discord_parse():
             if line.strip().startswith("["):
                 discord_file = json.loads(line)
                 for channel in discord_file:
-                    print(f"Got channel ({channel_num})")
+                    log(f"Got channel ({channel_num})")
                     channel_num = channel_num + 1
                     guild_id = channel.get("guild_id")
                     if guild_id not in server_data:
@@ -1987,17 +1987,17 @@ def discord_parse():
         for server_id, channels in server_data.items():
             with open(f'{DraggieTools_AppData_Directory}\\DiscordParse\\{server_id}.json', 'w') as outfile:
                 json.dump(sorted(channels, key=lambda x: x['position']), outfile, indent=4)
-                print(f"Writing data... ({server_num})")
+                log(f"Writing data... ({server_num})")
                 server_num = server_num + 1
 
 
 def videomaker():
     import moviepy
-    return print("This feature is currently disabled due to a bug in moviepy. Please use the old version of DraggieTools for this feature.")
+    return log("This feature is currently disabled due to a bug in moviepy. Please use the old version of DraggieTools for this feature.")
     audio_dir = input("Enter path to ogg files: ")
     output_dir = input("Enter output dir path (there will be a temp folder located in here): ")
 
-    print(moviepy.editor.TextClip.list('font'))
+    log(moviepy.editor.TextClip.list('font'))
 
     # set file paths
     # audio_dir = r'D:\App Files\Brawl Music\test'
@@ -2024,20 +2024,20 @@ def videomaker():
             pass
 
     # load audio files
-    print("loading files...")
+    log("loading files...")
     num = 0
     audio_extensions = ('.ogg', '.mp3', '.m4a', '.wav')
     audio_files = []
     for root, dirs, files in os.walk(audio_dir):
         for file in files:
             if file.endswith(audio_extensions):
-                print(f"Found matching file: {file}")
+                log(f"Found matching file: {file}")
                 audio_files.append(os.path.join(root, file))
                 num = num + 1
-    print(f"Loaded {num} audio files.")
+    log(f"Loaded {num} audio files.")
 
     def two():
-        print("Gathering information about all files...")
+        log("Gathering information about all files...")
         # set the input and output directories
 
         input_dir = (os.path.join(output_dir, 'temp'))
@@ -2074,9 +2074,9 @@ def videomaker():
         if x == 3:
             os.system(f"ffmpeg -f concat -safe 0 -i {os.path.join(output_dir, 'list.txt')} -c copy {os.path.join(output_dir, final_name)}")
 
-        # print a message to indicate successful execution
+        # log a message to indicate successful execution
         end_time = time.time()
-        print(f"Files concatenated successfully in {end_time - start_time:.2f} seconds!")
+        log(f"Files concatenated successfully in {end_time - start_time:.2f} seconds!")
         time.sleep(1)
 
     def one():
@@ -2099,7 +2099,7 @@ def videomaker():
 
             final_video = moviepy.editor.CompositeVideoClip([video_with_new_audio, text_clip])
 
-            print(f"processing audio file {filename}")
+            log(f"processing audio file {filename}")
 
             # Generate temp mp4 files
             output_file = os.path.join(output_dir, 'temp', f"{os.path.splitext(os.path.basename(audio_file))[0]}.mp4")
@@ -2112,18 +2112,18 @@ def videomaker():
                 futures = []
 
                 for iteration, audio_file in enumerate(audio_files):
-                    # print(f"[iteration {iteration}] processing audio file {audio_file}")
+                    # log(f"[iteration {iteration}] processing audio file {audio_file}")
                     try:
                         futures.append(executor.submit(process_audio_file, audio_file))
                     except Exception as e:
-                        print(e)
+                        log(e)
 
                 # wait for all threads to finish
                 cf.wait(futures)
 
                 # concatenate video clips and write output file
                 end_time = time.time()
-                print(f"Rendered video clips for all files in {end_time - start_time:.2f} seconds!")
+                log(f"Rendered video clips for all files in {end_time - start_time:.2f} seconds!")
                 two()
 
     inn = input(f"[1] Render selected files from the OGG directory {audio_dir}\n[2] Render preprocessed mp4 files in the temp folder\n\n>>> ")
@@ -2135,7 +2135,7 @@ def videomaker():
 
 
 def yt_download():
-    print("Hi!")
+    log("Hi!")
     # Create a YoutubeDL object
     ydl = youtube_dl.YoutubeDL()
 
@@ -2170,16 +2170,16 @@ def yt_download():
     try:
         audio_info = ydl.extract_info(youtube_video, download=False)
     except youtube_dl.utils.YoutubeDLError as e:
-        log_print(e, 3, False)
+        log(e, 3, False)
         try:
             audio_info = ydl.extract_info(f"ytsearch:{youtube_video}", download=False)['entries'][0]
             youtube_video = audio_info['webpage_url']
         except youtube_dl.utils.YoutubeDLError as e:
-            log_print("There was an error getting information from the provided URL. Please try again later.")
-            log_print(e, 4, False)
+            log("There was an error getting information from the provided URL. Please try again later.")
+            log(e, 4, False)
             choice1()
 
-    print(f"\n\n[draggietools] Found matching video: {audio_info['title']}\n\n")
+    log(f"\n\n[draggietools] Found matching video: {audio_info['title']}\n\n")
     highest_audio_bitrate = 0
     highest_total_bitrate = 0
     highest_audio_url = ''
@@ -2189,20 +2189,20 @@ def yt_download():
     highest_audio_format = ''
 
     if audio_info['formats']:
-        print("Not a playlist")
+        log("Not a playlist")
 
         def old_download():
             for format in audio_info['formats']:
                 if format['vcodec'] == 'none': # check if the format is audio-only
                     if 'asr' in format and format['asr'] > highest_sample_rate:
                         highest_sample_rate = format['asr']  # update highest_sample_rate
-                        print(f"Updated highest sample rate to {highest_sample_rate}Hz")
+                        log(f"Updated highest sample rate to {highest_sample_rate}Hz")
                     if 'abr' in format and format['asr'] == highest_sample_rate:
                         if format['abr'] > highest_audio_bitrate:
                             highest_audio_url = format['url']
                             highest_audio_bitrate = format['abr']
                             # highest_audio_format_id = format['format_id']
-                            print(f"New best audio bitrate: {highest_audio_bitrate}")
+                            log(f"New best audio bitrate: {highest_audio_bitrate}")
                             highest_audio_format = format
 
                 if format['acodec'] == 'none': # check if the format is video-only
@@ -2210,10 +2210,10 @@ def yt_download():
                         highest_total_bitrate = format['vbr'] # update highest_total_bitrate
                         highest_video_url = format['url']
                         # highest_video_format_id = format['format_id']
-                        print(f"New best video bitrate: {highest_total_bitrate}")
+                        log(f"New best video bitrate: {highest_total_bitrate}")
                         highest_video_format = format
 
-            print(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
+            log(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
 
         # old_download()
 
@@ -2234,7 +2234,7 @@ def yt_download():
             ydl_opts = get_ydl_info(audio_info['title'], "both", directory=save_dir)
             tqdm_download2(highest_audio_url, os.path.join(save_dir, f"{audio_info['title']}[audio].{highest_audio_format['ext']}"), desc="Downloading highest quality audio...")
             tqdm_download2(highest_video_url, os.path.join(save_dir, f"{audio_info['title']}[video].{highest_video_format['ext']}"), desc="Downloading highest quality video...")
-            print("Downloaded both files!")
+            log("Downloaded both files!")
         else:
             ydl_opts = get_ydl_info(audio_info['title'], "both", directory=save_dir)
             pass
@@ -2245,11 +2245,11 @@ def yt_download():
     else:
         try:
             if audio_info['entries']:
-                log_print("Playlist detected", 1, False)
+                log("Playlist detected", 1, False)
         except KeyError:
-            return log_print("Not a playlist, not a video, no clue what to do with this URL", 4, True)
+            return log("Not a playlist, not a video, no clue what to do with this URL", 4, True)
 
-        log_print("Going through a playlist...", 1, False)
+        log("Going through a playlist...", 1, False)
         what_to_do = input("What do you want to do?\n[1] Download audio\n[2] Download video\n[3] Download both and merge into one file\n\n>>> ")
         save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
 
@@ -2274,8 +2274,8 @@ def yt_download():
                 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([video['webpage_url']])
 
-    log_print(f"[download]  Finished in {round(time() - start_time_download, 2)} seconds.")
-    log_print(f"[ytdl]      Finished in {round(time() - start_time, 2)} seconds.")
+    log(f"[download]  Finished in {round(time() - start_time_download, 2)} seconds.")
+    log(f"[ytdl]      Finished in {round(time() - start_time, 2)} seconds.")
 
 
 def draggieclient():
@@ -2285,28 +2285,28 @@ def draggieclient():
             target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
             Ensure_Client_AppData_Directory = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
         except Exception as e:
-            return log_print(f"There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n")
+            return log(f"There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n")
 
         # -*-*-*-*-* DIRECTORY CREATION *-*-*-*-*-
 
         if not os.path.exists(Ensure_Client_AppData_Directory):
             os.makedirs(Ensure_Client_AppData_Directory, exist_ok=True)
-            log_print(f"makedirs: {Ensure_Client_AppData_Directory}")
+            log(f"makedirs: {Ensure_Client_AppData_Directory}")
 
         if not os.path.exists(f"{Ensure_Client_AppData_Directory}\\Logs"):
             os.makedirs(f"{Ensure_Client_AppData_Directory}\\Logs", exist_ok=True)
-            log_print(f"mkdir: {Ensure_Client_AppData_Directory}\\Logs")
+            log(f"mkdir: {Ensure_Client_AppData_Directory}\\Logs")
 
-        log_print("Prerequisites installed.\nDownloading client...")
+        log("Prerequisites installed.\nDownloading Build 40 of client...")
         try:
-            tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate20.exe", target_path)
+            tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate40.exe", target_path)
         except PermissionError as e:
-            return print(f"{e}\nMaybe you already have DraggieClient installed?")
+            return log(f"{e}\nMaybe you already have DraggieClient installed?")
         except Exception as e:
-            return print(f"An error occured: {e}: {traceback.format_exc()}")
+            return log(f"An error occured: {e}: {traceback.format_exc()}")
         os.startfile(target_path)
         save_json()
-        log_print("Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
+        log("Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
     elif choice_client_manage == "2":
         startup_path = os.path.join(winshell.startup(), "Client.lnk")
         if os.path.exists(startup_path):
@@ -2314,7 +2314,7 @@ def draggieclient():
         try:
             os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
         except Exception as e:
-            log_print(f"Unable to remove client.exe - it is likely that it is running: {e}")
+            log(f"Unable to remove client.exe - it is likely that it is running: {e}")
 
         for proc in psutil.process_iter():
             try:
@@ -2323,22 +2323,22 @@ def draggieclient():
                 procname = "client.exe"
                 if proc.name() == procname:
                     process_exe = process.exe()
-                    log_print(f"Found client.exe running at {process_exe}\nAttempting to kill process...")
+                    log(f"Found client.exe running at {process_exe}\nAttempting to kill process...")
                     if process_exe.lower() == target_path:
                         proc.kill()
-                        log_print("Client has been killed.")
+                        log("Client has been killed.")
                     os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
-                    log_print("Client has been uninstalled.")
+                    log("Client has been uninstalled.")
             except Exception as e:
-                return log_print(f"Unable to kill and completely remove client.exe: {e}")
-        log_print("Client has been uninstalled and removed from startup successfully.")
+                return log(f"Unable to kill and completely remove client.exe: {e}")
+        log("Client has been uninstalled and removed from startup successfully.")
     elif choice_client_manage == "3":
         log_subdir = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\Logs")
         if not os.path.exists(log_subdir):
             os.makedirs(log_subdir, exist_ok=True)
         os.startfile(log_subdir)
     elif choice_client_manage == "4":
-        # return log_print("This is not yet implemented.")
+        # return log("This is not yet implemented.")
         json_settings_dir = os.path.join(DraggieTools_AppData_Directory, "Client_Settings.json")
         if not os.path.exists(json_settings_dir):
             with open(json_settings_dir, 'w') as f:
@@ -2351,8 +2351,8 @@ def draggieclient():
         with open(json_settings_dir, 'r') as f:
             json_settings = json.load(f)
             for key, value in json_settings.items():
-                print(f"{key}: {value}")
-            print("\n")
+                log(f"{key}: {value}")
+            log("\n")
             choice_client_settings = input("What do you want to do?\n[1] Change startup\n[2] Change autoupdate\n>>> ")
             match choice_client_settings:
                 case "1":
@@ -2362,12 +2362,12 @@ def draggieclient():
                             json_settings["startup"] = True
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log_print("Startup enabled.")
+                            log("Startup enabled.")
                         case "2":
                             json_settings["startup"] = False
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log_print("Startup disabled.")
+                            log("Startup disabled.")
                             draggieclient()
                 case "2":
                     choice_client_settings_autoupdate = input("Do you want to enable or disable autoupdate?\n[1] Enable\n[2] Disable\n>>> ")
@@ -2376,12 +2376,12 @@ def draggieclient():
                             json_settings["autoupdate"] = True
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log_print("Autoupdate enabled.")
+                            log("Autoupdate enabled.")
                         case "2":
                             json_settings["autoupdate"] = False
                             with open(json_settings_dir, 'w') as f:
                                 json.dump(json_settings, f)
-                            log_print("Autoupdate disabled.")
+                            log("Autoupdate disabled.")
                             draggieclient()
     else:
         choice1()
@@ -2397,7 +2397,7 @@ def save_json():
                 "tools_installation_directory": directory,
             }, f)
     except Exception as e:
-        log_print(f"Unable to write current information: {e}")
+        log(f"Unable to write current information: {e}")
 
 
 def vbs_script_launcher():
@@ -2413,7 +2413,7 @@ def vbs_script_launcher():
     no = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/no.bat"
 
     choice_vbs = input("What script do you want to download?\n1. Important Disk Data\n2. Keyboard RGB\n3. Have you heard of this amazing website?\n4. CD Eject\n5. Delete\n6. Fool\n7. Hacking Matrix\n8. Infinite\n9. L\n10. No\n\nChoice: ")
-    log_print("Downloading script...")
+    log("Downloading script...")
     match choice_vbs:
         case "1":
             filename = "Important-Disk-Data.vbs"; url = vbs_funny_long
@@ -2436,13 +2436,13 @@ def vbs_script_launcher():
         case "10":
             filename = "no.bat"; url = no
         case _:
-            print("Invalid choice. Quitting...")
+            log("Invalid choice. Quitting...")
             choice1()
     try:
         tqdm_download(url, f"{DraggieTools_AppData_Directory}\\{filename}")
         os.startfile(f"{DraggieTools_AppData_Directory}\\{filename}")
     except Exception as e:
-        log_print(f"Error: {e}")
+        log(f"Error: {e}")
 
 
 def choice1():
@@ -2450,10 +2450,10 @@ def choice1():
         x = input(phrases[language]['menu_options'])
         status_update(details="Selecting what to do...")
         """y = x/0 # in case we need to do some quick error checking!
-        print(y)"""
+        log(y)"""
         if x == "0":
-            log_print(f"Goodbye! {time()}\nHope you found me useful.", 2, False)
-            print("\n\n\n\n\n\nQuitting...")
+            log(f"Goodbye! {time()}\nHope you found me useful.", 2, False)
+            log("\n\n\n\n\n\nQuitting...")
             if client:
                 client.close()
             sys.exit()
@@ -2465,8 +2465,8 @@ def choice1():
                     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
                         install_dir = e.read()
                         if install_dir == str(desktop_dir):
-                            print("Existing desktop file preference exists.")
-                            print("The file will now no longer be located on the desktop.\n")
+                            log("Existing desktop file preference exists.")
+                            log("The file will now no longer be located on the desktop.\n")
                             with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
                                 e.close()
                             with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w") as f:
@@ -2474,38 +2474,38 @@ def choice1():
                             choice1()
 
                 start_anim_loading("Initialising.")
-                # print(f"Current directory: {directory}")
+                # log(f"Current directory: {directory}")
                 try:
                     copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
                     stop_anim_loading()
-                    print("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
+                    log("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
                     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
                         e.write(f"{desktop_dir}\n{build}")
                 except FileNotFoundError:
                     stop_anim_loading()
-                    print("\nRunning from PYTHON file. Not executable. This should print only in the development stage.")
+                    log("\nRunning from PYTHON file. Not executable. This should log only in the development stage.")
                     copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
-                    print("I am very dumb. This will be improved later.")
+                    log("I am very dumb. This will be improved later.")
                 except SameFileError:
                     stop_anim_loading()
-                    print("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
+                    log("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
             case "2":
                 try:
                     e = r"C:\Program Files"
                     c = r"C:\Program Files\Draggie"
                     y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
-                    print(f"Current directory: {directory}")
+                    log(f"Current directory: {directory}")
                     try:
                         mkdir(f"{y}\\Draggie\\")
                     except Exception:
                         pass
                     copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
 
-                    print(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
-                    log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
+                    log(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
+                    log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
                 except Exception as e:
-                    print(f"An error occured. {e}")
-                    print("Please make sure that the file has not been renamed.")
+                    log(f"An error occured. {e}")
+                    log("Please make sure that the file has not been renamed.")
                     logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
                     choice1()
             case "3":
@@ -2534,7 +2534,7 @@ def choice1():
                 status_update(details="Parsing Discord files")
                 discord_parse()
             case "12":
-                print("Reloading Discord RPC...")
+                log("Reloading Discord RPC...")
                 asyncio.run(load_presence())
             case "13":
                 status_update(details="Installing AutoUpdater")
@@ -2559,7 +2559,7 @@ def choice1():
                 upload_logs()
 
             case "69":
-                print(";)")
+                log(";)")
                 status_update(details="In the secret menu", state="")
                 secret_menu()
 
@@ -2568,29 +2568,29 @@ def choice1():
 
         choice1()
     except KeyboardInterrupt:
-        log_print("Abandoned by user request.", )
+        log("Abandoned by user request.", )
         try:
             sleep(1)
         except KeyboardInterrupt:
-            log_print("Press Ctrl+C 3 more times to exit")
+            log("Press Ctrl+C 3 more times to exit")
             try:
                 sleep(2)
             except KeyboardInterrupt:
-                log_print("Press Ctrl+C 2 more times to exit...")
+                log("Press Ctrl+C 2 more times to exit...")
                 try:
                     sleep(3)
                 except KeyboardInterrupt:
-                    log_print("Press Ctrl+C 1 more time to exit...")
+                    log("Press Ctrl+C 1 more time to exit...")
                     try:
                         sleep(4)
                     except KeyboardInterrupt:
-                        log_print("Goodbye!")
+                        log("Goodbye!")
                         return sys.exit(0)
 
-        log_print("Okay, I'll stay.")
+        log("Okay, I'll stay.")
         return choice1()
     except Exception as e:
-        log_print(f"\n[WARNING] An unknown exception has occured: {e}\n\n{traceback.format_exc()}", 4)
+        log(f"\n[WARNING] An unknown exception has occured: {e}\n\n{traceback.format_exc()}", 4)
         beans = input("Type 1 to upload your logs!\n\n>>> ")
         if beans == "1" or beans == "":
             upload_logs(5)
@@ -2599,43 +2599,43 @@ def choice1():
 
 def main():
     try:
-        log_print(f"{phrases[language]['run_from']} {current_directory}")
+        log(f"{phrases[language]['run_from']} {current_directory}")
     except Exception:
-        log_print("First time run detected.")
+        log("First time run detected.")
         change_language()
-        log_print(f"{phrases[language]['run_from']}", 2)
-    log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed", 1, False)
-    print(random.choice(funny_messages))
-    print(phrases[language]['menu_prompt'])
+        log(f"{phrases[language]['run_from']}", 2)
+    log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed", 1, False)
+    log(random.choice(funny_messages))
+    log(phrases[language]['menu_prompt'])
     save_json()
 
     choice1()
 
 
-print("Done! Loading base data...")
+log("Done! Loading base data...")
 
 desktop_install_path = False
 
 if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
-    log_print("[MainInit] InstallDir_Pref exists.", 2, False)
+    log("[MainInit] InstallDir_Pref exists.", 2, False)
     desktop_dir = pathlib.Path.home() / 'Desktop'
     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
         install_dir = e.read()
         if install_dir == str(desktop_dir):
-            log_print(f"Determined install_dir to be desktop @ {desktop_dir}")
+            log(f"Determined install_dir to be desktop @ {desktop_dir}")
             desktop_install_path = True
-        log_print(f"[MainInit] Determined install_dir {install_dir}. Read from file InstallDir_Pref", 2, False)
+        log(f"[MainInit] Determined install_dir {install_dir}. Read from file InstallDir_Pref", 2, False)
 else:
-    log_print("[MainInit] Setting new file preference exists.", 2, False)
+    log("[MainInit] Setting new file preference exists.", 2, False)
     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'w+') as f:
         f.close()
     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'w') as f:
         f.write(f"{DraggieTools_AppData_Directory}\n{build}")
 
-log_print("[MainInit] Checking for update", 2, False)
+log("[MainInit] Checking for update", 2, False)
 check_for_update()
 
-print("\nLoading Discord RPC...")
+log("\nLoading Discord RPC...")
 
 
 def start_discord_event_loop(loop):
@@ -2650,15 +2650,15 @@ thread.start()
 
 current_directory = path.dirname(path.realpath(__file__))
 if dev_mode:
-    log_print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: variable currrent_directory assigned with value {current_directory}")
+    log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: variable currrent_directory assigned with value {current_directory}")
 
 
 try:
-    print("Done! Entering program...")
+    log("Done! Entering program...")
     # pyi_splash.close()
     main()
 except Exception as e:
-    print(f"An unhandled exception was encountered.\nShort: {e}\n\nLong:\n{traceback.format_exc()}\n\nIt would be appreciated if you generate a logfile and DM it Draggie#3060. Thanks!\n")
+    log(f"An unhandled exception was encountered.\nShort: {e}\n\nLong:\n{traceback.format_exc()}\n\nIt would be appreciated if you generate a logfile and DM it Draggie#3060. Thanks!\n")
     logging.error(traceback.format_exc())
     beans = input("Type 1 to upload your logs!\n\n>>> ")
     if beans == "1" or beans == "":
