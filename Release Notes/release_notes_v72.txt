@@ -1,0 +1,9 @@
+- New strings.
+- Colours! In parts of the CLI, you'll be greeted with new colourful text.
+    - These changes are purely cosmetic and help to distinguish between regular information, warnings, errors and other types of messages.
+    - Colours are mostly in recent parts of the program like Saturnian and Lily. Older parts of the program will be updated in the future.
+    - Parts of the program with fully implemented colours are magenta in the main menu!
+- New command prompt mode. This allows you to execute console commands without having access to CMD.exe itself.
+    - This is useful for when you're in a restricted environment and you need to execute a command.
+- Logging has been improved and is now more consistent - all messages printed to the console are now logged to a file.
+- Fixed glitchy text after downloading files.

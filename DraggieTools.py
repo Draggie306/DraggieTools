@@ -8,16 +8,24 @@ start_time = time.time()
 import os
 from os import environ, listdir, makedirs, mkdir, path, remove, startfile, system
 
+green_colour = "\033[92m"
+red_colour = "\033[91m"
+yellow_colour = "\033[93m"
+blue_colour = "\033[94m"
+cyan_colour = "\033[96m"
+magenta_colour = "\033[95m"
+reset_colour = "\033[0m"
+
 
 def print_loading_message(module_name):
-    """sys.stdout.write(f"Loading module {module_name}...                  ")
+    sys.stdout.write("\033[K")
+    sys.stdout.write(f"{green_colour}Loading module {module_name}...{reset_colour}")
     sys.stdout.flush()
     sys.stdout.write("\r")
-    sys.stdout.flush()"""
-    system(f"title DraggieTools: Loading module {module_name}...")
+    sys.stdout.flush()
 
 
-system("title DraggieTools: Importing modules...")
+system("title DraggieTools: Loading modules...")
 
 # import pyi_splash
 
@@ -130,21 +138,35 @@ end_time = time()
 
 elapsed_time = end_time - start_time
 
+quick_time = 2.5
+alright_time = 5
+slow_time = 10
+very_slow_time = 20
+
+if elapsed_time < quick_time:
+    print(f"All modules loaded! Took {cyan_colour}{round(elapsed_time, 7)}s.{reset_colour}")
+elif elapsed_time < alright_time:
+    print(f"All modules loaded! Took {green_colour}{round(elapsed_time, 7)}s.{reset_colour}")
+elif elapsed_time < slow_time:
+    print(f"All modules loaded! Took {yellow_colour}{round(elapsed_time, 7)}s.{reset_colour}")
+elif elapsed_time < very_slow_time:
+    print(f"All modules loaded! Took {red_colour}{round(elapsed_time, 7)}s.{reset_colour}")
+
+
 sys.stdout.write("\r")
 sys.stdout.flush()
-print(f"All modules loaded! Took {round(elapsed_time, 7)}s      ")
 
 dev_mode = False
 
 global build, client
 
-build = 71
-version = "0.8.9"
-build_date = 1687558012
+build = 72
+version = "0.8.10"
+build_date = 1688411466
 username = getpass.getuser()
 current_exe_path = sys.executable
 
-system(f"title DraggieTools v{version} (build {build})")
+system(f"title DraggieTools v{version} (build {build}) initialised in {round(elapsed_time, 7)}s")
 
 environ_dir = environ['USERPROFILE']
 
@@ -154,7 +176,7 @@ client = None
 
 phrases = {
     'english': {
-        'menu_options': '\n\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n[7] ProjectSaturnian\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n[13] Install DraggieClient\n[14] YouTube Downloader\n[15] Bank Files Extractor\n[16] VideoMaker\n[17] VBS Script Launcher\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
+        'menu_options': f'\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n{magenta_colour}[7] ProjectSaturnian{reset_colour}\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n{magenta_colour}[13] Install DraggieClient{reset_colour}\n[14] YouTube Downloader\n[15] Bank Files Extractor\n[16] VideoMaker\n[17] VBS Script Launcher\n[18] CMD Executor\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
         'key_error': 'Key error occurred: ',
         'backup': '\n\nResorting to backup',
         'downloading': 'Downloading.',
@@ -162,7 +184,7 @@ phrases = {
         'check_update': 'Checking for update...',
         'download_update': 'Downloading update...',
         'run_from': '\nRunning from',
-        'menu_prompt': 'What would you like to do, my friend?',
+        'menu_prompt': f'\n{green_colour}What would you like to do, my friend?\n',
         'server_says': 'The server says the newest build is',
         'running_version': '\nRunning version',
         'at': '@',
@@ -269,27 +291,32 @@ funny_messages = [
     "Please enter your credit card number for a free trial",
     "Transferring sensitive files to The Criminal Network...",
     "Your computer is hacked by IP: 5.172.193.104 like OS: LINUX/KALI LINUX and location: RUSSIAN FEDERATION",
-    "Your internet connection will be disconnected in 10 seconds. Please panic!",
+    "Your internet connection will be disconnected in 10 seconds.",
     "You have just won a lifetime supply of spam emails. Congratulations!",
-    "The NSA is watching you. No, seriously. They're right behind you",
+    "Waiting for the system to crash. Please be patient...",
     "Insufficient funds. Please go rob a bank and try again",
+    "Reading your emails... 0% complete..",
+    "Reading Chrome Browser history... 67% complete..",
+    "Reading Chrome Browser passwords... 100% complete..",
+    "Uploading your files to The Criminal Network... 100% complete..",
+    "Downloading your files from The Criminal Network... 100% complete..",
+    "The Criminal Network has been hacked. Please wait while we transfer all your files to the FBI...",
     "Your computer has been upgraded to Windows 98. Enjoy the nostalgia!",
     "Warning: this program has been known to cause spontaneous dancing",
     "Your hard drive is full. Please delete all your files, including the ones you actually need",
-    "Error: your keyboard has been replaced with a typewriter. Good luck!",
-    "Your computer has been infected with a virus. The cure? A subscription to our premium antivirus software!",
-    "Please wait while we install a new operating system... DOS!",
-    "Error: user brain not found. Please insert coffee and try again",
+    "Critical alert from Microsoft: your computer has been infected with a virus. Please call 1-800-SCAMMER to fix this issue",
     "Congratulations, you have been selected to participate in our new program: 'Extreme Keyboard Smashing'",
-    "Your computer has been infected with a virus. The cure? A subscription to our premium antivirus software!",
-    "Your computer has been selected to be the host of the next big cyber attack. Please prepare for the FBI to knock on your door",
+    "Your computer has been selected to be the host of the next big cyber attack",
+    "Viruses detected. Please wait while we delete System32...",
+    "Malware has been detected on your computer. Transferring sensitive files to The Criminal Network...",
+    r"Encrypting all your files... 32% complete..",
+    "UwU, what's this? A virus? OwO",
+    "Glizzy Gladiator is now running in the background. Please do not close this window",
     "Your keyboard has been upgraded to a potato. You're welcome!",
-    "The matrix has you. But don't worry, we have a pill for that.",
     "Insufficient disk space. Please delete all your selfies and try again",
-    "Your computer is now powered by hamsters on wheels. Please do not feed them",
+    "Making a backup of your files... 0% complete..",
+    "Make your computer easier to see. Enable the magnifier at Settings > Ease of Access > Magnifier",
     "Congratulations! You have just won a free trip to the blue screen of death",
-    "Warning: this program has been known to cause side effects such as uncontrollable laughter",
-    "Your computer is infected with a Trojan horse. Don't worry, we've got a Trojan condom for that!",
     "Your computer is running low on RAM. Please download more RAM at www.downloadmoreram.com"
 ]
 
@@ -375,7 +402,15 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True) -> No
         case _:
             logging.info(text)
     if output:
-        print(text)
+        if log_level is None:
+            log_level = 2
+        if log_level <= 2:
+            print(f"{text}{reset_colour}")
+        elif log_level == 3:
+            print(f"{yellow_colour}{text}{reset_colour}")
+        else:
+            print(f"{red_colour}{text}{reset_colour}")
+
     # if output else logging.info("The above log was not shown to the console")
 
 
@@ -485,10 +520,12 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
         written = 0
         desc = download_url.split("/")[-1]
         log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False)
+        print(blue_colour)
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc):
                 written = written + len(data)
                 f.write(data)
+        print(reset_colour)
         log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False)
 
     if return_exceptions:
@@ -501,7 +538,6 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
             return choice1()
         except Exception as e:
             log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4)
-
 
 
 def download_chunk(url, start, end, save_dir, pbar):
@@ -546,7 +582,7 @@ def change_language():
         status_update(details="Choosing language", state="English or French?")
         x = input("Choose language\nChoisissez la langue\nEnglish = 1, French = 2\n\n>>> ")
         if x == "2":
-            print("La langue est maintenant francais.")
+            log("La langue est maintenant francais.")
             language = 'french'
             with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
                 x.close()
@@ -557,7 +593,7 @@ def change_language():
             log(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'French'")
             language_chosen = "french"
         else:
-            print("Language updated to English.")
+            log("Language updated to English.")
             language = 'english'
             with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
                 x.close()
@@ -584,10 +620,10 @@ def get_language():
 
             if language_read == "french":
                 language = 'french'
-                print("Langue mise a jour: francais.")
+                log("Langue mise a jour: francais.")
             else:
                 language = 'english'
-                print("Language set to English.")
+                log("Language set to English.")
         except Exception:
             language = change_language()
     else:
@@ -601,7 +637,7 @@ log(f"[MainInit] Language set to {language}", 2, False)
 
 
 def cmini_extraction():
-    print("CMINI_EXTRACTION")
+    log("CMINI_EXTRACTION")
     import subprocess
     bankfilepath = input("Enter the INPUT PATH. This must contain the bank files.\n\n>>> ")
     outputpath = input("Enter the output path to nicely put everything in afterwards.\n\n>>> ")
@@ -636,7 +672,7 @@ def cmini_extraction():
     # Check if all the files exist
 
     if not os.path.isfile(quickbms_exe) or not os.path.isfile(bmsfile) or not os.path.isfile(batchfile) or not os.path.isfile(fsb_aud_extr_exe):
-        print("Missing files! Please redownload the dependencies.")
+        log("Missing files! Please redownload the dependencies.")
         return
 
     # Replace content in batchfile to match the path to the fsb_aud_extr.exe file
@@ -668,7 +704,7 @@ def cmini_extraction():
     output = proc.communicate()[0]
     output_str = output.decode()
 
-    # Print the output
+    # log the output
 
     log(output_str, 1)
     log("Successfully extracted some files!")
@@ -706,7 +742,7 @@ def cmini_extraction():
                     grandparentname = os.path.basename(os.path.normpath(os.path.dirname(dst_dir)))
                     grandparentdir = os.path.dirname(os.path.dirname(dst_dir))
 
-                    print(parentname, grandparentname, grandparentdir)
+                    log(parentname, grandparentname, grandparentdir)
                     shutil.move(os.path.join(root, file), os.path.join(grandparentdir, file))
 
                     log(f"Moved {os.path.join(root, file)} to {grandparentdir + file}", 2, True)
@@ -765,15 +801,15 @@ def download_update(current_build_version):
             file.close()
 
     except KeyError as e:
-        print(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be used, saving to default directory.")
-        print(f"{language[0]}{e}{language[1]}")
+        log(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be used, saving to default directory.")
+        log(f"{language[0]}{e}{language[1]}")
         r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             f.write(r)
 
 
 def secret_menu():
-    print("Welcome to the secret menu.")
+    log("Welcome to the secret menu.")
     x = input("[1] = The.Batman.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX]\n[2] = Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY\n\n>>> ")
 
     index = get("https://awtd.ibaguette.com/index.beans").content
@@ -831,8 +867,8 @@ def secret_menu():
     while (not th.is_seed()):
         s.wait_for_alert(1000)
 
-    # Print the torrent status
-    print(th.status())"""
+    # log the torrent status
+    log(th.status())"""
 
 
 def cleanup_files():
@@ -861,7 +897,7 @@ def cleanup_files():
                      ]
     upload_log = None
     if not dir_paths:
-        return log(f"[FileCleanup] No directories to delete from.")
+        return log("[FileCleanup] No directories to delete from.", log_level=3)
     # Loop through all the directories
 
     for dir in dir_paths:
@@ -895,7 +931,7 @@ def cleanup_files():
 
 
 def view_source():
-    print(phrases[language]['downloading_opening'])
+    log(phrases[language]['downloading_opening'])
     x = time()
     r = get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
     with open(f'{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py', 'wb') as f:
@@ -906,10 +942,9 @@ def view_source():
 def fort_file_mod():
     fort_ini_directory = (f"{environ_dir}\\AppData\\Local\\FortniteGame\\Saved\\Config\\WindowsClient\\GameUserSettings.ini")
     if not path.isfile(fort_ini_directory):
-        print("Unable to detect the INI settings file. Make sure your client is updated.")
-        return
+        return log("Unable to detect the INI settings file. Please run Fortnite at least once to generate this file.", log_level=3)
 
-    print(f"Established uplink with {fort_ini_directory}")
+    log(f"Established uplink with {fort_ini_directory}")
 
     y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\nType 0 to open the directory\n\n>>> ")
 
@@ -919,29 +954,29 @@ def fort_file_mod():
             try:
                 fps = int(input("Input desired FPS here:\n\n>>> "))
             except ValueError:
-                print("Disallowed input. Try again")
+                log("Disallowed input. Try again")
                 return main()
 
             x = get_first_line_of_term("FrameRateLimit=", fort_ini_directory)
 
             replace_line(fort_ini_directory, x, f'FrameRateLimit={fps}.000000\n')
 
-            print(f"Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings], line {x}")
+            log(f"Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings], line {x}")
 
         if z == "2":
             try:
                 fps = int(input("Input desired FPS here:\n\n>>> "))
             except ValueError:
-                print("Disallowed input. Try again")
+                log("Disallowed input. Try again")
                 return main()
 
             x = get_first_line_of_term("FrontendFrameRateLimit=", fort_ini_directory)
-            print(f"first line of the codees = {x}")
+            log(f"first line of the codees = {x}")
 
             replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
             logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
             logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
-            print("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
+            log("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
 
     if y == "2":
         graphics_settings = ["Low", "Medium", "High", "Epic"]
@@ -955,7 +990,7 @@ def fort_file_mod():
             ["Culture", "bUseD3D12InGame", "bUseGPUCrashDebugging", "r.RayTracing.EnableInGame", "MeshQuality"]
         ]
 
-        print("Reading graphics settings and quality presets...")
+        log("Reading graphics settings and quality presets...")
 
         for i in range(len(eligible_settings[1])):
             try:
@@ -969,14 +1004,14 @@ def fort_file_mod():
                 quality_level = int(quality[0])
 
                 if eligible_settings[0][i] == "3D Resolution":
-                    print(f"{eligible_settings[0][i]} = {quality_level}%")
+                    log(f"{eligible_settings[0][i]} = {quality_level}%")
                 else:
-                    print(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
+                    log(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
                 sleep(0.05)
             except Exception as e:
-                print(f"Could not find the value associated with {eligible_settings[0][i]} - {e}")
+                log(f"Could not find the value associated with {eligible_settings[0][i]} - {e}")
 
-        print("\nSearching for other settings...\n")
+        log("\nSearching for other settings...\n")
 
         for i in range(len(other_settings[1])):
             try:
@@ -989,17 +1024,17 @@ def fort_file_mod():
                 quality = quality[1].split("\n")
                 quality_level = (quality[0])
 
-                print(f"{other_settings[0][i]} is set to '{quality_level}'")
+                log(f"{other_settings[0][i]} is set to '{quality_level}'")
             except Exception as e:
-                print(f"Could not find the value associated with {other_settings[0][i]} - {e}")
+                log(f"Could not find the value associated with {other_settings[0][i]} - {e}")
 
         choice2 = input("\n\n1) Go back\n2) Modify a value\n\n>>> ")
 
         if choice2 != "2":
             return
         else:
-            print("Default values are 0 for LOW/OFF\n1 for MEDIUM\n2 for HIGH\n3 for EPIC")
-            print("\nOk, what would you like to change?")
+            log("Default values are 0 for LOW/OFF\n1 for MEDIUM\n2 for HIGH\n3 for EPIC")
+            log("\nOk, what would you like to change?")
 
     if y == "0":
         Popen(f'explorer /select,"{fort_ini_directory}"')
@@ -1052,9 +1087,9 @@ def check_for_update():
         if language == "english":
             versions_to_get = current_build_version - build
             if versions_to_get == 1:
-                print(f"You're {versions_to_get} build behind latest")
+                log(f"You're {versions_to_get} build behind latest")
             else:
-                print(f"You're {versions_to_get} builds behind latest")
+                log(f"You're {versions_to_get} builds behind latest")
 
             string = (f"Latest release notes (v{current_build_version}):\n\n{release_notes}\n")
 
@@ -1062,11 +1097,11 @@ def check_for_update():
                 current_build_version = current_build_version - 1
                 version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}\n\n")
-            print(f"\n{string}\n")
+            log(f"\n{string}\n")
 
         update_choice = input(f"{phrases[language]['press_enter_update']}\n\n>>> ")
         if update_choice != "":
-            print("Skipping update.")
+            log("Skipping update.")
             return
 
         log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {language[6]} - {DraggieTools_AppData_Directory}")
@@ -1080,14 +1115,14 @@ def check_for_update():
         sys.exit()
 
     if current_build_version < build:
-        print(phrases[language]['newer_version'])
+        log(phrases[language]['newer_version'])
     else:
-        print(f"{phrases[language]['running_version']} {version} - {phrases[language]['build']} {build} - {phrases[language]['at']} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {phrases[language]['server_says']} {current_build_version}.")
+        log(f"{phrases[language]['running_version']} {version} - {phrases[language]['build']} {build} - {phrases[language]['at']} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {phrases[language]['server_says']} {current_build_version}.")
 
 
 def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_json: Optional[dict] = None):
     app_version = str(app_version)
-    print(f"{phrases[language]['interacting_allowed']} '{app_name}' {phrases[language]['file']}. [v{app_version}]")
+    log(f"{phrases[language]['interacting_allowed']} '{app_name}' {phrases[language]['file']}. [v{app_version}]")
     if app_name is None:
         app_name = ""
     if not fingerprint_json:
@@ -1157,14 +1192,14 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                     game_download_url = "game-assets.clashminigame.com"
                     app_name = "[Fingerprint] Clash Mini"
                 case _:
-                    return print("Invalid choice. Exiting.")
+                    return log("Invalid choice. Exiting.")
 
     status_update(details="Extracting Supercell game assets", state=f"Loaded: {app_name} (v{app_version}) - {arch_type}")
 
     x = input(phrases[language]['select_options'])
     match x:
         case "1":
-            print(f"{l10n_text('read_info_from_file')}:\n{l10n_text('fingerprint_hash')}: {fingerprint_json['sha']}\n{l10n_text('amount_of_files')}: {len(fingerprint_json['files'])}\n\n")
+            log(f"{l10n_text('read_info_from_file')}:\n{l10n_text('fingerprint_hash')}: {fingerprint_json['sha']}\n{l10n_text('amount_of_files')}: {len(fingerprint_json['files'])}\n\n")
         case "2":
             if not fingerprint_json:
                 fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
@@ -1173,7 +1208,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                 if 'music/background' in item['file']:
                     log(f"Found 'music/background' in file: {item}", 1, False)
                     # The file field contains 'music/background'
-                    print(f"{phrases[language]['found_music_in_file']}{item['file']}")
+                    log(f"{phrases[language]['found_music_in_file']}{item['file']}")
                     # Split the file field on the '\' character and take the first two elements
                     dir_path = item['file'].split('/')[:2]
 
@@ -1184,9 +1219,9 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                     makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}', exist_ok=True)
                     tqdm_download(f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}')
                 else:
-                    # print(f"Not in file {item}")
+                    # log(f"Not in file {item}")
                     pass
-            print("ok")
+            log("ok")
         case "3": # this is the get list of new/modified/deleted files
             Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             amount_of_files = 0
@@ -1196,14 +1231,14 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
             for i in listdir(Downloaded_Builds_AppData_Directory):
                 amount_of_files = amount_of_files + 1
 
-            print(f"\n[Enter] Select one of the {amount_of_files} downloaded files.")
+            log(f"\n[Enter] Select one of the {amount_of_files} downloaded files.")
             files = []
             f = 0
 
             for file in listdir(Downloaded_Builds_AppData_Directory):
                 files.append(file)
             for i in files:
-                print(f"[{f}] {i}")
+                log(f"[{f}] {i}")
                 f += 1
             x = input("\nChoose file\n\n>>> ")
             ipa_2_dir = f"{Downloaded_Builds_AppData_Directory}\\{files[int(x)]}"
@@ -1238,32 +1273,32 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                 if file2:
                     if file_object['sha'] != file2['sha']:
                         modified_files.append(file_object['file'])
-                        print(f"Found a modified file: {file_object['file']}")
+                        log(f"Found a modified file: {file_object['file']}")
                         modified_files_count += 1
                 else:
                     new_files.append(file_object['file'])
-                    print(f"Found a new file: {file_object['file']}")
+                    log(f"Found a new file: {file_object['file']}")
                     new_files_count += 1
 
             for file2 in files2:
                 file1 = next((file for file in files1 if file['file'] == file2['file']), None)
                 if not file1:
                     deleted_files.append(file2['file'])
-                    print(f"Found a deleted file: {file2['file']}")
+                    log(f"Found a deleted file: {file2['file']}")
                     deleted_files_count += 1
 
-            # print('New files:', new_files)
-            # print('Modified files:', modified_files)
-            # print('Deleted files:', deleted_files)
-            print(f"Found {new_files_count} new files, {modified_files_count} modified files and {deleted_files_count} deleted files.")
-            print(f"COMPARED v{data1['version']} (StartPoint) to v{data2['version']} (OldVersion)")
+            # log('New files:', new_files)
+            # log('Modified files:', modified_files)
+            # log('Deleted files:', deleted_files)
+            log(f"Found {new_files_count} new files, {modified_files_count} modified files and {deleted_files_count} deleted files.")
+            log(f"COMPARED v{data1['version']} (StartPoint) to v{data2['version']} (OldVersion)")
 
             # now download the new and modified files
 
             choice_1 = input(f"\n{phrases[language]['download_new_files']}\n\n>>> ")
 
             if choice_1 == "1":
-                print("ok")
+                log("ok")
 
                 question = input("Do you want to filter by a string? (y/n)\n\n>>> ")
                 if question == "y":
@@ -1278,12 +1313,12 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                     tqdm_download(f'https://{game_download_url}/{data1["sha"]}/{new_file_object}', new_path)
                     downloads += 1
 
-                print(f"Downloaded {downloads} new files.")
+                log(f"Downloaded {downloads} new files.")
                 Popen(f"explorer {base_directory}")
 
             sleep(1)
         case "4":
-            print("Not implemented yet")
+            log("Not implemented yet")
         case "5":
             threads = int(input(phrases[language]['input_threads']))
             log(f"[AutoBrawlExtractor] Threads chosen to download: {threads}")
@@ -1307,7 +1342,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                             if not file.lower().endswith(".json"):
                                 archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
                                 archives += 1
-                                print(f"{phrases[language]['searching_archive']} {file}")
+                                log(f"{phrases[language]['searching_archive']} {file}")
                                 new_fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
                                 new_fingerprint_json = json.loads(new_fingerprint_json)
                             else:
@@ -1315,16 +1350,16 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                             try:
                                 fingerprint_sha = new_fingerprint_json["sha"]
                             except Exception as e:
-                                print(f"Unable to find a valid fingerprint.json file in {file}.\n{e}")
+                                log(f"Unable to find a valid fingerprint.json file in {file}.\n{e}")
 
                             for item in new_fingerprint_json['files']:
-                                # print(f"Searching file: {item}", end='\r')
-                                # print("\n")
+                                # log(f"Searching file: {item}", end='\r')
+                                # log("\n")
                                 files += 1
                                 if search_term in item['file']:
                                     log(f"Found '{search_term}' in file: {item}")
                                     # The file field contains search_term
-                                    print(f"{phrases[language]['found']} {search_term} {phrases[language]['in_file']} {item['file']}")
+                                    log(f"{phrases[language]['found']} {search_term} {phrases[language]['in_file']} {item['file']}")
                                     hits += 1
 
                                     # Split the file path on the '\' character and take all elements except the last one
@@ -1340,13 +1375,13 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                                     if not os.path.isfile(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'):
                                         futures.append(executor.submit(tqdm_download, f'https://{game_download_url}/{fingerprint_sha}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'))
                                     else:
-                                        print(f"{phrases[language]['not_downloading_exists']}{item['file']} {phrases[language]['not_downloading_exists_2']}")
+                                        log(f"{phrases[language]['not_downloading_exists']}{item['file']} {phrases[language]['not_downloading_exists_2']}")
                                         skips += 1
                                 else:
                                     pass
-                                    # print(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
+                                    # log(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
                     else:
-                        print(f"{phrases[language]['unsupported_extension_1']} {file} {phrases[language]['unsupported_extension_2']}")
+                        log(f"{phrases[language]['unsupported_extension_1']} {file} {phrases[language]['unsupported_extension_2']}")
             else:
                 archives += 1
                 with cf.ThreadPoolExecutor(max_workers=threads) as executor:
@@ -1363,7 +1398,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                             url = f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}'
                             path = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}'
                             futures.append(executor.submit(tqdm_download, url, path))
-            print(f"{phrases[language]['found']} {hits} {phrases[language]['matching_files']} {files} {phrases[language]['total_files_in']} {archives} {phrases[language]['available_archives']} {skips} {phrases[language]['files_already_exist']}")
+            log(f"{phrases[language]['found']} {hits} {phrases[language]['matching_files']} {files} {phrases[language]['total_files_in']} {archives} {phrases[language]['available_archives']} {skips} {phrases[language]['files_already_exist']}")
             status_update(details=f"{phrases[language]['S_as']}", state=f"{files} {phrases[language]['S_as_1']} {hits} {phrases[language]['S_as_2']}")
         case "6":
             Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}"')
@@ -1402,18 +1437,18 @@ def init_filetype(dir):
             new_fingerprint_json = str(archive.read('assets/fingerprint.json'), encoding="UTF-8")
             new_fingerprint_json = json.loads(new_fingerprint_json)
             version_name = new_fingerprint_json['version']
-            print(f"{phrases[language]['read_asset']}v{version_name}")
+            log(f"{phrases[language]['read_asset']}v{version_name}")
             app_name = "Brawl Stars"
-            print({phrases[language]['apk_name_warning']})
+            log({phrases[language]['apk_name_warning']})
 
         if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
             mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
             log(f"Made directory: {Brawl_AppData_Directory}\\Versions\\{version_name}")
 
-        print(f"{phrases[language]['detected_architecture']}{arch_type}")
+        log(f"{phrases[language]['detected_architecture']}{arch_type}")
         maniupulate_brawl_file(dir, f"{version_name}", app_name, arch_type, fingerprint_json=None)
     except Exception as e:
-        print(f"\n[WARNING] An error has occured which cannot be resolved: {e}")
+        log(f"\n[WARNING] An error has occured which cannot be resolved: {e}")
         logging.error(e)
 
 
@@ -1430,14 +1465,14 @@ def csv_decoder():
         basename, _ = os.path.splitext(path)
         decodedname = basename + "_DECODED.csv"
 
-        print(phrases[language]['processing'], path, "->", decodedname)
+        log(phrases[language]['processing'], path, "->", decodedname)
 
         try:
             with open(path, 'rb') as f:
                 data = f.read()
         except Exception as e:
             log(f"Error: File not found. {e}")
-            print(traceback.format_exc())
+            log(traceback.format_exc())
 
         tempdata = bytearray()
 
@@ -1455,7 +1490,7 @@ def csv_decoder():
                 decompressor = lzma.LZMADecompressor()
                 unpack_data = decompressor.decompress(tempdata)
                 f.write(unpack_data)
-                print(f"\n\nSuccessfully unpacked the file. You can now view it at {decodedname}\n")
+                log(f"\n\nSuccessfully unpacked the file. You can now view it at {decodedname}\n")
         except Exception:
             log(f"invalid input: {traceback.format_exc()}")
 
@@ -1661,11 +1696,11 @@ def ProjectSaturnian():
         """
         Gets the encrypted token, if it exists.
         """
-        log("[read_tokenfile_contents] Reading token file contents")
+        log("[read_tokenfile_contents] Reading token file contents...")
         if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
             with open(f"{saturnian_appdir}\\token.bin", "r") as f:
                 cached_token = f.read()
-                log(f"[read_tokenfile_contents] Found cached token: {cached_token}")
+                log(f"[read_tokenfile_contents] Found cached token: {cached_token}", output=False)
                 return cached_token
         return None
 
@@ -1693,7 +1728,7 @@ def ProjectSaturnian():
         login = requests.post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
         stop_anim_loading()
         if login.status_code == 200:
-            log("Login successful.")
+            log(f"{green_colour}Login successful.")
             server_token = login.json()["auth_token"]
             log(f"Server returned token: {server_token}")
             newly_encrypted_token = encrypt_token(server_token)
@@ -1701,16 +1736,16 @@ def ProjectSaturnian():
             write_token(newly_encrypted_token)
             log("Token written to file.")
         else:
-            log("Login failed. Please try again.")
+            log("Login failed. Please try again.", log_level=4)
             ProjectSaturnian()
 
     try:
-        encrypted_token = read_tokenfile_contents()
-        log(f"encrypted_token: {encrypted_token}")
+        encrypted_token = cached_token
+        log(f"encrypted_token: {encrypted_token}", output=False)
         decrypted_token = decrypt_token(encrypted_token)
-        log(f"token: {decrypted_token}")
+        log(f"token: {decrypted_token}", output=False)
         token = decrypted_token.decode()
-        log(f"Final read token: {decrypted_token}")
+        log(f"Final read token: {decrypted_token}", output=False)
     except Exception:
         clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
         match clear_token:
@@ -1722,7 +1757,7 @@ def ProjectSaturnian():
                     os.remove(f"{saturnian_appdir}\\token.bin")
                     log(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
                 else:
-                    log(f"[write_token] File not found: {saturnian_appdir}\\token.bin")
+                    log(f"[write_token] File not found: {saturnian_appdir}\\token.bin", log_level=3)
                 ProjectSaturnian()
             case "n":
                 log("Exiting...")
@@ -1731,24 +1766,25 @@ def ProjectSaturnian():
 
     # After validating the token, we can use it to log in.
 
-    log(f"\n\nValidation successful, logging in with token {token}")
+    log(f"\n\n{green_colour}Token decryption successful!")
+    log("Logging in to your account...")
 
     def token_login(token):
         endpoint = "https://client.draggie.games/token_login"
         login = requests.post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
         if login.status_code == 200:
             response = json.loads(login.content)
-            log(f"Token login successful. Received response: {response}", output=False)
+            log(f"{green_colour}Token login successful. Received response: {response}", output=False)
             return token
         else:
-            log("Token login failed.")
+            log(f"{red_colour}Token login failed.")
             choice1()
         # log(f"Received token login content: {login.content}")
 
     new_token = token_login(token)
     known_token = new_token
     # log(f"new_token: {known_token}")
-    log("Logged in successfuly using a token!")
+    log(f"{green_colour}Logged in successfuly!")
 
     def get_saturnian_info(known_token):
         log("Getting Saturnian info...")
@@ -1757,17 +1793,17 @@ def ProjectSaturnian():
         if x.status_code == 200:
             try:
                 response = json.loads(x.content)
-                log(f"[saturnian/OnlineAccount] Your tier: {response['type']}")
-                log(f"[saturnian/OnlineAccount] Saturnian current version: {response['currentVersion']}")
+                log(f"[saturnian/OnlineAccount] Your tier: {green_colour}{response['type']}")
+                log(f"[saturnian/OnlineAccount] Saturnian current version: {green_colour}v{response['currentVersion']}")
                 return response
             except Exception as e:
-                log(f"[saturnian/errors.account] Exception: {e}")
-                log(f"[saturnian/errors] Received version status code: {x.status_code}")
+                log(f"[saturnian/errors.account] Exception: {e}", log_level=4)
+                log(f"[saturnian/errors] Received version status code: {x.status_code}", log_level=4)
                 choice1()
         else:
-            log(f"[saturnian/errors.account] ERROR: Received Saturnian version status code: {x.status_code}")
+            log(f"[saturnian/errors.account] ERROR: Received Saturnian version status code: {x.status_code}", log_level=4)
             error_message = json.loads(x.content)
-            log(f"[saturnian/errors.account] ERROR: {error_message['message']}")
+            log(f"[saturnian/errors.account] ERROR: {error_message['message']}", log_level=4)
             sleep(4)
             choice1()
 
@@ -1775,19 +1811,20 @@ def ProjectSaturnian():
     saturnian_current_version = server_json_response["currentVersion"]
 
     if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
-        log("[saturnian] No data file found. Creating one now...")
+        log("[saturnian] No data file found. Creating one now...", log_level=3)
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
             first_info = {"current_version": None, "tier": None}
             json.dump(first_info, f)
-            log("[saturnian] Gamedata file created successfully.")
+            log(f"{green_colour}[saturnian] Gamedata file created successfully.")
 
     # Read the json file
     try:
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
             saturnian_data = json.load(f)
-            log(f"[saturnian] Successfully read datafile: {saturnian_data}")
+            log(f"{green_colour}[saturnian] Successfully read datafile.")
+            log(f"Datafile contents: {saturnian_data}", output=False)
     except Exception as e:
-        return log(f"[saturnian/errors] Error reading Saturnian data file: {e}")
+        return log(f"[saturnian/errors] Error reading Saturnian data file: {e}", log_level=4)
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
 
@@ -1798,34 +1835,38 @@ def ProjectSaturnian():
 
         tqdm_download(download_url, f"{saturnian_appdir}\\Saturnian.bin", overwrite=True)
 
-        log("[saturnian/buildDL] Download complete. Decompressing...")
+        log(f"{green_colour}[saturnian/buildDL] Download complete. Decompressing...")
         start_anim_loading("Decompressing...")
         with zipfile.ZipFile(f"{saturnian_appdir}\\Saturnian.bin", "r") as zip_ref:
             zip_ref.extractall(f"{saturnian_appdir}\\SaturnianGame")
         stop_anim_loading()
-        log("\n[saturnian/buildDL] Extraction complete.")
+        sys.stdout.flush()
+        sys.stdout.write("\r") # TODO: make it clear the line above
+        sys.stdout.flush()
+        log(f"\n{green_colour}[saturnian/buildDL] Extraction complete.")
 
     if saturnian_current_version != saturnian_data["current_version"]:
-        log("[saturnian/Updater] Local game version is different from server version! Would you like to update? Y/N:\n\n>>> ")
-        choice = input("Y/N: ")
+        log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Would you like to update? {reset_colour}")
+        choice = input("y/n:\n>>> ")
         if choice.lower() == "y":
             log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
-            start_anim_loading("Downloading...")
+            # start_anim_loading("Downloading...")
             download_saturnian_build()
-            stop_anim_loading()
-            log("[saturnian/Updater] Update download was successful.")
+            # stop_anim_loading()
+            log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
             saturnian_data["current_version"] = saturnian_current_version
             saturnian_data["tier"] = server_json_response["type"]
             with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
                 json.dump(saturnian_data, f)
-                log("[saturnian/datafile] Data file updated")
+                log(f"{green_colour}[saturnian/datafile] Data file updated")
     if not os.path.isfile(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"):
-        log("[saturnian/Updater] The binary file is missing. Downloading build...")
+        log("[saturnian/Updater] The binary file is missing. Downloading build...", log_level=3)
         download_saturnian_build()
-        log("[saturnian/Updater] Update complete!")
+    log(f"\n{green_colour}[saturnian/Updater] Update completed!")
 
-    to_open = input("\n\nWould you like to open the latest build now?\n[1] Yes\n[2] No\n[3] Open in Explorer\n\n>>> ")
+
+    to_open = input("\n\nWould you like to open the latest build now?\n[1] Yes (Launches in fullscreen window)\n[2] No\n[3] Open containing folder in Explorer\n\n>>> ")
     match to_open.lower():
         case "1":
             Popen(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe")
@@ -1855,9 +1896,11 @@ def upload_log_file(file_path):
         'file': (new_filename, open(file_path, 'rb'))
     }
 
-    log(new_filename)
     response = post(url, files=files)
-    log(f"Uploading the logfile {file_path}. Status code: {response.status_code}", 2)
+    if response.status_code != 200:
+        log(f"{red_colour}Failed to upload the logfile {file_path}. Status code: {response.status_code}", 2)
+    else:
+        log(f"{green_colour}Uploaded the logfile {file_path}. Status code: {response.status_code}", 2)
 
 
 def upload_logs(most_recent: Optional[int] = None):
@@ -1923,7 +1966,7 @@ def discord_parse():
         if not path.isfile(f"{DraggieTools_AppData_Directory}\\DiscordParse"):
             makedirs(f"{DraggieTools_AppData_Directory}\\DiscordParse", exist_ok=True)
         Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\DiscordParse"')
-        return log(f"No valid file or improperly formatted json file exists! You have to put the file in the folder {DraggieTools_AppData_Directory}\\DiscordParse\n\n{e}")
+        return log(f"No valid file or improperly formatted json file exists! You have to put the file in the folder {DraggieTools_AppData_Directory}\\DiscordParse\n\n{e}", log_level=3)
 
     x = input("[1] Parse current file and output everything.\n[2] Organise current file and output JSON files for each server\n\n")
 
@@ -1999,7 +2042,7 @@ def discord_parse():
 
 def videomaker():
     import moviepy
-    return log("This feature is currently disabled due to a bug in moviepy. Please use the old version of DraggieTools for this feature.")
+    return log("This feature is currently disabled due to a bug in moviepy. Please use the old version of DraggieTools for this feature.", log_level=3)
     audio_dir = input("Enter path to ogg files: ")
     output_dir = input("Enter output dir path (there will be a temp folder located in here): ")
 
@@ -2181,7 +2224,7 @@ def yt_download():
             audio_info = ydl.extract_info(f"ytsearch:{youtube_video}", download=False)['entries'][0]
             youtube_video = audio_info['webpage_url']
         except youtube_dl.utils.YoutubeDLError as e:
-            log("There was an error getting information from the provided URL. Please try again later.")
+            log("There was an error getting information from the provided URL. Please try again later.", log_level=3)
             log(e, 4, False)
             choice1()
 
@@ -2280,8 +2323,8 @@ def yt_download():
                 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([video['webpage_url']])
 
-    log(f"[download]  Finished in {round(time() - start_time_download, 2)} seconds.")
-    log(f"[ytdl]      Finished in {round(time() - start_time, 2)} seconds.")
+    log(f"{green_colour}[download]  Finished in {round(time() - start_time_download, 2)} seconds.")
+    log(f"{green_colour}[ytdl]      Finished in {round(time() - start_time, 2)} seconds.")
 
 
 def draggieclient():
@@ -2293,110 +2336,112 @@ def draggieclient():
         lily_ensure_appdata_dir = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
         lily_ensure_appdata_dir_via_expanded = (f"{os.path.expanduser('~')}\\AppData\\Local\\Draggie\\Client")
     except Exception as e:
-        return log(f"[ProjectLily] There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n")
+        return log(f"[ProjectLily] There was a critical error with trying to determine access to an essential directory: {e}: {traceback.format_exc()}.\n\n", log_level=4)
 
     if not os.path.exists(lily_ensure_appdata_dir):
         try:
             log("[ProjectLily] Prerequisite directory does not exist. Creating it now...")
             os.makedirs(lily_ensure_appdata_dir, exist_ok=True)
-            log(f"[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}")
+            log(f"{green_colour}[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}")
         except Exception as e:
-            log(f"[ProjectLily] There was a critical error with trying to create a directory: {e}: {traceback.format_exc()}. Trying again with a different method...\n\n")
+            log(f"[ProjectLily] There was a critical error with trying to create a directory: {e}: {traceback.format_exc()}. Trying again with a different method...\n\n", log_level=3)
             os.makedirs(lily_ensure_appdata_dir_via_expanded, exist_ok=True)
-            log(f"[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir_via_expanded}")
+            log(f"{green_colour}[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir_via_expanded}")
 
-    if lily_initial_choice == "1":
-        if not os.path.exists(f"{lily_ensure_appdata_dir}\\Logs"):
-            os.makedirs(f"{lily_ensure_appdata_dir}\\Logs", exist_ok=True)
-            log(f"[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}\\Logs")
+    match lily_initial_choice:
+        case "1":
+            if not os.path.exists(f"{lily_ensure_appdata_dir}\\Logs"):
+                os.makedirs(f"{lily_ensure_appdata_dir}\\Logs", exist_ok=True)
+                log(f"{green_colour}[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}\\Logs")
 
-        log("Downloading Build 40 of client...")
-        try:
-            tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate40.exe", target_path, return_exceptions=True)
-        except PermissionError as e:
-            return log(f"[ProjectLily] {e}\nThe client is likely running! We don't need to install it again.")
-        except Exception as e:
-            return log(f"[ProjectLily] An error occured: {e}: {traceback.format_exc()}")
-        os.startfile(target_path)
-        save_json()
-        log("Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
-    elif lily_initial_choice == "2":
-        startup_path = os.path.join(winshell.startup(), "Client.lnk")
-        if os.path.exists(startup_path):
-            os.remove(startup_path)
-        try:
-            os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
-        except Exception as e:
-            log(f"[ProjectLily] Unable to remove client.exe - it is likely that it is running: {e}")
-
-        for proc in psutil.process_iter():
+            log("Downloading Build 40 of client...")
             try:
-                target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
-                process = psutil.Process(proc.pid)
-                procname = "client.exe"
-                if proc.name() == procname:
-                    process_exe = process.exe()
-                    log(f"Found client.exe running at {process_exe}\nAttempting to kill process...")
-                    if process_exe.lower() == target_path:
-                        proc.kill()
-                        log("Client has been killed.")
-                    os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
-                    log("Client has been uninstalled.")
+                tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate40.exe", target_path, return_exceptions=True)
+                os.startfile(target_path)
+                save_json()
+                log(f"{green_colour}Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
+            except PermissionError as e:
+                log(f"[ProjectLily] {e}\nThe client is likely running! We don't need to install it again.", log_level=3)
             except Exception as e:
-                return log(f"[ProjectLily] Unable to kill and completely remove client.exe: {e}")
-        log("[ProjectLily] Client has been uninstalled and removed from startup successfully.")
-    elif lily_initial_choice == "3":
-        log_subdir = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\Logs")
-        if not os.path.exists(log_subdir):
-            os.makedirs(log_subdir, exist_ok=True)
-        os.startfile(log_subdir)
-    elif lily_initial_choice == "4":
-        # return log("This is not yet implemented.")
-        json_settings_dir = os.path.join(lily_ensure_appdata_dir, "Client_Settings.json")
-        if not os.path.exists(json_settings_dir):
-            with open(json_settings_dir, 'w') as f:
-                json.dump({
-                    "startup": True,
-                    "autoupdate": True,
-                    "autoupdate_interval": "default",
-                    "autoupdate_interval_unit": "default",
-                }, f)
-        with open(json_settings_dir, 'r') as f:
-            json_settings = json.load(f)
-            for key, value in json_settings.items():
-                log(f"{key}: {value}", output=False)
-            choice_client_settings = input("What do you want to do?\n[1] Change startup\n[2] Change autoupdate\n>>> ")
-            match choice_client_settings:
-                case "1":
-                    choice_client_settings_startup = input("Do you want to enable or disable startup?\n[1] Enable\n[2] Disable\n>>> ")
-                    match choice_client_settings_startup:
-                        case "1":
-                            json_settings["startup"] = True
-                            with open(json_settings_dir, 'w') as f:
-                                json.dump(json_settings, f)
-                            log("[ProjectLily] Startup enabled.")
-                        case "2":
-                            json_settings["startup"] = False
-                            with open(json_settings_dir, 'w') as f:
-                                json.dump(json_settings, f)
-                            log("[ProjectLily] Startup disabled.")
-                            draggieclient()
-                case "2":
-                    choice_client_settings_autoupdate = input("Do you want to enable or disable autoupdate?\n[1] Enable\n[2] Disable\n>>> ")
-                    match choice_client_settings_autoupdate:
-                        case "1":
-                            json_settings["autoupdate"] = True
-                            with open(json_settings_dir, 'w') as f:
-                                json.dump(json_settings, f)
-                            log("[ProjectLily] Autoupdate enabled.")
-                        case "2":
-                            json_settings["autoupdate"] = False
-                            with open(json_settings_dir, 'w') as f:
-                                json.dump(json_settings, f)
-                            log("[ProjectLily] Autoupdate disabled.")
-                            draggieclient()
-    else:
-        choice1()
+                log(f"[ProjectLily] An error occured: {e}: {traceback.format_exc()}", log_level=4)
+        case "2":
+            startup_path = os.path.join(winshell.startup(), "Client.lnk")
+            if os.path.exists(startup_path):
+                os.remove(startup_path)
+            try:
+                os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
+            except Exception as e:
+                log(f"[ProjectLily] Unable to remove client.exe - it is likely that it is running: {e}", log_level=3)
+
+            for proc in psutil.process_iter():
+                try:
+                    target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+                    process = psutil.Process(proc.pid)
+                    procname = "client.exe"
+                    if proc.name() == procname:
+                        process_exe = process.exe()
+                        log(f"Found client.exe running at {process_exe}\nAttempting to kill process...")
+                        if process_exe.lower() == target_path:
+                            proc.kill()
+                            log(f"{green_colour}Client has been killed.")
+                        os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
+                        log(f"{green_colour}[ProjectLily] Client has been uninstalled and removed from startup successfully.")
+                except Exception as e:
+                    log(f"[ProjectLily] Unable to kill and completely remove client.exe: {e}", log_level=3)
+        case "3":
+            log_subdir = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\Logs")
+            if not os.path.exists(log_subdir):
+                os.makedirs(log_subdir, exist_ok=True)
+            os.startfile(log_subdir)
+        case "4":
+            # return log("This is not yet implemented.")
+            json_settings_dir = os.path.join(lily_ensure_appdata_dir, "Client_Settings.json")
+            if not os.path.exists(json_settings_dir):
+                with open(json_settings_dir, 'w') as f:
+                    json.dump({
+                        "startup": True,
+                        "autoupdate": True,
+                        "autoupdate_interval": "default",
+                        "autoupdate_interval_unit": "default",
+                    }, f)
+            with open(json_settings_dir, 'r') as f:
+                json_settings = json.load(f)
+                for key, value in json_settings.items():
+                    log(f"{key}: {value}", output=False)
+                choice_client_settings = input("What do you want to do?\n[1] Change startup\n[2] Change autoupdate\n>>> ")
+                match choice_client_settings:
+                    case "1":
+                        choice_client_settings_startup = input("Do you want to enable or disable startup?\n[1] Enable\n[2] Disable\n>>> ")
+                        match choice_client_settings_startup:
+                            case "1":
+                                json_settings["startup"] = True
+                                with open(json_settings_dir, 'w') as f:
+                                    json.dump(json_settings, f)
+                                log(f"{green_colour}[ProjectLily] Startup enabled.")
+                            case "2":
+                                json_settings["startup"] = False
+                                with open(json_settings_dir, 'w') as f:
+                                    json.dump(json_settings, f)
+                                log(f"{red_colour}[ProjectLily] Startup disabled.")
+                                draggieclient()
+                    case "2":
+                        choice_client_settings_autoupdate = input("Do you want to enable or disable autoupdate?\n[1] Enable\n[2] Disable\n>>> ")
+                        match choice_client_settings_autoupdate:
+                            case "1":
+                                json_settings["autoupdate"] = True
+                                with open(json_settings_dir, 'w') as f:
+                                    json.dump(json_settings, f)
+                                log(f"{green_colour}[ProjectLily] Autoupdate enabled.")
+                            case "2":
+                                json_settings["autoupdate"] = False
+                                with open(json_settings_dir, 'w') as f:
+                                    json.dump(json_settings, f)
+                                log(f"{red_colour}[ProjectLily] Autoupdate disabled.")
+                                draggieclient()
+        case _:
+            log(f"{red_colour}[ProjectLily] Invalid choice. Please try again.", log_level=3)
+    sleep(1)
+    return choice1()
 
 
 def save_json():
@@ -2421,40 +2466,63 @@ def vbs_script_launcher():
     fool = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/fool.vbs"
     hackingmatrix = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/Hackingmatrix.bat"
     infinite_bat = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/infinite.bat"
-    l = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/L.vbs"
+    l_vbs = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/L.vbs"
     no = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/no.bat"
 
     choice_vbs = input("What script do you want to download?\n1. Important Disk Data\n2. Keyboard RGB\n3. Have you heard of this amazing website?\n4. CD Eject\n5. Delete\n6. Fool\n7. Hacking Matrix\n8. Infinite\n9. L\n10. No\n\nChoice: ")
     log("Downloading script...")
     match choice_vbs:
         case "1":
-            filename = "Important-Disk-Data.vbs"; url = vbs_funny_long
+            filename = "Important-Disk-Data.vbs"
+            url = vbs_funny_long
         case "2":
-            filename = "keyboard-rgb.vbs"; url = keyboard_rgb
+            filename = "keyboard-rgb.vbs"
+            url = keyboard_rgb
         case "3":
-            filename = "Have-you-heard-of-this-amazing-website.bat"; url = amazing_site
+            filename = "Have-you-heard-of-this-amazing-website.bat"
+            url = amazing_site
         case "4":
-            filename = "cd.vbs"; url = cd_eject
+            filename = "cd.vbs"
+            url = cd_eject
         case "5":
-            filename = "delete.bat"; url = delete
+            filename = "delete.bat"
+            url = delete
         case "6":
-            filename = "fool.vbs"; url = fool
+            filename = "fool.vbs"
+            url = fool
         case "7":
-            filename = "Hackingmatrix.bat"; url = hackingmatrix
+            filename = "Hackingmatrix.bat"
+            url = hackingmatrix
         case "8":
-            filename = "infinite.bat"; url = infinite_bat
+            filename = "infinite.bat"
+            url = infinite_bat
         case "9":
-            filename = "L.vbs"; url = l
+            filename = "L.vbs"
+            url = l_vbs
         case "10":
-            filename = "no.bat"; url = no
+            filename = "no.bat"
+            url = no
         case _:
             log("Invalid choice. Quitting...")
-            choice1()
+            return choice1()
     try:
         tqdm_download(url, f"{DraggieTools_AppData_Directory}\\{filename}")
         os.startfile(f"{DraggieTools_AppData_Directory}\\{filename}")
     except Exception as e:
         log(f"Error: {e}")
+
+
+def cmd_launcher():
+    # Project Jake: Execute commands in cmd from within the executable
+    log("This mode will loop until you press CTRL+C.")
+    username = getpass.getuser()
+    while True:
+        x = input(f"\nC:\\Users\\{username}> ")
+        log(f"Executing command: {x}", log_level=2, output=False)
+        try:
+            os.system(x)
+        except Exception as e:
+            log(f"Error: {e}", log_level=3, output=True)
 
 
 def choice1():
@@ -2463,6 +2531,7 @@ def choice1():
         status_update(details="Selecting what to do...")
         """y = x/0 # in case we need to do some quick error checking!
         log(y)"""
+        print(reset_colour)
         if x == "0":
             log(f"Goodbye! {time()}\nHope you found me useful.", 2, False)
             log("\n\n\n\n\n\nQuitting...")
@@ -2563,6 +2632,9 @@ def choice1():
             case "17":
                 status_update(details="In the VBS Script Launcher")
                 vbs_script_launcher()
+            case "18":
+                status_update(details="In the Command Prompt")
+                cmd_launcher()
             case "dev":
                 status_update(details="In the developer menu")
                 dev_menu()
@@ -2583,11 +2655,11 @@ def choice1():
         try:
             sleep(1)
         except KeyboardInterrupt:
-            log("Press Ctrl+C 3 more times to exit")
+            log("Press Ctrl+C 3 more times to exit.")
             try:
                 sleep(2)
             except KeyboardInterrupt:
-                log("Press Ctrl+C 2 more times to exit...")
+                log("Press Ctrl+C 2 more times to exit..")
                 try:
                     sleep(3)
                 except KeyboardInterrupt:
@@ -2622,7 +2694,8 @@ def main():
 
     choice1()
 
-
+sys.stdout.write("\r")
+sys.stdout.flush()
 log("Done! Loading base data...")
 
 desktop_install_path = False
