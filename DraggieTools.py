@@ -163,9 +163,9 @@ dev_mode = False
 
 global build, client
 
-build = 73
-version = "0.8.11"
-build_date = 1688411466
+build = 74
+version = "0.8.12"
+build_date = 1688678379
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -441,7 +441,7 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
             print(f"{red_colour}{text}{reset_colour}")
     else:
         if log_level == 1:
-            print(f"{text}{reset_colour} {cyan_colour}[debug]{reset_colour}")
+            print(f"{text}{cyan_colour} [debug] {reset_colour}")
 
     # if output else logging.info("The above log was not shown to the console")
 
@@ -547,7 +547,7 @@ def refresh2():
 def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False, return_exceptions: Optional[bool] = False):
     # Networking component codename is Lily
     def download_file(download_url, save_dir):
-        response = requests.get(download_url, stream=True)
+        response = lily_get(download_url, stream=True)
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         written = 0
@@ -578,9 +578,20 @@ def lily_get(*args, **kwargs):
     Drop in replacement for requests.get that uses the logging system.
     """
     # Networking component codename is Lily
-    log(f"Attempting to get a file. ({args[0]})", 1, False, component="Lily")
+    log(f"Getting data from: ({args[0]})", 1, False, component="Lily")
     x = requests.get(*args, **kwargs)
-    log(f"Got the file, status code {x.status_code}. ({args[0]})", 1, False, component="Lily")
+    log(f"GET request returned with status code {x.status_code}. ({args[0]})", 1, False, component="Lily")
+    return x
+
+
+def lily_post(*args, **kwargs):
+    """
+    Drop in replacement for requests.post that uses the logging system.
+    """
+    # Networking component codename is Lily
+    log(f"POSTing data to: ({args[0]})", 1, False, component="Lily")
+    x = requests.post(*args, **kwargs)
+    log(f"POSTing data returned with status code {x.status_code}. ({args[0]})", 1, False, component="Lily")
     return x
 
 
@@ -589,7 +600,7 @@ def download_chunk(url, start, end, save_dir, pbar):
     Downloads a chunk of a file.
     """
     headers = {'Range': f'bytes={start}-{end}'}
-    response = requests.get(url, headers=headers, stream=True)
+    response = lily_get(url, headers=headers, stream=True)
     with open(f"{save_dir}.part{start}", "wb") as f:
         for data in response.iter_content(1024):
             f.write(data)
@@ -1742,6 +1753,7 @@ def ProjectSaturnian():
                 cached_token = f.read()
                 log(f"[read_tokenfile_contents] Found cached token: {cached_token}", output=False)
                 return cached_token
+        log("[read_tokenfile_contents] No cached token found.", output=False)
         return None
 
     def write_token(encrypted_token):
@@ -1765,7 +1777,7 @@ def ProjectSaturnian():
         email = input("\nEmail: ")
         password = getpass.getpass("\nPassword: ")
         start_anim_loading(text="Logging in...")
-        login = requests.post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
+        login = lily_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
         stop_anim_loading()
         if login.status_code == 200:
             log(f"{green_colour}Login successful.")
@@ -1811,7 +1823,7 @@ def ProjectSaturnian():
 
     def token_login(token):
         endpoint = "https://client.draggie.games/token_login"
-        login = requests.post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
+        login = lily_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
         if login.status_code == 200:
             response = json.loads(login.content)
             log(f"{green_colour}Token login successful. Received response: {response}", output=False)
