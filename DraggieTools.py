@@ -15,6 +15,12 @@ blue_colour = "\033[94m"
 cyan_colour = "\033[96m"
 magenta_colour = "\033[95m"
 reset_colour = "\033[0m"
+lily_colour = "\033[95m"
+clear_line = "\033[K"
+up_one_line = "\033[F"
+start_of_line = "\033[0G"
+clear_from_line_start = "\033[1K"
+clear_above_line_overwrite = "\033[F\033[K"
 
 
 def print_loading_message(module_name):
@@ -31,9 +37,6 @@ system("title DraggieTools: Loading modules...")
 
 print_loading_message("subprocess.Popen")
 from subprocess import Popen
-
-print_loading_message("requests.get, requests.post")
-from requests import get, post
 
 print_loading_message("datetime.datetime")
 from datetime import datetime
@@ -138,10 +141,10 @@ end_time = time()
 
 elapsed_time = end_time - start_time
 
-quick_time = 2.5
-alright_time = 5
-slow_time = 10
-very_slow_time = 20
+quick_time = 1
+alright_time = 2
+slow_time = 3
+very_slow_time = 5
 
 if elapsed_time < quick_time:
     print(f"All modules loaded! Took {cyan_colour}{round(elapsed_time, 7)}s.{reset_colour}")
@@ -160,8 +163,8 @@ dev_mode = False
 
 global build, client
 
-build = 72
-version = "0.8.10"
+build = 73
+version = "0.8.11"
 build_date = 1688411466
 username = getpass.getuser()
 current_exe_path = sys.executable
@@ -295,11 +298,11 @@ funny_messages = [
     "You have just won a lifetime supply of spam emails. Congratulations!",
     "Waiting for the system to crash. Please be patient...",
     "Insufficient funds. Please go rob a bank and try again",
-    "Reading your emails... 0% complete..",
-    "Reading Chrome Browser history... 67% complete..",
-    "Reading Chrome Browser passwords... 100% complete..",
-    "Uploading your files to The Criminal Network... 100% complete..",
-    "Downloading your files from The Criminal Network... 100% complete..",
+    r"Reading your emails... 0% complete..",
+    r"Reading Chrome Browser history... 67% complete..",
+    r"Reading Chrome Browser passwords... 100% complete..",
+    r"Uploading your files to The Criminal Network... 100% complete..",
+    r"Downloading your files from The Criminal Network... 100% complete..",
     "The Criminal Network has been hacked. Please wait while we transfer all your files to the FBI...",
     "Your computer has been upgraded to Windows 98. Enjoy the nostalgia!",
     "Warning: this program has been known to cause spontaneous dancing",
@@ -314,7 +317,7 @@ funny_messages = [
     "Glizzy Gladiator is now running in the background. Please do not close this window",
     "Your keyboard has been upgraded to a potato. You're welcome!",
     "Insufficient disk space. Please delete all your selfies and try again",
-    "Making a backup of your files... 0% complete..",
+    r"Making a backup of your files... 0% complete..",
     "Make your computer easier to see. Enable the magnifier at Settings > Ease of Access > Magnifier",
     "Congratulations! You have just won a free trip to the blue screen of death",
     "Your computer is running low on RAM. Please download more RAM at www.downloadmoreram.com"
@@ -358,7 +361,7 @@ if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
     print(f"[MainInit] Made SourceCode Directory: {DraggieTools_AppData_Directory}\\SourceCode", 2)
 
 
-print("Loading functions...")
+print(f"{clear_above_line_overwrite}Loading functions...")
 
 
 """
@@ -384,10 +387,24 @@ if dev_mode:
 logging.debug(f"[MainInit] Took {elapsed_time} to load modules")
 
 
-def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True) -> None:
+def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event: Optional[str] = None, component: Optional[str] = None) -> None:
     """
-    Logs and prints the text inputted. The logging level is\n1: DEBUG\n2: INFO (default)\n3: WARNING\n4: ERROR\n5: CRITICAL
+    Logs and prints the text inputted. The logging level is 1: DEBUG, 2: INFO (Default), 3: WARNING, 4: ERROR, 5: CRITICAL\n
+    :param text: The text to log\n
+    :param log_level: The logging level\n
+    :param output: Whether to output the text to the console\n
+    :param event: The event to log (Success, Warning, Error, None). Gives the text a colour, overwrites log_level implied colour\n
+    :param component: The component of the program that is logging the text. Codenames are used for this\n
     """
+
+    if component is not None:
+        if component.lower() == "lily":
+            text = f"{lily_colour}[LilyNetworking]{reset_colour} {text}"
+        elif component.lower() == "main":
+            text = f"[Main] {text}"
+        elif component.lower() == "updater":
+            text = f"[Updater] {text}"
+
     match log_level:
         case 1:
             logging.debug(text)
@@ -401,6 +418,18 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True) -> No
             logging.critical(text)
         case _:
             logging.info(text)
+
+    if event is not None:
+        if event == "Success":
+            colour = green_colour
+        elif event == "Warning":
+            colour = yellow_colour
+        elif event == "Error":
+            colour = red_colour
+        else:
+            colour = blue_colour
+        text = f"{colour}{text}{reset_colour}"
+
     if output:
         if log_level is None:
             log_level = 2
@@ -410,6 +439,9 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True) -> No
             print(f"{yellow_colour}{text}{reset_colour}")
         else:
             print(f"{red_colour}{text}{reset_colour}")
+    else:
+        if log_level == 1:
+            print(f"{text}{reset_colour} {cyan_colour}[debug]{reset_colour}")
 
     # if output else logging.info("The above log was not shown to the console")
 
@@ -495,7 +527,7 @@ def replace_line(file_name, line_num, text):
 
 """
 try:
-    x = get("https://client.draggie.games")
+    x = lily_get("https://client.draggie.games")
 except:
     pass
 """
@@ -513,20 +545,21 @@ def refresh2():
 
 
 def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False, return_exceptions: Optional[bool] = False):
+    # Networking component codename is Lily
     def download_file(download_url, save_dir):
-        response = get(download_url, stream=True)
+        response = requests.get(download_url, stream=True)
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         written = 0
         desc = download_url.split("/")[-1]
-        log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False)
+        log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False, component="Lily")
         print(blue_colour)
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc):
                 written = written + len(data)
                 f.write(data)
         print(reset_colour)
-        log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False)
+        log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False, component="Lily")
 
     if return_exceptions:
         download_file(download_url, save_dir)
@@ -534,13 +567,27 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
         try:
             download_file(download_url, save_dir)
         except KeyboardInterrupt:
-            log("Keyboard interrupt: going back to first choice.", 3)
+            log("Keyboard interrupt: going back to first choice.", 3, False, component="Lily")
             return choice1()
         except Exception as e:
-            log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4)
+            log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4, component="Lily")
+
+
+def lily_get(*args, **kwargs):
+    """
+    Drop in replacement for requests.get that uses the logging system.
+    """
+    # Networking component codename is Lily
+    log(f"Attempting to get a file. ({args[0]})", 1, False, component="Lily")
+    x = requests.get(*args, **kwargs)
+    log(f"Got the file, status code {x.status_code}. ({args[0]})", 1, False, component="Lily")
+    return x
 
 
 def download_chunk(url, start, end, save_dir, pbar):
+    """
+    Downloads a chunk of a file.
+    """
     headers = {'Range': f'bytes={start}-{end}'}
     response = requests.get(url, headers=headers, stream=True)
     with open(f"{save_dir}.part{start}", "wb") as f:
@@ -550,7 +597,7 @@ def download_chunk(url, start, end, save_dir, pbar):
 
 
 def tqdm_download2(download_url, save_dir, desc=None, num_threads: Optional[int] = 4):
-    response = requests.get(download_url, stream=True)
+    response = lily_get(download_url, stream=True)
     total_size = int(response.headers.get("content-length", 0))
     chunk_size = ceil(total_size / num_threads)
 
@@ -575,7 +622,7 @@ def tqdm_download2(download_url, save_dir, desc=None, num_threads: Optional[int]
             os.remove(f"{save_dir}.part{i * chunk_size}")
 
 
-def change_language():
+def change_language() -> str:
     global language, language_chosen
     language = None
     while language is None:
@@ -611,7 +658,7 @@ def change_language():
     return language_chosen
 
 
-def get_language():
+def get_language() -> str:
     """Returns the user's language. Currently `english` or `french`.\nIf the language file doesn't exist, it will be created."""
     if path.exists(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt"):
         try:
@@ -623,7 +670,7 @@ def get_language():
                 log("Langue mise a jour: francais.")
             else:
                 language = 'english'
-                log("Language set to English.")
+                log(f"{clear_above_line_overwrite}Language set to English.")
         except Exception:
             language = change_language()
     else:
@@ -712,13 +759,13 @@ def cmini_extraction():
     # Run the batchfile
 
     log("Running batchfile to extract all the files from the fsb files...", 2, False)
-    log(f"Executing command with subprocess.Popen: {batchfile}. working directory is {outputpath}", 2, True)
-    start_anim_loading("Extracting waveform files from FSB... this make take some time...")
+    log(f"{magenta_colour}Executing command with subprocess.Popen: {batchfile}. working directory is {outputpath}", 2, True)
+    start_anim_loading(f"{magenta_colour}Extracting waveform files from FSB... this make take some time...")
     proc = subprocess.Popen([batchfile], stdout=subprocess.PIPE, cwd=outputpath)
     output = proc.communicate()[0]
     output_str = output.decode()
     stop_anim_loading()
-    log(f"Extracting all was successfully completed.\n\nLog of files extracted:\n------\n{output_str}\n------\n", 2, True)
+    log(f"{green_colour}Extracting all was successfully completed.\n\nLog of files extracted:\n------\n{output_str}\n------\n", 2, True)
 
     log("Performing additional cleanup...", 2, True)
 
@@ -738,14 +785,15 @@ def cmini_extraction():
                     os.makedirs(os.path.dirname(dst_dir), exist_ok=True)
 
                     # get name of current, wanted target folder
-                    parentname = os.path.basename(os.path.normpath(dst_dir))
-                    grandparentname = os.path.basename(os.path.normpath(os.path.dirname(dst_dir)))
+                    wav_filename = os.path.basename(os.path.normpath(dst_dir))
+                    grandparent_foldername = os.path.basename(os.path.normpath(os.path.dirname(dst_dir)))
                     grandparentdir = os.path.dirname(os.path.dirname(dst_dir))
 
-                    log(parentname, grandparentname, grandparentdir)
+                    log(f"Wav filename: {wav_filename}, grandparent foldername: {grandparent_foldername}, grandparent directory: {grandparentdir}", 2, False)
+                    log(f"Attempting to move {os.path.join(root, file)} to {grandparentdir + file}", 1, False)
                     shutil.move(os.path.join(root, file), os.path.join(grandparentdir, file))
 
-                    log(f"Moved {os.path.join(root, file)} to {grandparentdir + file}", 2, True)
+                    log(f"{green_colour}Moved {os.path.join(root, file)} to {grandparentdir + file}", 2, True)
                     wavfiles = wavfiles + 1
 
                     if len(os.listdir(root)) <= 1:
@@ -803,7 +851,7 @@ def download_update(current_build_version):
     except KeyError as e:
         log(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be used, saving to default directory.")
         log(f"{language[0]}{e}{language[1]}")
-        r = get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
+        r = lily_get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             f.write(r)
 
@@ -812,7 +860,7 @@ def secret_menu():
     log("Welcome to the secret menu.")
     x = input("[1] = The.Batman.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX]\n[2] = Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY\n\n>>> ")
 
-    index = get("https://awtd.ibaguette.com/index.beans").content
+    index = lily_get("https://awtd.ibaguette.com/index.beans").content
     lines = index.splitlines()
 
     if x == "1":
@@ -820,7 +868,7 @@ def secret_menu():
     else:
         download_url = str(lines[0]).strip("b'").strip("'")
 
-    response = get(download_url, stream=True)
+    response = lily_get(download_url, stream=True)
     total_size = int(response.headers.get("content-length", 0))
     block_size = 1024  # 1 Kibibyte
     written = 0
@@ -933,7 +981,7 @@ def cleanup_files():
 def view_source():
     log(phrases[language]['downloading_opening'])
     x = time()
-    r = get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
+    r = lily_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
     with open(f'{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py', 'wb') as f:
         f.write(r.content)
     Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py"')
@@ -1043,12 +1091,8 @@ def fort_file_mod():
 
 def check_for_update():
     try:
-        stop_event = Event()
-        thread = Thread(target=loading_icon, args=(stop_event, phrases[language]['check_update']))
-        thread.start()
+        log(phrases[language]['check_update'], 2, True)
     except Exception:
-        stop_event.set()
-        thread.join()
         change_language()
         check_for_update()
     try:
@@ -1073,17 +1117,13 @@ def check_for_update():
         log(f"Unable to overwrite older version. {e}", 4)
 
     try:
-        current_build_version = int((get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
-        stop_event.set()
-        thread.join()
+        current_build_version = int((lily_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     except Exception as e:
-        stop_event.set()
-        thread.join()
         log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
         current_build_version = build
     if build < current_build_version: # if build is less than current version - so there's an update available.
-        release_notes = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
-        log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n")
+        release_notes = str((lily_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
+        log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n", event="success")
         if language == "english":
             versions_to_get = current_build_version - build
             if versions_to_get == 1:
@@ -1095,7 +1135,7 @@ def check_for_update():
 
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
-                version_patch = str((get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
+                version_patch = str((lily_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}\n\n")
             log(f"\n{string}\n")
 
@@ -1465,7 +1505,7 @@ def csv_decoder():
         basename, _ = os.path.splitext(path)
         decodedname = basename + "_DECODED.csv"
 
-        log(phrases[language]['processing'], path, "->", decodedname)
+        log(f"{green_colour}{phrases[language]['processing'], path, '->', decodedname}")
 
         try:
             with open(path, 'rb') as f:
@@ -1492,7 +1532,7 @@ def csv_decoder():
                 f.write(unpack_data)
                 log(f"\n\nSuccessfully unpacked the file. You can now view it at {decodedname}\n")
         except Exception:
-            log(f"invalid input: {traceback.format_exc()}")
+            log(f"Invalid input: {traceback.format_exc()}", 4, True)
 
     if os.path.isdir(path):
         log(f"Path is a directory. Parsing all CSV files in {path}", 2, True)
@@ -1504,7 +1544,7 @@ def csv_decoder():
 
     open_in_explorer = input("Do you want to open the folder containing the decoded CSV files? (y/n)\n\n>>> ")
     if open_in_explorer.lower() == "y":
-        os.startfile(os.path.dirname(os.path.realpath(__file__)))
+        Popen("explorer.exe /select, " + path)
 
     autobrawlextractor()
 
@@ -1534,7 +1574,7 @@ def autobrawlextractor():
 
         if location == "1":
             log("Fetching a list of all trusted versions from GitHub...")
-            git_brawl_builds = get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
+            git_brawl_builds = lily_get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
             git_brawl_builds = git_brawl_builds.text
             urls = git_brawl_builds.splitlines()
             version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
@@ -1570,7 +1610,7 @@ def autobrawlextractor():
                     game = clash_of_clans
 
                 log("Fetching a list of all trusted versions from GitHub...")
-                git_clash_mini_builds = get(game)
+                git_clash_mini_builds = lily_get(game)
                 urls = (git_clash_mini_builds.text).splitlines()
 
                 if game_choice == "1":
@@ -1789,7 +1829,7 @@ def ProjectSaturnian():
     def get_saturnian_info(known_token):
         log("Getting Saturnian info...")
         endpoint = "https://client.draggie.games/api/v1/saturnian/game/gameData/licenses/validation"
-        x = requests.get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
+        x = lily_get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
         if x.status_code == 200:
             try:
                 response = json.loads(x.content)
@@ -2356,7 +2396,7 @@ def draggieclient():
 
             log("Downloading Build 40 of client...")
             try:
-                tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate40.exe", target_path, return_exceptions=True)
+                tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate44.exe", target_path, return_exceptions=True)
                 os.startfile(target_path)
                 save_json()
                 log(f"{green_colour}Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
@@ -2459,6 +2499,7 @@ def save_json():
 
 def vbs_script_launcher():
     vbs_funny_long = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/Important-Disk-Data.vbs"
+    vbs_funny = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/diskdata-trimmed.vbs"
     keyboard_rgb = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/keyboard-rgb.vbs"
     amazing_site = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/Have-you-heard-of-this-amazing-website.bat"
     cd_eject = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/cd.vbs"
@@ -2469,7 +2510,7 @@ def vbs_script_launcher():
     l_vbs = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/L.vbs"
     no = r"https://cdn.ibaguette.com/cdn/Tools/script-pranks/no.bat"
 
-    choice_vbs = input("What script do you want to download?\n1. Important Disk Data\n2. Keyboard RGB\n3. Have you heard of this amazing website?\n4. CD Eject\n5. Delete\n6. Fool\n7. Hacking Matrix\n8. Infinite\n9. L\n10. No\n\nChoice: ")
+    choice_vbs = input("What script do you want to download?\n1. Important Disk Data\n2. Keyboard RGB\n3. Have you heard of this amazing website?\n4. CD Eject\n5. Delete\n6. Fool\n7. Hacking Matrix\n8. Infinite\n9. L\n10. No\n11. Short Prank\n\nChoice: ")
     log("Downloading script...")
     match choice_vbs:
         case "1":
@@ -2502,6 +2543,9 @@ def vbs_script_launcher():
         case "10":
             filename = "no.bat"
             url = no
+        case "11":
+            filename = "diskdata-trimmed.vbs"
+            url = vbs_funny
         case _:
             log("Invalid choice. Quitting...")
             return choice1()
@@ -2688,15 +2732,16 @@ def main():
         change_language()
         log(f"{phrases[language]['run_from']}", 2)
     log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main() subroutine executed", 1, False)
-    log(random.choice(funny_messages))
+    log(f"{green_colour}{random.choice(funny_messages)}")
     log(phrases[language]['menu_prompt'])
     save_json()
 
     choice1()
 
+
 sys.stdout.write("\r")
 sys.stdout.flush()
-log("Done! Loading base data...")
+log(f"{clear_above_line_overwrite}Done! Loading base data...")
 
 desktop_install_path = False
 

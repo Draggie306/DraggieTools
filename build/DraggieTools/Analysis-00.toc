@@ -317,14 +317,17 @@
   ('importlib',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\__init__.py',
    'PYMODULE'),
+  ('importlib.resources',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\resources.py',
+   'PYMODULE'),
+  ('contextlib',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\contextlib.py',
+   'PYMODULE'),
   ('importlib._common',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\_common.py',
    'PYMODULE'),
   ('importlib._adapters',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\_adapters.py',
-   'PYMODULE'),
-  ('contextlib',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\contextlib.py',
    'PYMODULE'),
   ('importlib.abc',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\abc.py',
@@ -521,9 +524,6 @@
   ('pkg_resources._vendor.jaraco.text',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pkg_resources\\_vendor\\jaraco\\text\\__init__.py',
-   'PYMODULE'),
-  ('importlib.resources',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\resources.py',
    'PYMODULE'),
   ('pkg_resources._vendor.jaraco.functools',
    'd:\\Draggie '
@@ -1514,12 +1514,6 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pythoncom.py',
    'PYMODULE'),
-  ('_py_abc',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\_py_abc.py',
-   'PYMODULE'),
-  ('stringprep',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\stringprep.py',
-   'PYMODULE'),
   ('nturl2path',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\nturl2path.py',
    'PYMODULE'),
@@ -1532,6 +1526,12 @@
   ('http.cookiejar',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\http\\cookiejar.py',
    'PYMODULE'),
+  ('stringprep',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\stringprep.py',
+   'PYMODULE'),
+  ('_py_abc',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\_py_abc.py',
+   'PYMODULE'),
   ('tracemalloc',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\tracemalloc.py',
    'PYMODULE'),
@@ -1542,6 +1542,544 @@
   ('moviepy.version',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\moviepy\\version.py',
+   'PYMODULE'),
+  ('requests',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\__init__.py',
+   'PYMODULE'),
+  ('requests.status_codes',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\status_codes.py',
+   'PYMODULE'),
+  ('requests.structures',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\structures.py',
+   'PYMODULE'),
+  ('requests.compat',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\compat.py',
+   'PYMODULE'),
+  ('http.cookies',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\http\\cookies.py',
+   'PYMODULE'),
+  ('requests.models',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\models.py',
+   'PYMODULE'),
+  ('idna',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\__init__.py',
+   'PYMODULE'),
+  ('idna.intranges',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\intranges.py',
+   'PYMODULE'),
+  ('idna.core',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\core.py',
+   'PYMODULE'),
+  ('idna.uts46data',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\uts46data.py',
+   'PYMODULE'),
+  ('idna.idnadata',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\idnadata.py',
+   'PYMODULE'),
+  ('idna.package_data',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\package_data.py',
+   'PYMODULE'),
+  ('requests.hooks',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\hooks.py',
+   'PYMODULE'),
+  ('requests.cookies',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\cookies.py',
+   'PYMODULE'),
+  ('requests.auth',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\auth.py',
+   'PYMODULE'),
+  ('requests._internal_utils',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\_internal_utils.py',
+   'PYMODULE'),
+  ('urllib3.util',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\__init__.py',
+   'PYMODULE'),
+  ('urllib3.util.wait',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\wait.py',
+   'PYMODULE'),
+  ('urllib3.util.url',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\url.py',
+   'PYMODULE'),
+  ('urllib3.packages.six',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\six.py',
+   'PYMODULE'),
+  ('urllib3.packages',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\__init__.py',
+   'PYMODULE'),
+  ('urllib3.util.timeout',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\timeout.py',
+   'PYMODULE'),
+  ('urllib3.util.ssl_',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\ssl_.py',
+   'PYMODULE'),
+  ('urllib3.util.ssltransport',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\ssltransport.py',
+   'PYMODULE'),
+  ('urllib3.util.retry',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\retry.py',
+   'PYMODULE'),
+  ('urllib3.util.response',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\response.py',
+   'PYMODULE'),
+  ('urllib3.util.request',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\request.py',
+   'PYMODULE'),
+  ('brotli',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\brotli.py',
+   'PYMODULE'),
+  ('urllib3.util.connection',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\connection.py',
+   'PYMODULE'),
+  ('urllib3.contrib._appengine_environ',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\_appengine_environ.py',
+   'PYMODULE'),
+  ('urllib3.filepost',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\filepost.py',
+   'PYMODULE'),
+  ('urllib3.fields',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\fields.py',
+   'PYMODULE'),
+  ('requests.api',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\api.py',
+   'PYMODULE'),
+  ('requests.sessions',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\sessions.py',
+   'PYMODULE'),
+  ('requests.adapters',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\adapters.py',
+   'PYMODULE'),
+  ('urllib3.contrib.socks',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\socks.py',
+   'PYMODULE'),
+  ('urllib3.connectionpool',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\connectionpool.py',
+   'PYMODULE'),
+  ('urllib3.util.ssl_match_hostname',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\ssl_match_hostname.py',
+   'PYMODULE'),
+  ('ipaddress',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\ipaddress.py',
+   'PYMODULE'),
+  ('urllib3.util.queue',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\queue.py',
+   'PYMODULE'),
+  ('urllib3.util.proxy',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\proxy.py',
+   'PYMODULE'),
+  ('urllib3.request',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\request.py',
+   'PYMODULE'),
+  ('urllib3.connection',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\connection.py',
+   'PYMODULE'),
+  ('urllib3._version',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\_version.py',
+   'PYMODULE'),
+  ('urllib3._collections',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\_collections.py',
+   'PYMODULE'),
+  ('urllib3.response',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\response.py',
+   'PYMODULE'),
+  ('urllib3.poolmanager',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\poolmanager.py',
+   'PYMODULE'),
+  ('requests.__version__',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\__version__.py',
+   'PYMODULE'),
+  ('requests.utils',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\utils.py',
+   'PYMODULE'),
+  ('requests.certs',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\certs.py',
+   'PYMODULE'),
+  ('certifi',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\__init__.py',
+   'PYMODULE'),
+  ('certifi.core',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\core.py',
+   'PYMODULE'),
+  ('requests.packages',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\packages.py',
+   'PYMODULE'),
+  ('urllib3.exceptions',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\exceptions.py',
+   'PYMODULE'),
+  ('cryptography',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.bindings.openssl.binding',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\binding.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.bindings',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.exceptions',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\exceptions.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.bindings.openssl._conditional',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\_conditional.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.bindings.openssl',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.x448',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\x448.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.x448',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x448.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.x25519',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x25519.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.rsa',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\rsa.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives._asymmetric',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\_asymmetric.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.hashes',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\hashes.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.ed25519',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed25519.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.ed448',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed448.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.ec',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ec.py',
+   'PYMODULE'),
+  ('cryptography.hazmat._oid',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\_oid.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.dsa',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dsa.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.utils',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\utils.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.dh',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dh.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives._serialization',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\_serialization.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.serialization',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.serialization.ssh',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\ssh.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.ciphers.modes',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\modes.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives._cipheralgorithm',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\_cipheralgorithm.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.ciphers.algorithms',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\algorithms.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.ciphers',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.ciphers.base',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\base.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.serialization.base',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\base.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.types',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\types.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.padding',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\padding.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.constant_time',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\constant_time.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.x25519',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\x25519.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.utils',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\utils.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.rsa',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\rsa.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.asymmetric.padding',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\padding.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.poly1305',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\poly1305.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.hmac',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\hmac.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.hashes',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\hashes.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.ed448',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ed448.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.ed25519',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ed25519.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.ec',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ec.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.dsa',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\dsa.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.dh',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\dh.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.decode_asn1',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\decode_asn1.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.cmac',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\cmac.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.ciphers',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ciphers.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.backend',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\backend.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.serialization.pkcs12',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\pkcs12.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.kdf.scrypt',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\kdf\\scrypt.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.kdf',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\kdf\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl.aead',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\aead.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.primitives.ciphers.aead',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\aead.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends.openssl',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.hazmat.backends',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.x509',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\__init__.py',
+   'PYMODULE'),
+  ('cryptography.x509.oid',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\oid.py',
+   'PYMODULE'),
+  ('cryptography.x509.name',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\name.py',
+   'PYMODULE'),
+  ('cryptography.x509.general_name',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\general_name.py',
+   'PYMODULE'),
+  ('cryptography.x509.extensions',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\extensions.py',
+   'PYMODULE'),
+  ('cryptography.x509.base',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\base.py',
+   'PYMODULE'),
+  ('cryptography.x509.certificate_transparency',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\certificate_transparency.py',
+   'PYMODULE'),
+  ('cryptography.utils',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\utils.py',
+   'PYMODULE'),
+  ('cryptography.__about__',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\__about__.py',
+   'PYMODULE'),
+  ('urllib3.contrib.pyopenssl',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\pyopenssl.py',
+   'PYMODULE'),
+  ('urllib3.packages.backports.makefile',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\backports\\makefile.py',
+   'PYMODULE'),
+  ('urllib3.packages.backports',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\backports\\__init__.py',
+   'PYMODULE'),
+  ('urllib3.contrib',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\__init__.py',
+   'PYMODULE'),
+  ('charset_normalizer',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\__init__.py',
+   'PYMODULE'),
+  ('charset_normalizer.version',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\version.py',
+   'PYMODULE'),
+  ('charset_normalizer.utils',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\utils.py',
+   'PYMODULE'),
+  ('charset_normalizer.constant',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\constant.py',
+   'PYMODULE'),
+  ('charset_normalizer.assets',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\assets\\__init__.py',
+   'PYMODULE'),
+  ('charset_normalizer.models',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\models.py',
+   'PYMODULE'),
+  ('charset_normalizer.cd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\cd.py',
+   'PYMODULE'),
+  ('charset_normalizer.legacy',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\legacy.py',
+   'PYMODULE'),
+  ('charset_normalizer.api',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\api.py',
+   'PYMODULE'),
+  ('requests.exceptions',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\exceptions.py',
+   'PYMODULE'),
+  ('urllib3',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\__init__.py',
    'PYMODULE'),
   ('nest_asyncio',
    'd:\\Draggie '
@@ -2224,9 +2762,6 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets\\headers.py',
    'PYMODULE'),
-  ('ipaddress',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\ipaddress.py',
-   'PYMODULE'),
   ('websockets.extensions.permessage_deflate',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets\\extensions\\permessage_deflate.py',
@@ -2480,24 +3015,9 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\mutagen\\_util.py',
    'PYMODULE'),
-  ('certifi',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\__init__.py',
-   'PYMODULE'),
-  ('certifi.core',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\core.py',
-   'PYMODULE'),
-  ('brotli',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\brotli.py',
-   'PYMODULE'),
   ('yt_dlp.compat.compat_utils',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\yt_dlp\\compat\\compat_utils.py',
-   'PYMODULE'),
-  ('http.cookies',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\http\\cookies.py',
    'PYMODULE'),
   ('html.parser',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\html\\parser.py',
@@ -6879,270 +7399,6 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\hmac.py',
    'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.backend',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\backend.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization.pkcs12',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\pkcs12.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives._serialization',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\_serialization.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization.ssh',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\ssh.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.kdf.scrypt',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\kdf\\scrypt.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.constant_time',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\constant_time.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.kdf',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\kdf\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.types',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\types.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.padding',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\padding.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.x25519',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x25519.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.x448',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x448.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.rsa',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\rsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.utils',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\utils.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.ed25519',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed25519.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.ed448',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed448.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.ec',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ec.py',
-   'PYMODULE'),
-  ('cryptography.hazmat._oid',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\_oid.py',
-   'PYMODULE'),
-  ('cryptography.hazmat',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.dsa',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.dh',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dh.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives._asymmetric',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\_asymmetric.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization.base',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\base.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings.openssl.binding',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\binding.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings.openssl._conditional',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\_conditional.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings.openssl',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.x25519',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\x25519.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.utils',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\utils.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.x448',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\x448.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.rsa',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\rsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.poly1305',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\poly1305.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.hashes',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\hashes.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.ed25519',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ed25519.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.ed448',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ed448.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.ec',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ec.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.dsa',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\dsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.dh',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\dh.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.cmac',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\cmac.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.ciphers',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ciphers.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.aead',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\aead.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.aead',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\aead.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.x509',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.x509.oid',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\oid.py',
-   'PYMODULE'),
-  ('cryptography.x509.name',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\name.py',
-   'PYMODULE'),
-  ('cryptography.x509.general_name',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\general_name.py',
-   'PYMODULE'),
-  ('cryptography.x509.extensions',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\extensions.py',
-   'PYMODULE'),
-  ('cryptography.x509.base',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\base.py',
-   'PYMODULE'),
-  ('cryptography.x509.certificate_transparency',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\x509\\certificate_transparency.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.hmac',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\hmac.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.modes',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\modes.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives._cipheralgorithm',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\_cipheralgorithm.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.algorithms',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\algorithms.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.base',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\base.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.padding',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\padding.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.hashes',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\hashes.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\primitives\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.exceptions',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\exceptions.py',
-   'PYMODULE'),
-  ('cryptography.utils',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\utils.py',
-   'PYMODULE'),
-  ('cryptography',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.decode_asn1',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\decode_asn1.py',
-   'PYMODULE'),
-  ('cryptography.__about__',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\__about__.py',
-   'PYMODULE'),
   ('base64',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\base64.py',
    'PYMODULE'),
@@ -7246,280 +7502,24 @@
   ('_strptime',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\_strptime.py',
    'PYMODULE'),
-  ('requests',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\__init__.py',
-   'PYMODULE'),
-  ('requests.status_codes',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\status_codes.py',
-   'PYMODULE'),
-  ('requests.structures',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\structures.py',
-   'PYMODULE'),
-  ('requests.compat',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\compat.py',
-   'PYMODULE'),
-  ('requests.models',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\models.py',
-   'PYMODULE'),
-  ('idna',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\__init__.py',
-   'PYMODULE'),
-  ('idna.intranges',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\intranges.py',
-   'PYMODULE'),
-  ('idna.core',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\core.py',
-   'PYMODULE'),
-  ('idna.uts46data',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\uts46data.py',
-   'PYMODULE'),
-  ('idna.idnadata',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\idnadata.py',
-   'PYMODULE'),
-  ('idna.package_data',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\idna\\package_data.py',
-   'PYMODULE'),
-  ('requests.hooks',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\hooks.py',
-   'PYMODULE'),
-  ('requests.cookies',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\cookies.py',
-   'PYMODULE'),
-  ('requests.auth',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\auth.py',
-   'PYMODULE'),
-  ('requests._internal_utils',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\_internal_utils.py',
-   'PYMODULE'),
-  ('urllib3.util',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\__init__.py',
-   'PYMODULE'),
-  ('urllib3.util.wait',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\wait.py',
-   'PYMODULE'),
-  ('urllib3.util.url',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\url.py',
-   'PYMODULE'),
-  ('urllib3.packages.six',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\six.py',
-   'PYMODULE'),
-  ('urllib3.packages',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\__init__.py',
-   'PYMODULE'),
-  ('urllib3.util.timeout',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\timeout.py',
-   'PYMODULE'),
-  ('urllib3.util.ssl_',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\ssl_.py',
-   'PYMODULE'),
-  ('urllib3.util.ssltransport',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\ssltransport.py',
-   'PYMODULE'),
-  ('urllib3.util.retry',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\retry.py',
-   'PYMODULE'),
-  ('urllib3.util.response',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\response.py',
-   'PYMODULE'),
-  ('urllib3.util.request',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\request.py',
-   'PYMODULE'),
-  ('urllib3.util.connection',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\connection.py',
-   'PYMODULE'),
-  ('urllib3.contrib._appengine_environ',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\_appengine_environ.py',
-   'PYMODULE'),
-  ('urllib3.filepost',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\filepost.py',
-   'PYMODULE'),
-  ('urllib3.fields',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\fields.py',
-   'PYMODULE'),
-  ('requests.api',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\api.py',
-   'PYMODULE'),
-  ('requests.sessions',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\sessions.py',
-   'PYMODULE'),
-  ('requests.adapters',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\adapters.py',
-   'PYMODULE'),
-  ('urllib3.contrib.socks',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\socks.py',
-   'PYMODULE'),
-  ('urllib3.connectionpool',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\connectionpool.py',
-   'PYMODULE'),
-  ('urllib3.util.ssl_match_hostname',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\ssl_match_hostname.py',
-   'PYMODULE'),
-  ('urllib3.util.queue',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\queue.py',
-   'PYMODULE'),
-  ('urllib3.util.proxy',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\util\\proxy.py',
-   'PYMODULE'),
-  ('urllib3.request',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\request.py',
-   'PYMODULE'),
-  ('urllib3.connection',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\connection.py',
-   'PYMODULE'),
-  ('urllib3._version',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\_version.py',
-   'PYMODULE'),
-  ('urllib3._collections',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\_collections.py',
-   'PYMODULE'),
-  ('urllib3.response',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\response.py',
-   'PYMODULE'),
-  ('urllib3.poolmanager',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\poolmanager.py',
-   'PYMODULE'),
-  ('requests.__version__',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\__version__.py',
-   'PYMODULE'),
-  ('requests.utils',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\utils.py',
-   'PYMODULE'),
-  ('requests.certs',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\certs.py',
-   'PYMODULE'),
-  ('requests.packages',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\packages.py',
-   'PYMODULE'),
-  ('urllib3.exceptions',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\exceptions.py',
-   'PYMODULE'),
-  ('urllib3.contrib.pyopenssl',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\pyopenssl.py',
-   'PYMODULE'),
-  ('urllib3.packages.backports.makefile',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\backports\\makefile.py',
-   'PYMODULE'),
-  ('urllib3.packages.backports',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\packages\\backports\\__init__.py',
-   'PYMODULE'),
-  ('urllib3.contrib',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\contrib\\__init__.py',
-   'PYMODULE'),
-  ('charset_normalizer',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\__init__.py',
-   'PYMODULE'),
-  ('charset_normalizer.version',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\version.py',
-   'PYMODULE'),
-  ('charset_normalizer.utils',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\utils.py',
-   'PYMODULE'),
-  ('charset_normalizer.constant',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\constant.py',
-   'PYMODULE'),
-  ('charset_normalizer.assets',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\assets\\__init__.py',
-   'PYMODULE'),
-  ('charset_normalizer.models',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\models.py',
-   'PYMODULE'),
-  ('charset_normalizer.cd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\cd.py',
-   'PYMODULE'),
-  ('charset_normalizer.legacy',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\legacy.py',
-   'PYMODULE'),
-  ('charset_normalizer.api',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\api.py',
-   'PYMODULE'),
-  ('requests.exceptions',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\requests\\exceptions.py',
-   'PYMODULE'),
-  ('urllib3',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\urllib3\\__init__.py',
-   'PYMODULE'),
   ('subprocess',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\subprocess.py',
    'PYMODULE')],
- [('api-ms-win-crt-heap-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-heap-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-math-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-math-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-stdio-l1-1-0.dll',
+ [('api-ms-win-crt-stdio-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-stdio-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-runtime-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-runtime-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-math-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-math-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-heap-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-heap-l1-1-0.dll',
    'BINARY'),
   ('python310.dll',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\python310.dll',
@@ -7539,6 +7539,14 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-environment-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-crt-string-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-string-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-process-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-process-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-crt-filesystem-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-filesystem-l1-1-0.dll',
@@ -7551,41 +7559,49 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-convert-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-process-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-process-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-string-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-string-l1-1-0.dll',
-   'BINARY'),
   ('api-ms-win-crt-time-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-time-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-localization-l1-2-0.dll',
+  ('api-ms-win-core-heap-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-localization-l1-2-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-heap-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-file-l1-2-0.dll',
+  ('api-ms-win-core-debug-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l1-2-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-debug-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-processenvironment-l1-1-0.dll',
+  ('api-ms-win-core-synch-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processenvironment-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-2-0.dll',
    'BINARY'),
-  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
+  ('api-ms-win-core-timezone-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-timezone-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-profile-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-profile-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-synch-l1-2-0.dll',
+  ('api-ms-win-core-synch-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-2-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processthreads-l1-1-1.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-1.dll',
+   'BINARY'),
+  ('api-ms-win-core-util-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-util-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processenvironment-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processenvironment-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-console-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-console-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-errorhandling-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
@@ -7595,6 +7611,22 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-sysinfo-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-core-datetime-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-datetime-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-handle-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-handle-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-memory-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-memory-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-string-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-string-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-core-namedpipe-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-namedpipe-l1-1-0.dll',
@@ -7603,181 +7635,169 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l2-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-memory-l1-1-0.dll',
+  ('api-ms-win-core-file-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-memory-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-interlocked-l1-1-0.dll',
+  ('api-ms-win-core-localization-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-interlocked-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-processthreads-l1-1-1.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-1.dll',
-   'BINARY'),
-  ('api-ms-win-core-console-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-console-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-util-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-util-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-timezone-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-timezone-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-heap-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-heap-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-datetime-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-datetime-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-localization-l1-2-0.dll',
    'BINARY'),
   ('api-ms-win-core-processthreads-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-core-file-l1-2-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l1-2-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-interlocked-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-interlocked-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-core-libraryloader-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-libraryloader-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-debug-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-debug-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-file-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-synch-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-string-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-string-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-handle-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-handle-l1-1-0.dll',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_cbc.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cbc.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_keccak.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_keccak.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_aesni.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_aesni.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_ghash_clmul.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_ghash_clmul.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA224.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA224.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_ghash_portable.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_ghash_portable.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ecb.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ecb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_cast.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cast.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_des.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_des.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_MD4.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD4.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_MD5.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD5.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_blowfish.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_blowfish.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_cfb.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cfb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Math\\_modexp.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Math\\_modexp.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ocb.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ocb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_arc2.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_arc2.pyd',
-   'BINARY'),
-  ('Cryptodome\\Util\\_cpuid_c.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Util\\_cpuid_c.pyd',
-   'BINARY'),
-  ('Cryptodome\\Util\\_strxor.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Util\\_strxor.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_des3.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_des3.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_ec_ws.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ec_ws.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_ed25519.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ed25519.pyd',
-   'BINARY'),
-  ('pywin32_system32\\pywintypes310.dll',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pywin32_system32\\pywintypes310.dll',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_aes.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_aes.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_BLAKE2b.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2b.pyd',
-   'BINARY'),
-  ('pywin32_system32\\pythoncom310.dll',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pywin32_system32\\pythoncom310.dll',
    'BINARY'),
   ('Cryptodome\\Cipher\\_chacha20.pyd',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_chacha20.pyd',
    'BINARY'),
-  ('Cryptodome\\Cipher\\_ARC4.pyd',
+  ('Cryptodome\\Cipher\\_raw_ecb.pyd',
    'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_ARC4.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ecb.pyd',
    'BINARY'),
-  ('Cryptodome\\Hash\\_SHA512.pyd',
+  ('Cryptodome\\Cipher\\_raw_aesni.pyd',
    'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA512.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_aesni.pyd',
    'BINARY'),
-  ('Cryptodome\\Hash\\_BLAKE2s.pyd',
+  ('Cryptodome\\Hash\\_SHA384.pyd',
    'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2s.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA384.pyd',
+   'BINARY'),
+  ('pywin32_system32\\pythoncom310.dll',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pywin32_system32\\pythoncom310.dll',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA256.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA256.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA1.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA1.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_ctr.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ctr.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_MD2.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD2.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_MD5.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD5.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_cfb.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cfb.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_ed448.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ed448.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA224.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA224.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_aes.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_aes.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_keccak.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_keccak.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_des3.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_des3.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_ghash_portable.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_ghash_portable.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_arc2.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_arc2.pyd',
+   'BINARY'),
+  ('pywin32_system32\\pywintypes310.dll',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pywin32_system32\\pywintypes310.dll',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_blowfish.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_blowfish.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_x25519.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_x25519.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_des.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_des.pyd',
+   'BINARY'),
+  ('Cryptodome\\Protocol\\_scrypt.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Protocol\\_scrypt.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_cast.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cast.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_MD4.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD4.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_BLAKE2b.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2b.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_ec_ws.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ec_ws.pyd',
+   'BINARY'),
+  ('Cryptodome\\Util\\_cpuid_c.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Util\\_cpuid_c.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_ocb.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ocb.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_ghash_clmul.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_ghash_clmul.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_poly1305.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_poly1305.pyd',
+   'BINARY'),
+  ('Cryptodome\\Util\\_strxor.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Util\\_strxor.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_ed25519.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ed25519.pyd',
    'BINARY'),
   ('Cryptodome\\Cipher\\_pkcs1_decode.pyd',
    'd:\\Draggie '
@@ -7787,53 +7807,33 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_Salsa20.pyd',
    'BINARY'),
-  ('Cryptodome\\Hash\\_MD2.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD2.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA1.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA1.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_x25519.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_x25519.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_poly1305.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_poly1305.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA256.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA256.pyd',
-   'BINARY'),
   ('Cryptodome\\Cipher\\_raw_ofb.pyd',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ofb.pyd',
    'BINARY'),
-  ('Cryptodome\\Hash\\_SHA384.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA384.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ctr.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ctr.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_ed448.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ed448.pyd',
-   'BINARY'),
-  ('Cryptodome\\Protocol\\_scrypt.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Protocol\\_scrypt.pyd',
-   'BINARY'),
   ('Cryptodome\\Hash\\_RIPEMD160.pyd',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_RIPEMD160.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_ARC4.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_ARC4.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_cbc.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cbc.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_BLAKE2s.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2s.pyd',
+   'BINARY'),
+  ('Cryptodome\\Math\\_modexp.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Math\\_modexp.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA512.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA512.pyd',
    'BINARY'),
   ('_multiprocessing.pyd',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_multiprocessing.pyd',
@@ -7884,6 +7884,30 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\_win32sysloader.pyd',
    'EXTENSION'),
+  ('_brotli.cp310-win_amd64.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\_brotli.cp310-win_amd64.pyd',
+   'EXTENSION'),
+  ('_cffi_backend.cp310-win_amd64.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\_cffi_backend.cp310-win_amd64.pyd',
+   'EXTENSION'),
+  ('cryptography\\hazmat\\bindings\\_openssl.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\_openssl.pyd',
+   'EXTENSION'),
+  ('cryptography\\hazmat\\bindings\\_rust.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\_rust.pyd',
+   'EXTENSION'),
+  ('charset_normalizer\\md__mypyc.cp310-win_amd64.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\md__mypyc.cp310-win_amd64.pyd',
+   'EXTENSION'),
+  ('charset_normalizer\\md.cp310-win_amd64.pyd',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\md.cp310-win_amd64.pyd',
+   'EXTENSION'),
   ('_asyncio.pyd',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_asyncio.pyd',
    'EXTENSION'),
@@ -7901,10 +7925,6 @@
   ('_overlapped.pyd',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_overlapped.pyd',
    'EXTENSION'),
-  ('_cffi_backend.cp310-win_amd64.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\_cffi_backend.cp310-win_amd64.pyd',
-   'EXTENSION'),
   ('websockets\\speedups.cp310-win_amd64.pyd',
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets\\speedups.cp310-win_amd64.pyd',
@@ -7912,31 +7932,11 @@
   ('_sqlite3.pyd',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_sqlite3.pyd',
    'EXTENSION'),
-  ('_brotli.cp310-win_amd64.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\_brotli.cp310-win_amd64.pyd',
-   'EXTENSION'),
   ('_lzma.pyd',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_lzma.pyd',
    'EXTENSION'),
-  ('cryptography\\hazmat\\bindings\\_openssl.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\_openssl.pyd',
-   'EXTENSION'),
-  ('cryptography\\hazmat\\bindings\\_rust.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\_rust.pyd',
-   'EXTENSION'),
   ('_uuid.pyd',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_uuid.pyd',
-   'EXTENSION'),
-  ('charset_normalizer\\md__mypyc.cp310-win_amd64.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\md__mypyc.cp310-win_amd64.pyd',
-   'EXTENSION'),
-  ('charset_normalizer\\md.cp310-win_amd64.pyd',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\md.cp310-win_amd64.pyd',
    'EXTENSION'),
   ('VCRUNTIME140_1.dll',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\VCRUNTIME140_1.dll',
@@ -7945,11 +7945,11 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-utility-l1-1-0.dll',
    'BINARY'),
-  ('libcrypto-1_1.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libcrypto-1_1.dll',
-   'BINARY'),
   ('libssl-1_1.dll',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libssl-1_1.dll',
+   'BINARY'),
+  ('libcrypto-1_1.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libcrypto-1_1.dll',
    'BINARY'),
   ('libffi-7.dll',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libffi-7.dll',
@@ -7958,15 +7958,15 @@
    'd:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\mfc140u.dll',
    'BINARY'),
+  ('MSVCP140.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\MSVCP140.dll',
+   'BINARY'),
   ('python3.dll',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\python3.dll',
    'BINARY'),
   ('sqlite3.dll',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\sqlite3.dll',
-   'BINARY'),
-  ('MSVCP140.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\MSVCP140.dll',
    'BINARY'),
   ('api-ms-win-crt-multibyte-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
@@ -7978,65 +7978,57 @@
    'D:\\Draggie '
    'Programs\\Tools\\DraggieTools\\build\\DraggieTools\\base_library.zip',
    'DATA'),
-  ('certifi\\cacert.pem',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\cacert.pem',
-   'DATA'),
-  ('cryptography-39.0.1.dist-info\\INSTALLER',
+  ('cryptography-39.0.1.dist-info\\RECORD',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\INSTALLER',
-   'DATA'),
-  ('certifi\\py.typed',
-   'd:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\py.typed',
-   'DATA'),
-  ('cryptography-39.0.1.dist-info\\METADATA',
-   'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\METADATA',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\RECORD',
    'DATA'),
   ('cryptography-39.0.1.dist-info\\LICENSE',
    'd:\\draggie '
    'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\LICENSE',
    'DATA'),
-  ('cryptography-39.0.1.dist-info\\RECORD',
+  ('cryptography-39.0.1.dist-info\\INSTALLER',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\RECORD',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\INSTALLER',
    'DATA'),
-  ('cryptography-39.0.1.dist-info\\WHEEL',
+  ('cryptography-39.0.1.dist-info\\METADATA',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\WHEEL',
-   'DATA'),
-  ('cryptography-39.0.1.dist-info\\top_level.txt',
-   'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\top_level.txt',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\METADATA',
    'DATA'),
   ('cryptography-39.0.1.dist-info\\REQUESTED',
    'd:\\draggie '
    'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\REQUESTED',
    'DATA'),
-  ('cryptography-39.0.1.dist-info\\LICENSE.PSF',
-   'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\LICENSE.PSF',
-   'DATA'),
-  ('cryptography-39.0.1.dist-info\\LICENSE.APACHE',
-   'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\LICENSE.APACHE',
+  ('certifi\\cacert.pem',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\cacert.pem',
    'DATA'),
   ('cryptography-39.0.1.dist-info\\LICENSE.BSD',
    'd:\\draggie '
    'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\LICENSE.BSD',
    'DATA'),
-  ('websockets-11.0.2.dist-info\\METADATA',
+  ('cryptography-39.0.1.dist-info\\top_level.txt',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\METADATA',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\top_level.txt',
    'DATA'),
-  ('websockets-11.0.2.dist-info\\RECORD',
+  ('cryptography-39.0.1.dist-info\\LICENSE.APACHE',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\RECORD',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\LICENSE.APACHE',
    'DATA'),
-  ('websockets-11.0.2.dist-info\\LICENSE',
+  ('cryptography-39.0.1.dist-info\\LICENSE.PSF',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\LICENSE',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\LICENSE.PSF',
+   'DATA'),
+  ('cryptography-39.0.1.dist-info\\WHEEL',
+   'd:\\draggie '
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\cryptography-39.0.1.dist-info\\WHEEL',
+   'DATA'),
+  ('certifi\\py.typed',
+   'd:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\py.typed',
+   'DATA'),
+  ('websockets-11.0.2.dist-info\\top_level.txt',
+   'd:\\draggie '
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\top_level.txt',
    'DATA'),
   ('websockets-11.0.2.dist-info\\REQUESTED',
    'd:\\draggie '
@@ -8046,9 +8038,17 @@
    'd:\\draggie '
    'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\INSTALLER',
    'DATA'),
-  ('websockets-11.0.2.dist-info\\top_level.txt',
+  ('websockets-11.0.2.dist-info\\LICENSE',
    'd:\\draggie '
-   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\top_level.txt',
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\LICENSE',
+   'DATA'),
+  ('websockets-11.0.2.dist-info\\RECORD',
+   'd:\\draggie '
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\RECORD',
+   'DATA'),
+  ('websockets-11.0.2.dist-info\\METADATA',
+   'd:\\draggie '
+   'programs\\tools\\draggietools\\.venv\\lib\\site-packages\\websockets-11.0.2.dist-info\\METADATA',
    'DATA'),
   ('websockets-11.0.2.dist-info\\WHEEL',
    'd:\\draggie '

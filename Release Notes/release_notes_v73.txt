@@ -1,0 +1,12 @@
+- More colours available!
+    - Note: This is a test version and there is additional printing to the console. Debug level logs are printed to the console. This will be removed in the next version.
+- Improved speed of initialisation
+- All network events not initialised by external libraries now are more easily accessible with the log name "LilyNetworking"
+- Log functions can now be called with parameters "event" and "component"
+    - "event" overwrites text colours, with "success", "warning" or "error" having their respective colours
+    - "component" is the name of the component of the program that is logging the event, e.g. "lily" (networking) will be logged as "[LilyNetworking]"
+- Logs generated now have lower amounts of colour coding as a result from the CLI
+
+[BankFileExtractor]
+- Fixed a bug which resulted in errors due to the new logging system. 
+- Bank files are now extracted successfully.
