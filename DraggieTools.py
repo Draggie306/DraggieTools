@@ -1,7 +1,16 @@
 print("Loading modules...")
 
+global build, client
+
+import getpass
 import sys
 import time
+
+build = 75
+version = "0.8.13"
+build_date = 1688756556
+username = getpass.getuser()
+current_exe_path = sys.executable
 
 start_time = time.time()
 
@@ -12,6 +21,7 @@ green_colour = "\033[92m"
 red_colour = "\033[91m"
 yellow_colour = "\033[93m"
 blue_colour = "\033[94m"
+orange_colour = "\033[33m"
 cyan_colour = "\033[96m"
 magenta_colour = "\033[95m"
 reset_colour = "\033[0m"
@@ -100,9 +110,6 @@ import lzma
 print_loading_message("urllib.parse.urlsplit")
 from urllib.parse import urlsplit
 
-print_loading_message("getpass")
-import getpass
-
 print_loading_message("concurrent.futures")
 import concurrent.futures as cf
 
@@ -133,9 +140,15 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
-# if '_PYIBoot_SPLASH' in os.environ and importlib.util.find_spec("pyi_splash"):
-#    pyi_splash.update_text('UI Loaded ...')
-#    pyi_splash.close()
+# Codename Guide:
+"""
+DraggieTools: This file and binary exe
+saturnian: Unity game
+(Project)Lily: DraggieClient Downloader
+LilyNetworking: Fast, reliable, efficient, elegant, easy-to-use, (attractive) custom netcode
+
+
+"""
 
 end_time = time()
 
@@ -160,14 +173,6 @@ sys.stdout.write("\r")
 sys.stdout.flush()
 
 dev_mode = False
-
-global build, client
-
-build = 74
-version = "0.8.12"
-build_date = 1688678379
-username = getpass.getuser()
-current_exe_path = sys.executable
 
 system(f"title DraggieTools v{version} (build {build}) initialised in {round(elapsed_time, 7)}s")
 
@@ -446,17 +451,21 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
     # if output else logging.info("The above log was not shown to the console")
 
 
-async def load_presence():
-    discord_client_id = 1076873298501173269
+async def harry_loader():
+    """
+    Codename: Harry\n
+    Loads the Discord rich presence
+    """
+    harry_client_id = 1076873298501173269
     try:
         global client
-        client = Presence(discord_client_id)
+        client = Presence(harry_client_id)
 
         client.connect()
         status_update()
-        log("Loaded the presence.", 2, False)
+        log("[Harry/load] Presence loaded", 2, False)
     except Exception as e:
-        log(f"Unable to load the Discord rich presence: {e}", 4, True)
+        log(f"[Harry/load] Unable to load the Discord rich presence: {e}", 4, False)
 
 
 def status_update(details: Optional[str] = f"Selecting what to do... (v{build})",
@@ -479,9 +488,9 @@ def status_update(details: Optional[str] = f"Selecting what to do... (v{build})"
         if client:
             client.update(state=state, details=details, large_image=large_image, large_text=large_text, small_image=small_image, small_text=small_text, buttons=buttons, start=start)
         else:
-            return log("Not updating status due to Discord not being present.", 3, False)
+            return log("[Harry/update] Not updating status due to Discord not being present.", 3, False)
     except Exception as e:
-        return log(f"Unable to update the Discord rich presence: {e}", 4, True)
+        return log(f"[Harry/update] Unable to update the Discord rich presence: {e}", 4, True)
 
 
 global stop_event, thread
@@ -1948,7 +1957,7 @@ def upload_log_file(file_path):
         'file': (new_filename, open(file_path, 'rb'))
     }
 
-    response = post(url, files=files)
+    response = lily_post(url, files=files)
     if response.status_code != 200:
         log(f"{red_colour}Failed to upload the logfile {file_path}. Status code: {response.status_code}", 2)
     else:
@@ -2672,7 +2681,7 @@ def choice1():
                 discord_parse()
             case "12":
                 log("Reloading Discord RPC...")
-                asyncio.run(load_presence())
+                asyncio.run(harry_loader())
             case "13":
                 status_update(details="Installing AutoUpdater")
                 draggieclient()
@@ -2781,7 +2790,7 @@ log("\nLoading Discord RPC...")
 
 def start_discord_event_loop(loop):
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(load_presence())
+    loop.run_until_complete(harry_loader())
 
 
 loop = asyncio.new_event_loop()

@@ -1,0 +1,1 @@
+- Fixed log uploading by using Lily networking
