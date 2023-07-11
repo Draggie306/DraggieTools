@@ -39,7 +39,7 @@ Section "DraggieTools (required)"
   ; Put file there (you can add more File lines too)
   ; File "D:\Draggie Programs\Tools\DraggieTools\dist\DraggieTools.exe"
   
-  inetc::get "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/dist/DraggieTools.exe" "$EXEDIR\DraggieTools.exe" \ /END
+  inetc::get "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/dist/DraggieTools.exe" "$INSTDIR\DraggieTools.exe" \ /END
   Pop $0
  
   ; Wildcards are allowed:
@@ -63,7 +63,15 @@ Section "DraggieTools (required)"
   
 SectionEnd
 
+Var ClientSelected
+Var StartMenuShortcutsSelected
+
 Section /o "Client"
+  SectionIn RO
+
+  ; Check if the client section is selected by default
+  StrCmp $ClientSelected "" 0 +2
+  SetShellVarContext all
   SetOutPath $INSTDIR
   
   inetc::get "https://autoupdateclient.draggie.games/AutoUpdate40.exe" "DraggieClient.exe" /END
@@ -82,8 +90,12 @@ Section /o "Client"
 SectionEnd
 
 
-; Optional section (can be disabled by the user)
 Section /o "Start Menu Shortcuts (optional)"
+  SectionIn RO
+
+  ; Check if the start menu shortcuts section is selected by default
+  StrCmp $StartMenuShortcutsSelected "" 0 +2
+  SetShellVarContext all
   CreateDirectory "$SMPROGRAMS\DraggieTools"
   CreateShortcut "$SMPROGRAMS\DraggieTools\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortcut "$SMPROGRAMS\DraggieTools\DraggieTools.lnk" "$INSTDIR\DraggieTools.exe" "" "$INSTDIR\DraggieTools.exe" 0
@@ -139,3 +151,70 @@ Section "Uninstall" /o
 
 
 SectionEnd
+
+Function .onInit
+  ; Set the ClientSelected and StartMenuShortcutsSelected variables to 1 by default
+  StrCpy $ClientSelected 1
+  StrCpy $StartMenuShortcutsSelected 1
+FunctionEnd
+
+Function ToggleClient
+  ; Toggle the ClientSelected variable based on the checkbox state
+  ${If} $ClientSelected == 1
+    StrCpy $ClientSelected ""
+  ${Else}
+    StrCpy $ClientSelected 1
+  ${EndIf}
+FunctionEnd
+
+Function ToggleStartMenuShortcuts
+  ; Toggle the StartMenuShortcutsSelected variable based on the checkbox state
+ ```nsis
+  ; Toggle the StartMenuShortcutsSelected variable based on the checkbox state
+  ${If} $StartMenuShortcutsSelected == 1
+    StrCpy $StartMenuShortcutsSelected ""
+  ${Else}
+    StrCpy $StartMenuShortcutsSelected 1
+  ${EndIf}
+FunctionEnd
+
+!include MUI2.nsh
+!include LogicLib.nsh
+
+Function .onGuiInit
+  ; Set the checkbox state based on the ClientSelected and StartMenuShortcutsSelected variables
+  ${If} $ClientSelected == 1
+    ${NSD_SetState} $ClientCheckbox 1
+  ${Else}
+    ${NSD_SetState} $ClientCheckbox 0
+  ${EndIf}
+
+  ${If} $StartMenuShortcutsSelected == 1
+    ${NSD_SetState} $StartMenuShortcutsCheckbox 1
+  ${Else}
+    ${NSD_SetState} $StartMenuShortcutsCheckbox 0
+  ${EndIf}
+FunctionEnd
+
+!define MUI_CUSTOMFUNCTION_GUIINIT ToggleClientGuiInit
+!define MUI_CUSTOMFUNCTION_SHOW ToggleClientGuiInit
+
+Function ToggleClientGuiInit
+  ; Create the checkboxes and set their states
+  nsDialogs::Create 1018
+  Pop $0
+
+  ${If} $ClientSelected == 1
+    nsDialogs::CheckBox $0 1019 10% 12u 100% 12u "Install Client"
+  ${Else}
+    nsDialogs::CheckBox $0 1019 10% 12u 100% 12u "Install Client" /DISABLED
+  ${EndIf}
+
+  ${If} $StartMenuShortcutsSelected == 1
+    nsDialogs::CheckBox $0 1020 10% 32u 100% 12u "Start Menu Shortcuts"
+  ${Else}
+    nsDialogs::CheckBox $0 1020 10% 32u 100% 12u "Start Menu Shortcuts" /DISABLED
+  ${EndIf}
+
+  nsDialogs::Show
+FunctionEnd

@@ -6,11 +6,13 @@ import getpass
 import sys
 import time
 
-build = 75
-version = "0.8.13"
-build_date = 1688756556
+build = 76
+version = "0.8.14"
+build_date = 1689097015
 username = getpass.getuser()
 current_exe_path = sys.executable
+
+dev_mode = False
 
 start_time = time.time()
 
@@ -171,8 +173,6 @@ elif elapsed_time < very_slow_time:
 
 sys.stdout.write("\r")
 sys.stdout.flush()
-
-dev_mode = False
 
 system(f"title DraggieTools v{version} (build {build}) initialised in {round(elapsed_time, 7)}s")
 
@@ -1715,19 +1715,7 @@ def autobrawlextractor():
 
 
 def ProjectSaturnian():
-    saturnian_environ_dir = os.environ['USERPROFILE']
-    saturnian_appdir = f"{saturnian_environ_dir}\\AppData\\Roaming\\Draggie\\Saturnian"
-
-    """clear_cache = input("Would you like to clear your cached token? (y/n)\n\n>>> ")
-    if clear_cache == "y":
-        if not os.path.isdir(saturnian_appdir):
-            os.makedirs(saturnian_appdir, exist_ok=True)
-            log(f"[write_token] Created directory: {saturnian_appdir}")
-        if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
-            os.remove(f"{saturnian_appdir}\\token.bin")
-            log(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
-        else:
-            log(f"[write_token] File not found: {saturnian_appdir}\\token.bin")"""
+    saturnian_appdir = f"{Draggie_AppData_Directory}\\Saturnian"
 
     cached_token = None
     username = getpass.getuser()
@@ -1736,7 +1724,15 @@ def ProjectSaturnian():
     hash_key = hashlib.sha256(username.encode()).digest()
     # create a Fernet key from the hash
     fernet_key = Fernet(base64.urlsafe_b64encode(hash_key))
-    log(f"fernet_key: {fernet_key}")
+    log(f"fernet_key: {fernet_key}", output=False)
+
+    if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
+        log("[saturnian] No data file found. Creating one now...", log_level=3)
+        os.makedirs(saturnian_appdir, exist_ok=True)
+        with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
+            first_info = {"current_version": None, "tier": None, "install_dir": saturnian_appdir}
+            json.dump(first_info, f)
+            log(f"{green_colour}[saturnian] Gamedata file created successfully.")
 
     def encrypt_token(token):
         log("[encrypt_token] encrypting token")
@@ -1756,7 +1752,7 @@ def ProjectSaturnian():
         """
         Gets the encrypted token, if it exists.
         """
-        log("[read_tokenfile_contents] Reading token file contents...")
+        log("[read_tokenfile_contents] Reading token file contents...", output=False, log_level=1)
         if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
             with open(f"{saturnian_appdir}\\token.bin", "r") as f:
                 cached_token = f.read()
@@ -1777,36 +1773,80 @@ def ProjectSaturnian():
             f.write(encrypted_token.encode())
             log(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
 
+    def read_datafile_attribute(attribute):
+        """
+        Reads the datafile and returns the value of the attribute.
+        """
+        try:
+            with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
+                saturnian_data = json.load(f)
+                log(f"[saturnian/datafile] Read datafile: {saturnian_data}")
+            return saturnian_data[attribute]
+        except Exception as e:
+            if attribute == "install_dir":
+                log(f"[saturnian/datafile] Error reading datafile for attribute {attribute}, returning default value: {saturnian_appdir}", log_level=3)
+                return saturnian_appdir
+            return log(f"[saturnian/datafile] Error reading Saturnian data file: {e}", log_level=4)
+
+    def write_datafile_attribute(attribute, value):
+        """
+        Writes the value of the attribute to the datafile.
+        """
+        try:
+            with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
+                saturnian_data = json.load(f)
+                log(f"[saturnian/datafile] Read datafile: {saturnian_data}", log_level=1)
+            saturnian_data[attribute] = value
+            with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
+                json.dump(saturnian_data, f, indent=4)
+                log(f"[saturnian/datafile] Wrote attribute {attribute} to datafile: {value}")
+        except Exception as e:
+            log(f"[saturnian/datafile] Error writing attribute {attribute} to datafile: {e}", log_level=4)
+
     cached_token = read_tokenfile_contents()
 
     if not cached_token:
-        log("[ProjectSaturnian] You must log in to download builds from the gameserver, and to validate your license.")
-        log("[ProjectSaturnian] If you do not have an account, you can create one at https://alpha.draggiegames.com/register")
-        log("Please enter your login credentials below.")
-        email = input("\nEmail: ")
-        password = getpass.getpass("\nPassword: ")
-        start_anim_loading(text="Logging in...")
+        log(f"\n\n[ProjectSaturnian] {red_colour}You must log in to download builds from the gameserver, and to validate your license.{reset_colour}", log_level=3)
+        log(f"[ProjectSaturnian] {magenta_colour}If you do not have an account, you can create one at:{cyan_colour} https://alpha.draggiegames.com/register{reset_colour}", log_level=3)
+        log(f"\n\n{yellow_colour}Please enter your Draggie Games login credentials below.{reset_colour}", log_level=3)
+        email = input("\nDraggie Games email: ")
+        password = getpass.getpass("\nPassword (will not be shown): ")
+        log(f"{blue_colour}Logging in...")
         login = lily_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
-        stop_anim_loading()
+
         if login.status_code == 200:
-            log(f"{green_colour}Login successful.")
+            log(f"\n\n{green_colour}Login successful.\n")
             server_token = login.json()["auth_token"]
-            log(f"Server returned token: {server_token}")
+            log(f"Server returned token: {server_token}", log_level=1)
             newly_encrypted_token = encrypt_token(server_token)
-            log(f"newly_encrypted_token: {newly_encrypted_token}")
+            log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1)
             write_token(newly_encrypted_token)
-            log("Token written to file.")
+            log("Token written to file.", log_level=1)
+            preferred_install_location = input("\n\nWould you like to install the required files to the default location [1] or a custom location [2]?\n\n>>> ")
+            if preferred_install_location == "1":
+                write_datafile_attribute("install_dir", saturnian_appdir)
+            elif preferred_install_location == "2":
+                custom_install_location = input("Please enter the full path to the directory you would like to install the game to.\n\n>>> ")
+                if not os.path.isdir(custom_install_location):
+                    os.makedirs(custom_install_location, exist_ok=True)
+                    log(f"Created directory: {custom_install_location}")
+                write_datafile_attribute("install_dir", custom_install_location)
+
         else:
-            log("Login failed. Please try again.", log_level=4)
+            log("\n\nLogin failed! Please try again.", log_level=4)
             ProjectSaturnian()
 
     try:
+        cached_token = read_tokenfile_contents()
+        if not cached_token:
+            log("No cached token found. Please try again.", log_level=4)
+            ProjectSaturnian()
         encrypted_token = cached_token
-        log(f"encrypted_token: {encrypted_token}", output=False)
+        log(f"encrypted_token: {encrypted_token}", output=True)
         decrypted_token = decrypt_token(encrypted_token)
-        log(f"token: {decrypted_token}", output=False)
+        log(f"token: {decrypted_token}", output=True)
         token = decrypted_token.decode()
-        log(f"Final read token: {decrypted_token}", output=False)
+        log(f"Final read token: {decrypted_token}", output=True)
     except Exception:
         clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
         match clear_token:
@@ -1871,21 +1911,28 @@ def ProjectSaturnian():
     server_json_response = get_saturnian_info(known_token)
     saturnian_current_version = server_json_response["currentVersion"]
 
-    if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
-        log("[saturnian] No data file found. Creating one now...", log_level=3)
-        with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
-            first_info = {"current_version": None, "tier": None}
-            json.dump(first_info, f)
-            log(f"{green_colour}[saturnian] Gamedata file created successfully.")
-
     # Read the json file
     try:
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
             saturnian_data = json.load(f)
             log(f"{green_colour}[saturnian] Successfully read datafile.")
-            log(f"Datafile contents: {saturnian_data}", output=False)
+            log(f"Datafile contents: {saturnian_data}", output=False, log_level=1)
     except Exception as e:
         return log(f"[saturnian/errors] Error reading Saturnian data file: {e}", log_level=4)
+
+    def promote_project_lily():
+        """
+        Prompts the user to install the AutoUpdate project codename Lily.
+        """
+        log("\nMake sure to check out the Discord server and assign roles for updates: https://discord.gg/GfetCXH")
+        client = input(f"Note: {orange_colour}Saturnian{reset_colour} is still in development, so there may be bugs.\n\n{orange_colour}NOTICE: To auto update the project, make sure you have {magenta_colour}AutoUpdate{orange_colour} installed.{reset_colour}\nWould you like to open the {magenta_colour}AutoUpdate{reset_colour} menu now? Y/N\n\n>>> ")
+        match client.lower():
+            case "y":
+                draggieclient()
+            case "n":
+                return log("Okay. Exiting...")
+            case _:
+                ProjectSaturnian()
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
 
@@ -1894,77 +1941,125 @@ def ProjectSaturnian():
         log("[saturnian/buildDL] Grabbing authenticated build...")
         log(f"[saturnian/buildDL] Grabbing authenticated build from {download_url}", output=False)
 
-        tqdm_download(download_url, f"{saturnian_appdir}\\Saturnian.bin", overwrite=True)
+        preferred_install_location = read_datafile_attribute("install_dir")
+        tqdm_download(download_url, f"{preferred_install_location}\\Saturnian.bin", overwrite=True)
 
         log(f"{green_colour}[saturnian/buildDL] Download complete. Decompressing...")
         start_anim_loading("Decompressing...")
-        with zipfile.ZipFile(f"{saturnian_appdir}\\Saturnian.bin", "r") as zip_ref:
-            zip_ref.extractall(f"{saturnian_appdir}\\SaturnianGame")
+        with zipfile.ZipFile(f"{preferred_install_location}\\Saturnian.bin", "r") as zip_ref:
+            zip_ref.extractall(f"{preferred_install_location}\\SaturnianGame")
         stop_anim_loading()
         sys.stdout.flush()
         sys.stdout.write("\r") # TODO: make it clear the line above
         sys.stdout.flush()
         log(f"\n{green_colour}[saturnian/buildDL] Extraction complete.")
+        write_datafile_attribute("current_version", saturnian_current_version)
 
     if saturnian_current_version != saturnian_data["current_version"]:
-        log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Would you like to update? {reset_colour}")
-        choice = input("y/n:\n>>> ")
+        log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Would you like to update? {reset_colour} (y/n)")
+        choice = input("\n\n>>> ")
         if choice.lower() == "y":
             log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
-            # start_anim_loading("Downloading...")
             download_saturnian_build()
-            # stop_anim_loading()
             log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
-            saturnian_data["current_version"] = saturnian_current_version
-            saturnian_data["tier"] = server_json_response["type"]
-            with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
-                json.dump(saturnian_data, f)
-                log(f"{green_colour}[saturnian/datafile] Data file updated")
-    if not os.path.isfile(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"):
-        log("[saturnian/Updater] The binary file is missing. Downloading build...", log_level=3)
-        download_saturnian_build()
-    log(f"\n{green_colour}[saturnian/Updater] Update completed!")
+            write_datafile_attribute("current_version", saturnian_current_version)
+            write_datafile_attribute("tier", server_json_response["type"])
+            promote_project_lily()
 
+    preferred_install_location = saturnian_data["install_dir"]
+    if not os.path.isfile(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"):
+        log("[saturnian/Updater] There is no build in the SaturnianGame folder. This might be because you deleted it, or the download failed. Would you like to download it now? (y/n)")
+        choice = input("\n\n>>> ")
+        if choice.lower() == "y":
+            try:
+                download_saturnian_build()
+                log(f"\n{green_colour}[saturnian/Updater] Update completed!")
+            except Exception as e:
+                return log(f"[saturnian/errors] Error downloading Saturnian build: {e}", log_level=4, event="error")
 
-    to_open = input("\n\nWould you like to open the latest build now?\n[1] Yes (Launches in fullscreen window)\n[2] No\n[3] Open containing folder in Explorer\n\n>>> ")
+    to_open = input(f"\n\n{cyan_colour}Manage your installation of my project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Change installation directory\n\n>>> ")
     match to_open.lower():
+        case "0":
+            return choice1()
         case "1":
-            Popen(f"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe")
+            preferred_install_location = read_datafile_attribute("install_dir")
+            Popen(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe")
+            sleep(4)
         case "2":
-            return log("Okay. Exiting...")
+            log("[saturnian/Updater] Uninstalling Saturnian...")
+            try:
+                for file in os.listdir(f"{preferred_install_location}\\SaturnianGame"):
+                    os.remove(f"{preferred_install_location}\\SaturnianGame\\{file}")
+                    log(f"{green_colour}[saturnian/Updater] Removed {file}", log_level=2, output=True)
+                try:
+                    os.rmdir(f"{preferred_install_location}\\SaturnianGame")
+                    os.remove(f"{preferred_install_location}\\Saturnian.bin")
+                    log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame folder", log_level=2, output=True)
+                except Exception as e:
+                    return log(f"[saturnian/errors] Error removing SaturnianGame folder: {e}", log_level=4, event="error")
+                log(f"{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
+            except Exception as e:
+                return log(f"[saturnian/errors] Error uninstalling Saturnian: {e}", log_level=4, event="error")
         case "3":
-            Popen(f'explorer /select,"{saturnian_appdir}\\SaturnianGame\\Saturnian.exe"')
+            preferred_install_location = read_datafile_attribute("install_dir")
+            Popen(f'explorer /select,"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"')
+        case "4":
+            log("[saturnian/Updater] Changing installation directory...")
+            start_time = time()
+            try:
+                new_saturnian_install_dir = input("Enter the new installation directory:\n\n>>> ")
+                if not os.path.isdir(new_saturnian_install_dir):
+                    os.makedirs(new_saturnian_install_dir, exist_ok=True)
+                # Cut/move the files over
+                for file in os.listdir(f"{preferred_install_location}\\SaturnianGame"):
+                    shutil.move(f"{preferred_install_location}\\SaturnianGame\\{file}", f"{new_saturnian_install_dir}\\SaturnianGame\\{file}")
+                    log(f"{green_colour}[saturnian/Updater] Moved {file} to {new_saturnian_install_dir}\\SaturnianGame\\{file}", log_level=2, output=True)
+                # Write the new data file with the new directory
+                write_datafile_attribute("install_dir", new_saturnian_install_dir)
+                end_time = time()
+                log(f"{green_colour}[saturnian/Updater] Installation directory changed successfully. Took {end_time - start_time} seconds.")
+                sleep(2)
+            except Exception as e:
+                return log(f"[saturnian/errors] Error changing installation directory: {e}\n{traceback.format_exc()}", log_level=4, event="error")
+        case _:
+            log(f"{red_colour}[saturnian/Updater] Invalid option. Please try again.")
+            sleep(1)
+            ProjectSaturnian()
 
-    log("\nMake sure to check out the Discord server and assign roles for updates: https://discord.gg/GfetCXH")
-    client = input("Note: Saturnian is still in development, so there may be bugs.\n\nTo auto update the project, make sure you have the AutoUpdate installed.\nWould you like to open the Client menu now? Y/N\n\n>>> ")
-    match client.lower():
-        case "y":
-            draggieclient()
-        case "n":
-            return log("Okay. Exiting...")
-    sleep(2)
+    ProjectSaturnian()
 
 
-def upload_log_file(file_path):
+def upload_log_file(file_path, delete_after_upload: Optional[bool] = False):
     url = "https://logs.draggie.games/tools"
 
     filename = path.basename(file_path)
     username = getpass.getuser()
     new_filename = f"[{username}]-{filename}"
 
+    with open(file_path, 'rb') as f:
+        contents = f.read()
+
     files = {
-        'file': (new_filename, open(file_path, 'rb'))
+        'file': (new_filename, contents),
     }
 
     response = lily_post(url, files=files)
-    if response.status_code != 200:
+    if response.status_code == 429:
+        log(f"{red_colour}Hit ratelimit while uploading the logfile {file_path}. Status code: {response.status_code}", 2)
+        log(f"{red_colour}Waiting 20 seconds before trying again...", 2)
+        sleep(20)
+        upload_log_file(file_path)
+    elif response.status_code != 200:
         log(f"{red_colour}Failed to upload the logfile {file_path}. Status code: {response.status_code}", 2)
     else:
         log(f"{green_colour}Uploaded the logfile {file_path}. Status code: {response.status_code}", 2)
+        if delete_after_upload:
+            os.remove(file_path)
+            log(f"{green_colour}Deleted the logfile {file_path}", 2)
 
 
-def upload_logs(most_recent: Optional[int] = None):
+def upload_logs(most_recent: Optional[int] = None, no_confirm: Optional[bool] = True):
     logging_dir = f"{DraggieTools_AppData_Directory}\\Logs"
     files = listdir(logging_dir)
     files = [path.join(logging_dir, file) for file in files]
@@ -1978,6 +2073,16 @@ def upload_logs(most_recent: Optional[int] = None):
 
     log(f"Files to upload: {files}", 1, False)
 
+    if len(files) > 20:
+        log(f"{yellow_colour}[WARNING] That's a lot of files to upload, you will probably hit the rate limit. Please confirm that you want to upload {len(files)} files.", 2)
+        if no_confirm:
+            confirm = input(f"{yellow_colour}Do you want to continue? (y/n)\n\n>>> ")
+            if confirm.lower() == "y":
+                pass
+            else:
+                return log(f"{yellow_colour}Cancelled upload.", 2)
+        else:
+            log(f"{yellow_colour}Continuing upload.", 2)
     # upload each file
     for file in files:
         upload_log_file(file)
@@ -2420,7 +2525,7 @@ def draggieclient():
                 tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate44.exe", target_path, return_exceptions=True)
                 os.startfile(target_path)
                 save_json()
-                log(f"{green_colour}Your system now has DraggieClient installed! Running in the background, it will keep all of your files by me up to date! Enjoy.")
+                log(f"{green_colour}Your system now has DraggieClient installed! Running in the background, it will automatically keep all of your files by me up to date! Enjoy.")
             except PermissionError as e:
                 log(f"[ProjectLily] {e}\nThe client is likely running! We don't need to install it again.", log_level=3)
             except Exception as e:

@@ -1,0 +1,3 @@
+- Fixed first time run issue with Saturnian (option 7) logic.
+- Added uninstall and move installation directory to the Saturnian menu.
+- Improved logic throughout the script.
