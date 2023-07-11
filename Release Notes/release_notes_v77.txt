@@ -1,0 +1,1 @@
+- Fixed moving installation directories in rare case of if the previous installation directory was empty

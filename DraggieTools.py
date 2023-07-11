@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 76
-version = "0.8.14"
-build_date = 1689097015
+build = 77
+version = "0.8.15"
+build_date = 1689097934
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -2012,9 +2012,12 @@ def ProjectSaturnian():
                 if not os.path.isdir(new_saturnian_install_dir):
                     os.makedirs(new_saturnian_install_dir, exist_ok=True)
                 # Cut/move the files over
-                for file in os.listdir(f"{preferred_install_location}\\SaturnianGame"):
-                    shutil.move(f"{preferred_install_location}\\SaturnianGame\\{file}", f"{new_saturnian_install_dir}\\SaturnianGame\\{file}")
-                    log(f"{green_colour}[saturnian/Updater] Moved {file} to {new_saturnian_install_dir}\\SaturnianGame\\{file}", log_level=2, output=True)
+                try:
+                    for file in os.listdir(f"{preferred_install_location}\\SaturnianGame"):
+                        shutil.move(f"{preferred_install_location}\\SaturnianGame\\{file}", f"{new_saturnian_install_dir}\\SaturnianGame\\{file}")
+                        log(f"{green_colour}[saturnian/Updater] Moved {file} to {new_saturnian_install_dir}\\SaturnianGame\\{file}", log_level=2, output=True)
+                except Exception as e:
+                    log(f"[saturnian/errors] Error moving files, there may be no files to move: {e}", log_level=3)
                 # Write the new data file with the new directory
                 write_datafile_attribute("install_dir", new_saturnian_install_dir)
                 end_time = time()
