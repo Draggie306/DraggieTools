@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 77
-version = "0.8.15"
-build_date = 1689097934
+build = 78
+version = "0.8.16"
+build_date = 1690311422
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -147,8 +147,8 @@ import requests
 DraggieTools: This file and binary exe
 saturnian: Unity game
 (Project)Lily: DraggieClient Downloader
-LilyNetworking: Fast, reliable, efficient, elegant, easy-to-use, (attractive) custom netcode
-
+dashNetworking: Fast, reliable, efficient, elegant, easy-to-use, custom netcode
+Harry: Discord RPC
 
 """
 
@@ -403,8 +403,8 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
     """
 
     if component is not None:
-        if component.lower() == "lily":
-            text = f"{lily_colour}[LilyNetworking]{reset_colour} {text}"
+        if component.lower() == "dash":
+            text = f"{lily_colour}[dashNetworking]{reset_colour} {text}"
         elif component.lower() == "main":
             text = f"[Main] {text}"
         elif component.lower() == "updater":
@@ -446,7 +446,8 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
             print(f"{red_colour}{text}{reset_colour}")
     else:
         if log_level == 1:
-            print(f"{text}{cyan_colour} [debug] {reset_colour}")
+            # print(f"{text}{cyan_colour} [debug] {reset_colour}")
+            pass
 
     # if output else logging.info("The above log was not shown to the console")
 
@@ -536,7 +537,7 @@ def replace_line(file_name, line_num, text):
 
 """
 try:
-    x = lily_get("https://client.draggie.games")
+    x = dash_get("https://client.draggie.games")
 except:
     pass
 """
@@ -554,21 +555,21 @@ def refresh2():
 
 
 def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False, return_exceptions: Optional[bool] = False):
-    # Networking component codename is Lily
+    # Networking component codename is dash
     def download_file(download_url, save_dir):
-        response = lily_get(download_url, stream=True)
+        response = dash_get(download_url, stream=True)
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         written = 0
         desc = download_url.split("/")[-1]
-        log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False, component="Lily")
+        log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False, component="dash")
         print(blue_colour)
         with open(save_dir, "wb") as f:
             for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc):
                 written = written + len(data)
                 f.write(data)
         print(reset_colour)
-        log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False, component="Lily")
+        log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False, component="dash")
 
     if return_exceptions:
         download_file(download_url, save_dir)
@@ -576,31 +577,31 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
         try:
             download_file(download_url, save_dir)
         except KeyboardInterrupt:
-            log("Keyboard interrupt: going back to first choice.", 3, False, component="Lily")
+            log("Keyboard interrupt: going back to first choice.", 3, False, component="dash")
             return choice1()
         except Exception as e:
-            log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4, component="Lily")
+            log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4, component="dash")
 
 
-def lily_get(*args, **kwargs):
+def dash_get(*args, **kwargs):
     """
     Drop in replacement for requests.get that uses the logging system.
     """
-    # Networking component codename is Lily
-    log(f"Getting data from: ({args[0]})", 1, False, component="Lily")
+    # Networking component codename is dash
+    log(f"Getting data from: ({args[0]})", 1, False, component="dash")
     x = requests.get(*args, **kwargs)
-    log(f"GET request returned with status code {x.status_code}. ({args[0]})", 1, False, component="Lily")
+    log(f"GET request returned with status code {x.status_code}. ({args[0]})", 1, False, component="dash")
     return x
 
 
-def lily_post(*args, **kwargs):
+def dash_post(*args, **kwargs):
     """
     Drop in replacement for requests.post that uses the logging system.
     """
-    # Networking component codename is Lily
-    log(f"POSTing data to: ({args[0]})", 1, False, component="Lily")
+    # Networking component codename is dash
+    log(f"POSTing data to: ({args[0]})", 1, False, component="dash")
     x = requests.post(*args, **kwargs)
-    log(f"POSTing data returned with status code {x.status_code}. ({args[0]})", 1, False, component="Lily")
+    log(f"POSTing data returned with status code {x.status_code}. ({args[0]})", 1, False, component="dash")
     return x
 
 
@@ -609,7 +610,7 @@ def download_chunk(url, start, end, save_dir, pbar):
     Downloads a chunk of a file.
     """
     headers = {'Range': f'bytes={start}-{end}'}
-    response = lily_get(url, headers=headers, stream=True)
+    response = dash_get(url, headers=headers, stream=True)
     with open(f"{save_dir}.part{start}", "wb") as f:
         for data in response.iter_content(1024):
             f.write(data)
@@ -617,7 +618,7 @@ def download_chunk(url, start, end, save_dir, pbar):
 
 
 def tqdm_download2(download_url, save_dir, desc=None, num_threads: Optional[int] = 4):
-    response = lily_get(download_url, stream=True)
+    response = dash_get(download_url, stream=True)
     total_size = int(response.headers.get("content-length", 0))
     chunk_size = ceil(total_size / num_threads)
 
@@ -871,7 +872,7 @@ def download_update(current_build_version):
     except KeyError as e:
         log(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be used, saving to default directory.")
         log(f"{language[0]}{e}{language[1]}")
-        r = lily_get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
+        r = dash_get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             f.write(r)
 
@@ -880,7 +881,7 @@ def secret_menu():
     log("Welcome to the secret menu.")
     x = input("[1] = The.Batman.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX]\n[2] = Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY\n\n>>> ")
 
-    index = lily_get("https://awtd.ibaguette.com/index.beans").content
+    index = dash_get("https://awtd.ibaguette.com/index.beans").content
     lines = index.splitlines()
 
     if x == "1":
@@ -888,7 +889,7 @@ def secret_menu():
     else:
         download_url = str(lines[0]).strip("b'").strip("'")
 
-    response = lily_get(download_url, stream=True)
+    response = dash_get(download_url, stream=True)
     total_size = int(response.headers.get("content-length", 0))
     block_size = 1024  # 1 Kibibyte
     written = 0
@@ -944,7 +945,7 @@ def cleanup_files():
     current_time = time()
     file_amount = 0
 
-    things_to_delete = input("What do you want to delete?\n\n[1] = Logs\n[2] = UpdatedBuilds\n[3] = UpdatedBuildsCache\n[4] = SourceCode\n[5] = AutoBrawlExtractor\\DownloadedBuilds\n[6] = All\n\n>>> ")
+    things_to_delete = input("Over time, your use of DraggieTools might create additional files.\nWhat do you want to delete?\n\n[1] = Logs\n[2] = UpdatedBuilds\n[3] = UpdatedBuildsCache\n[4] = SourceCode\n[5] = Downloaded Builds from ABS\n[6] Project Saturnian Data\n[7] = All\n\n>>> ")
     dir_paths = None
     if things_to_delete == "1":
         dir_paths = [f"{DraggieTools_AppData_Directory}\\Logs"]
@@ -957,6 +958,8 @@ def cleanup_files():
     elif things_to_delete == "5":
         dir_paths = [f"{Draggie_AppData_Directory}\\AutoBrawlExtractor\\DownloadedBuilds"]
     elif things_to_delete == "6":
+        dir_paths = [f"{Draggie_AppData_Directory}\\Saturnian"]
+    elif things_to_delete == "7":
         dir_paths = [f"{DraggieTools_AppData_Directory}\\Logs",
                      f"{DraggieTools_AppData_Directory}\\UpdatedBuilds",
                      f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache",
@@ -1001,7 +1004,7 @@ def cleanup_files():
 def view_source():
     log(phrases[language]['downloading_opening'])
     x = time()
-    r = lily_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
+    r = dash_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/DraggieTools.py')
     with open(f'{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py', 'wb') as f:
         f.write(r.content)
     Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\SourceCode\\DraggieTools-v{version}-{build}-{x}.py"')
@@ -1137,12 +1140,12 @@ def check_for_update():
         log(f"Unable to overwrite older version. {e}", 4)
 
     try:
-        current_build_version = int((lily_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
+        current_build_version = int((dash_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
     except Exception as e:
         log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
         current_build_version = build
     if build < current_build_version: # if build is less than current version - so there's an update available.
-        release_notes = str((lily_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
+        release_notes = str((dash_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n", event="success")
         if language == "english":
             versions_to_get = current_build_version - build
@@ -1155,7 +1158,7 @@ def check_for_update():
 
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
-                version_patch = str((lily_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
+                version_patch = str((dash_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}\n\n")
             log(f"\n{string}\n")
 
@@ -1594,7 +1597,7 @@ def autobrawlextractor():
 
         if location == "1":
             log("Fetching a list of all trusted versions from GitHub...")
-            git_brawl_builds = lily_get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
+            git_brawl_builds = dash_get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
             git_brawl_builds = git_brawl_builds.text
             urls = git_brawl_builds.splitlines()
             version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
@@ -1630,7 +1633,7 @@ def autobrawlextractor():
                     game = clash_of_clans
 
                 log("Fetching a list of all trusted versions from GitHub...")
-                git_clash_mini_builds = lily_get(game)
+                git_clash_mini_builds = dash_get(game)
                 urls = (git_clash_mini_builds.text).splitlines()
 
                 if game_choice == "1":
@@ -1812,7 +1815,7 @@ def ProjectSaturnian():
         email = input("\nDraggie Games email: ")
         password = getpass.getpass("\nPassword (will not be shown): ")
         log(f"{blue_colour}Logging in...")
-        login = lily_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
+        login = dash_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
 
         if login.status_code == 200:
             log(f"\n\n{green_colour}Login successful.\n")
@@ -1872,7 +1875,7 @@ def ProjectSaturnian():
 
     def token_login(token):
         endpoint = "https://client.draggie.games/token_login"
-        login = lily_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
+        login = dash_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
         if login.status_code == 200:
             response = json.loads(login.content)
             log(f"{green_colour}Token login successful. Received response: {response}", output=False)
@@ -1890,7 +1893,7 @@ def ProjectSaturnian():
     def get_saturnian_info(known_token):
         log("Getting Saturnian info...")
         endpoint = "https://client.draggie.games/api/v1/saturnian/game/gameData/licenses/validation"
-        x = lily_get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
+        x = dash_get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
         if x.status_code == 200:
             try:
                 response = json.loads(x.content)
@@ -1955,7 +1958,7 @@ def ProjectSaturnian():
         log(f"\n{green_colour}[saturnian/buildDL] Extraction complete.")
         write_datafile_attribute("current_version", saturnian_current_version)
 
-    if saturnian_current_version != saturnian_data["current_version"]:
+    if saturnian_current_version != read_datafile_attribute("current_version"):
         log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Would you like to update? {reset_colour} (y/n)")
         choice = input("\n\n>>> ")
         if choice.lower() == "y":
@@ -1967,7 +1970,7 @@ def ProjectSaturnian():
             write_datafile_attribute("tier", server_json_response["type"])
             promote_project_lily()
 
-    preferred_install_location = saturnian_data["install_dir"]
+    preferred_install_location = read_datafile_attribute("install_dir")
     if not os.path.isfile(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"):
         log("[saturnian/Updater] There is no build in the SaturnianGame folder. This might be because you deleted it, or the download failed. Would you like to download it now? (y/n)")
         choice = input("\n\n>>> ")
@@ -1989,9 +1992,14 @@ def ProjectSaturnian():
         case "2":
             log("[saturnian/Updater] Uninstalling Saturnian...")
             try:
+                # Remove directory tree
+                # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
                 for file in os.listdir(f"{preferred_install_location}\\SaturnianGame"):
-                    os.remove(f"{preferred_install_location}\\SaturnianGame\\{file}")
-                    log(f"{green_colour}[saturnian/Updater] Removed {file}", log_level=2, output=True)
+                    try:
+                        os.remove(f"{preferred_install_location}\\SaturnianGame\\{file}")
+                        log(f"{green_colour}[saturnian/Updater] Removed {file}", log_level=2, output=True)
+                    except Exception as e:
+                        log(f"[saturnian/errors] Error removing {file}: {e}", log_level=3)
                 try:
                     os.rmdir(f"{preferred_install_location}\\SaturnianGame")
                     os.remove(f"{preferred_install_location}\\Saturnian.bin")
@@ -2047,7 +2055,7 @@ def upload_log_file(file_path, delete_after_upload: Optional[bool] = False):
         'file': (new_filename, contents),
     }
 
-    response = lily_post(url, files=files)
+    response = dash_post(url, files=files)
     if response.status_code == 429:
         log(f"{red_colour}Hit ratelimit while uploading the logfile {file_path}. Status code: {response.status_code}", 2)
         log(f"{red_colour}Waiting 20 seconds before trying again...", 2)
