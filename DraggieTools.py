@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 78
-version = "0.8.16"
-build_date = 1690311422
+build = 79
+version = "0.8.17"
+build_date = 1690488773
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -1863,7 +1863,7 @@ def ProjectSaturnian():
                 else:
                     log(f"[write_token] File not found: {saturnian_appdir}\\token.bin", log_level=3)
                 ProjectSaturnian()
-            case "n":
+            case _:
                 log("Exiting...")
                 return choice1()
         return choice1()
@@ -1932,9 +1932,8 @@ def ProjectSaturnian():
         match client.lower():
             case "y":
                 draggieclient()
-            case "n":
-                return log("Okay. Exiting...")
             case _:
+                log("Okay, returning to main menu...")
                 ProjectSaturnian()
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
@@ -1959,29 +1958,36 @@ def ProjectSaturnian():
         write_datafile_attribute("current_version", saturnian_current_version)
 
     if saturnian_current_version != read_datafile_attribute("current_version"):
-        log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Would you like to update? {reset_colour} (y/n)")
+        log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Input 1 to download and install the new version.")
         choice = input("\n\n>>> ")
-        if choice.lower() == "y":
-            log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
-            download_saturnian_build()
-            log(f"{green_colour}[saturnian/Updater] Update download was successful.")
+        match choice:
+            case "1":
+                log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
+                download_saturnian_build()
+                log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
-            write_datafile_attribute("current_version", saturnian_current_version)
-            write_datafile_attribute("tier", server_json_response["type"])
-            promote_project_lily()
+                write_datafile_attribute("current_version", saturnian_current_version)
+                write_datafile_attribute("tier", server_json_response["type"])
+                promote_project_lily()
+            case _:
+                log(f"Okay, returning to main menu...")
+                ProjectSaturnian()
 
     preferred_install_location = read_datafile_attribute("install_dir")
     if not os.path.isfile(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"):
-        log("[saturnian/Updater] There is no build in the SaturnianGame folder. This might be because you deleted it, or the download failed. Would you like to download it now? (y/n)")
+        log("[saturnian/Updater] There is no build in the SaturnianGame folder. This might be because you deleted it, or the download failed. Input 1 to download the build, or 0 to return to the main menu.")
         choice = input("\n\n>>> ")
-        if choice.lower() == "y":
-            try:
-                download_saturnian_build()
-                log(f"\n{green_colour}[saturnian/Updater] Update completed!")
-            except Exception as e:
-                return log(f"[saturnian/errors] Error downloading Saturnian build: {e}", log_level=4, event="error")
+        match choice:
+            case "0":
+                return choice1()
+            case _:
+                try:
+                    download_saturnian_build()
+                    log(f"\n{green_colour}[saturnian/Updater] Update completed!")
+                except Exception as e:
+                    return log(f"[saturnian/errors] Error downloading Saturnian build: {e}", log_level=4, event="error")
 
-    to_open = input(f"\n\n{cyan_colour}Manage your installation of my project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Change installation directory\n\n>>> ")
+    to_open = input(f"\n\n{cyan_colour}Manage your installation of the project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Change installation directory\n\n>>> ")
     match to_open.lower():
         case "0":
             return choice1()
@@ -2406,42 +2412,47 @@ def yt_download():
             choice1()
 
     log(f"\n\n[draggietools] Found matching video: {audio_info['title']}\n\n")
-    highest_audio_bitrate = 0
-    highest_total_bitrate = 0
     highest_audio_url = ''
-    highest_sample_rate = 0
+    
     highest_video_url = ''
     highest_video_format = ''
     highest_audio_format = ''
 
-    if audio_info['formats']:
+    if hasattr(audio_info, 'formats'):
         log("Not a playlist")
 
-        def old_download():
+        def get_format(extract_type):
+            highest_sample_rate = 0
+            highest_audio_bitrate = 0
+            highest_total_bitrate = 0
             for format in audio_info['formats']:
-                if format['vcodec'] == 'none': # check if the format is audio-only
-                    if 'asr' in format and format['asr'] > highest_sample_rate:
-                        highest_sample_rate = format['asr']  # update highest_sample_rate
-                        log(f"Updated highest sample rate to {highest_sample_rate}Hz")
-                    if 'abr' in format and format['asr'] == highest_sample_rate:
-                        if format['abr'] > highest_audio_bitrate:
-                            highest_audio_url = format['url']
-                            highest_audio_bitrate = format['abr']
-                            # highest_audio_format_id = format['format_id']
-                            log(f"New best audio bitrate: {highest_audio_bitrate}")
-                            highest_audio_format = format
+                if extract_type == "audio":
+                    if format['vcodec'] == 'none': # check if the format is audio-only
+                        if 'asr' in format and format['asr'] > highest_sample_rate:
+                            highest_sample_rate = format['asr']  # update highest_sample_rate
+                            log(f"Updated highest sample rate to {highest_sample_rate}Hz")
+                        if 'abr' in format and format['asr'] == highest_sample_rate:
+                            if format['abr'] > highest_audio_bitrate:
+                                highest_audio_url = format['url']
+                                highest_audio_bitrate = format['abr']
+                                # highest_audio_format_id = format['format_id']
+                                log(f"New best audio bitrate: {highest_audio_bitrate}")
+                                highest_format = format
 
-                if format['acodec'] == 'none': # check if the format is video-only
-                    if 'vbr' in format and format['vbr'] > highest_total_bitrate:
-                        highest_total_bitrate = format['vbr'] # update highest_total_bitrate
-                        highest_video_url = format['url']
-                        # highest_video_format_id = format['format_id']
-                        log(f"New best video bitrate: {highest_total_bitrate}")
-                        highest_video_format = format
+                elif extract_type == "video":
+                    if format['acodec'] == 'none': # check if the format is video-only
+                        if 'vbr' in format and format['vbr'] > highest_total_bitrate:
+                            highest_total_bitrate = format['vbr'] # update highest_total_bitrate
+                            highest_video_url = format['url']
+                            # highest_video_format_id = format['format_id']
+                            log(f"New best video bitrate: {highest_total_bitrate}")
+                            highest_format = format
 
-            log(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
+            log()
 
-        # old_download()
+            return highest_format
+          
+            # log(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
 
         what_to_do = input("What do you want to do?\n[1] Download audio\n[2] Download video\n[3] Download both\n[4] Download both and merge into one file\n\n>>> ")
         save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
@@ -2450,23 +2461,27 @@ def yt_download():
             os.makedirs(save_dir, exist_ok=True)
 
         start_time_download = time()
-        if what_to_do == "1":
-            ydl_opts = get_ydl_info(audio_info['title'], "audio", directory=save_dir)
-            x = tqdm_download2(highest_audio_url, os.path.join(save_dir, f"{audio_info['title']}[audio].{highest_audio_format['ext']}"), desc="Downloading highest quality audio...")
-        elif  what_to_do == "2":
-            ydl_opts = get_ydl_info(audio_info['title'], "video", directory=save_dir)
-            y = tqdm_download2(highest_video_url, os.path.join(save_dir, f"{audio_info['title']}[video].{highest_video_format['ext']}"), desc="Downloading highest quality video...")
-        elif what_to_do == "3":
-            ydl_opts = get_ydl_info(audio_info['title'], "both", directory=save_dir)
-            tqdm_download2(highest_audio_url, os.path.join(save_dir, f"{audio_info['title']}[audio].{highest_audio_format['ext']}"), desc="Downloading highest quality audio...")
-            tqdm_download2(highest_video_url, os.path.join(save_dir, f"{audio_info['title']}[video].{highest_video_format['ext']}"), desc="Downloading highest quality video...")
-            log("Downloaded both files!")
-        else:
-            ydl_opts = get_ydl_info(audio_info['title'], "both", directory=save_dir)
-            pass
+        match what_to_do:
+            case "1":
+                ydl_opts_2 = get_ydl_info(f"audio-{audio_info['title']}", "audio", directory=save_dir)
+                with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
+                    ydl.download([youtube_video])
+            case "2":
+                ydl_opts_2 = get_ydl_info(f"video-{audio_info['title']}", "video", directory=save_dir)
+                with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
+                    ydl.download([youtube_video])
+            case "3":
+                ydl_opts_2 = get_ydl_info(f"audio-{audio_info['title']}", "audio", directory=save_dir)
+                with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
+                    ydl.download([youtube_video])
 
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([youtube_video])
+                ydl_opts_2 = get_ydl_info(f"video-{audio_info['title']}", "video", directory=save_dir)
+                with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
+                    ydl.download([youtube_video])
+            case _: # case "4":
+                ydl_opts_2 = get_ydl_info(f"both-ytdl-default-{audio_info['title']}", "both", directory=save_dir)
+                with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
+                    ydl.download([youtube_video])
 
     else:
         try:
@@ -2531,9 +2546,9 @@ def draggieclient():
                 os.makedirs(f"{lily_ensure_appdata_dir}\\Logs", exist_ok=True)
                 log(f"{green_colour}[ProjectLily] Prerequisite directory made: {lily_ensure_appdata_dir}\\Logs")
 
-            log("Downloading Build 40 of client...")
+            log("Downloading AutoUpdateClient build v45...")
             try:
-                tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate44.exe", target_path, return_exceptions=True)
+                tqdm_download("https://autoupdateclient.draggie.games/AutoUpdate45.exe", target_path, return_exceptions=True)
                 os.startfile(target_path)
                 save_json()
                 log(f"{green_colour}Your system now has DraggieClient installed! Running in the background, it will automatically keep all of your files by me up to date! Enjoy.")
