@@ -31,5 +31,5 @@ tqdm==4.64.1
 urllib3==1.26.14
 websockets==11.0.2
 winshell==0.6
-yt-dlp==2023.3.4
+yt-dlp==2023.7.6
 zstandard==0.21.0
