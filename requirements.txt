@@ -20,7 +20,7 @@ Pillow==9.5.0
 proglog==0.1.10
 psutil==5.9.5
 pycparser==2.21
-pycryptodomex==3.17
+pycryptodomex==3.19.0
 pyinstaller==5.8.0
 pyinstaller-hooks-contrib==2023.7
 pypresence==4.2.1
