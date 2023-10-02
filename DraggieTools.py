@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 79
-version = "0.8.17"
-build_date = 1690488773
+build = 80
+version = "0.8.18"
+build_date = 1696262626
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -2418,7 +2418,12 @@ def yt_download():
     highest_video_format = ''
     highest_audio_format = ''
 
-    if hasattr(audio_info, 'formats'):
+    # print attributes of audio_info object
+    log("Available formats:")
+    for format in audio_info['formats']:
+        log(f"{format['format']} is available at {format['url'] if 'manifest_url' not in format else 'n/a'}")
+
+    if 'duration' in audio_info:
         log("Not a playlist")
 
         def get_format(extract_type):
@@ -2454,7 +2459,7 @@ def yt_download():
           
             # log(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
 
-        what_to_do = input("What do you want to do?\n[1] Download audio\n[2] Download video\n[3] Download both\n[4] Download both and merge into one file\n\n>>> ")
+        what_to_do = input("\n\nWhat do you want to do?\n[1] Download audio\n[2] Download video\n[3] Download both\n[4] Download both and merge into one file\n\n>>> ")
         save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
 
         if not os.path.exists(save_dir):

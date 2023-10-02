@@ -1,0 +1,3 @@
+- Bumped all dependencies to latest versions
+- Fixed YT download error
+- Increased verbosity of ytdl debug logs
