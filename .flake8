@@ -1,0 +1,4 @@
+[flake8]
+per-file-ignores =
+    # line too long
+    D:\Draggie Programs\Tools\DraggieTools\DraggieTools.py: E501,

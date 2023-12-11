@@ -1682,6 +1682,34 @@
   ('platform',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\platform.py',
    'PYMODULE'),
+  ('platformdirs',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\__init__.py',
+   'PYMODULE'),
+  ('platformdirs.android',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\android.py',
+   'PYMODULE'),
+  ('platformdirs.api',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\api.py',
+   'PYMODULE'),
+  ('platformdirs.macos',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\macos.py',
+   'PYMODULE'),
+  ('platformdirs.unix',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\unix.py',
+   'PYMODULE'),
+  ('platformdirs.version',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\version.py',
+   'PYMODULE'),
+  ('platformdirs.windows',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\platformdirs\\windows.py',
+   'PYMODULE'),
   ('plistlib',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\plistlib.py',
    'PYMODULE'),
@@ -2628,6 +2656,10 @@
    'PYMODULE'),
   ('typing',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\typing.py',
+   'PYMODULE'),
+  ('typing_extensions',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\typing_extensions.py',
    'PYMODULE'),
   ('unittest',
    'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\lib\\unittest\\__init__.py',

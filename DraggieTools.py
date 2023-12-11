@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 80
-version = "0.8.18"
-build_date = 1696262626
+build = 81
+version = "0.8.19"
+build_date = 1702321194
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -18,6 +18,8 @@ start_time = time.time()
 
 import os
 from os import environ, listdir, makedirs, mkdir, path, remove, startfile, system
+
+system("title DraggieTools: Loading modules...")
 
 green_colour = "\033[92m"
 red_colour = "\033[91m"
@@ -33,19 +35,19 @@ up_one_line = "\033[F"
 start_of_line = "\033[0G"
 clear_from_line_start = "\033[1K"
 clear_above_line_overwrite = "\033[F\033[K"
+# modules = 1
 
 
 def print_loading_message(module_name):
+    # global modules
+    # modules += 1
+    system("title DraggieTools: Loading 32 dependency modules...")
     sys.stdout.write("\033[K")
     sys.stdout.write(f"{green_colour}Loading module {module_name}...{reset_colour}")
     sys.stdout.flush()
     sys.stdout.write("\r")
     sys.stdout.flush()
 
-
-system("title DraggieTools: Loading modules...")
-
-# import pyi_splash
 
 print_loading_message("subprocess.Popen")
 from subprocess import Popen
@@ -138,8 +140,10 @@ print_loading_message("nest_asyncio")
 import nest_asyncio
 nest_asyncio.apply()
 
+print_loading_message("concurrent.futures")
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+print_loading_message("requests")
 import requests
 
 # Codename Guide:
@@ -292,6 +296,49 @@ def l10n_text(key: str) -> str:
     except Exception as e:
         log(f"[LocalisedText] Error occurred when getting localised string: {e}\n{traceback.format_exc()}", 4)
         return key
+
+
+default_draggietools_settings = {
+    "ydl_default_dir": None,
+    "auto_update": True,
+}
+
+
+def set_draggietools_setting(setting: str, value: str) -> bool:
+    """
+    Sets a setting in the DraggieTools settings file. If the setting does not exist, it will be created.\n
+    :param setting: The setting to set\n
+    :param value: The value to set the setting to\n
+    """
+    settings_dir = f"{DraggieTools_AppData_Directory}\\tools_settings.json"
+    if not path.exists(settings_dir):
+        with open(settings_dir, "w") as f:
+            print(f"[DraggieToolsSettings] Settings file not found. Creating one at {settings_dir}", 2, True)
+            json.dump(default_draggietools_settings, f, indent=4)
+    with open(settings_dir, "r") as f:
+        data = json.load(f)
+    data[setting] = value
+    with open(settings_dir, "w") as f:
+        json.dump(data, f, indent=4)
+    return True
+
+
+def get_draggietools_setting(setting: str) -> str | None:
+    """
+    Gets a setting from the DraggieTools settings file. If the setting does not exist, it will be created.\n
+    :param setting: The setting to get\n
+    """
+    settings_dir = f"{DraggieTools_AppData_Directory}\\tools_settings.json"
+    if not path.exists(settings_dir):
+        with open(settings_dir, "w") as f:
+            json.dump(default_draggietools_settings, f, indent=4)
+    with open(settings_dir, "r") as f:
+        data = json.load(f)
+
+    if setting not in data:
+        log(f"[DraggieToolsSettings] Setting {setting} not found in settings file. Returning None.", 3, True)
+        return None
+    return data[setting]
 
 
 funny_messages = [
@@ -1740,14 +1787,14 @@ def ProjectSaturnian():
     def encrypt_token(token):
         log("[encrypt_token] encrypting token")
         encrypted_binary_token = fernet_key.encrypt(token.encode())
-        log(f"[encrypt_token] encrypted_binary_token: {encrypted_binary_token}")
+        # log(f"[encrypt_token] encrypted_binary_token: {encrypted_binary_token}")
         # convert the binary token to a string
         encrypted_token = encrypted_binary_token.decode()
-        log(f"[encrypt_token] encrypted_token: {encrypted_token}")
+        # log(f"[encrypt_token] encrypted_token: {encrypted_token}")
         return encrypted_token
 
     def decrypt_token(encrypted_token):
-        log("[decrypt_token] decrypting token")
+        # log("[decrypt_token] decrypting token")
         token = encrypted_token
         return fernet_key.decrypt(token)
 
@@ -1755,7 +1802,7 @@ def ProjectSaturnian():
         """
         Gets the encrypted token, if it exists.
         """
-        log("[read_tokenfile_contents] Reading token file contents...", output=False, log_level=1)
+        # log("[read_tokenfile_contents] Reading token file contents...", output=False, log_level=1)
         if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
             with open(f"{saturnian_appdir}\\token.bin", "r") as f:
                 cached_token = f.read()
@@ -1768,13 +1815,13 @@ def ProjectSaturnian():
         """
         Writes the unencrypted token to a file. YOU MUST ENCRYPT THE TOKEN BEFORE PASSING IT TO THIS FUNCTION.
         """
-        log("[write_token] writing encrypted token")
+        # log("[write_token] writing encrypted token")
         if not os.path.isdir(saturnian_appdir):
             os.makedirs(saturnian_appdir, exist_ok=True)
             log(f"[write_token] Created directory: {saturnian_appdir}")
         with open(f"{saturnian_appdir}\\token.bin", "wb") as f:
             f.write(encrypted_token.encode())
-            log(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
+            # log(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
 
     def read_datafile_attribute(attribute):
         """
@@ -1783,7 +1830,7 @@ def ProjectSaturnian():
         try:
             with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
                 saturnian_data = json.load(f)
-                log(f"[saturnian/datafile] Read datafile: {saturnian_data}")
+                # log(f"[saturnian/datafile] Read datafile: {saturnian_data}")
             return saturnian_data[attribute]
         except Exception as e:
             if attribute == "install_dir":
@@ -1798,11 +1845,11 @@ def ProjectSaturnian():
         try:
             with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
                 saturnian_data = json.load(f)
-                log(f"[saturnian/datafile] Read datafile: {saturnian_data}", log_level=1)
+                # log(f"[saturnian/datafile] Read datafile: {saturnian_data}", log_level=1)
             saturnian_data[attribute] = value
             with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
                 json.dump(saturnian_data, f, indent=4)
-                log(f"[saturnian/datafile] Wrote attribute {attribute} to datafile: {value}")
+                log(f"[saturnian/datafile] Wrote attribute {attribute} to datafile: {value}", output=False)
         except Exception as e:
             log(f"[saturnian/datafile] Error writing attribute {attribute} to datafile: {e}", log_level=4)
 
@@ -1845,11 +1892,11 @@ def ProjectSaturnian():
             log("No cached token found. Please try again.", log_level=4)
             ProjectSaturnian()
         encrypted_token = cached_token
-        log(f"encrypted_token: {encrypted_token}", output=True)
+        log(f"encrypted_token: {encrypted_token}", output=False)
         decrypted_token = decrypt_token(encrypted_token)
-        log(f"token: {decrypted_token}", output=True)
+        # log(f"token: {decrypted_token}", output=False)
         token = decrypted_token.decode()
-        log(f"Final read token: {decrypted_token}", output=True)
+        # log(f"Final read token: {decrypted_token}", output=False)
     except Exception:
         clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
         match clear_token:
@@ -1948,14 +1995,20 @@ def ProjectSaturnian():
 
         log(f"{green_colour}[saturnian/buildDL] Download complete. Decompressing...")
         start_anim_loading("Decompressing...")
-        with zipfile.ZipFile(f"{preferred_install_location}\\Saturnian.bin", "r") as zip_ref:
-            zip_ref.extractall(f"{preferred_install_location}\\SaturnianGame")
+        try:
+            with zipfile.ZipFile(f"{preferred_install_location}\\Saturnian.bin", "r") as zip_ref:
+                zip_ref.extractall(f"{preferred_install_location}\\SaturnianGame")
+        except Exception as e:
+            stop_anim_loading()
+            log(f"\n{red_colour}[saturnian/errors] Error extracting Saturnian build: {e}", log_level=4, event="error")
+            return False
         stop_anim_loading()
         sys.stdout.flush()
-        sys.stdout.write("\r") # TODO: make it clear the line above
+        sys.stdout.write("\r")  # TODO: make it clear the line above
         sys.stdout.flush()
         log(f"\n{green_colour}[saturnian/buildDL] Extraction complete.")
         write_datafile_attribute("current_version", saturnian_current_version)
+        return 1
 
     if saturnian_current_version != read_datafile_attribute("current_version"):
         log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Input 1 to download and install the new version.")
@@ -1963,14 +2016,16 @@ def ProjectSaturnian():
         match choice:
             case "1":
                 log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
-                download_saturnian_build()
+                result = download_saturnian_build()
+                if not result:
+                    return log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
                 log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
                 write_datafile_attribute("current_version", saturnian_current_version)
                 write_datafile_attribute("tier", server_json_response["type"])
                 promote_project_lily()
             case _:
-                log(f"Okay, returning to main menu...")
+                log("Okay, returning to main menu...")
                 ProjectSaturnian()
 
     preferred_install_location = read_datafile_attribute("install_dir")
@@ -1982,12 +2037,18 @@ def ProjectSaturnian():
                 return choice1()
             case _:
                 try:
-                    download_saturnian_build()
+                    os.makedirs(f"{preferred_install_location}\\SaturnianGame", exist_ok=True)
+                    result = download_saturnian_build()
+                    if not result:
+                        log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
+                        log(f"{red_colour}[saturnian/Updater] Please make sure there is enough space on your drive, you have a stable internet connection, and you have the correct permissions to write to the directory \"{preferred_install_location}\".", log_level=4, event="error")
+                        return choice1()
                     log(f"\n{green_colour}[saturnian/Updater] Update completed!")
                 except Exception as e:
-                    return log(f"[saturnian/errors] Error downloading Saturnian build: {e}", log_level=4, event="error")
+                    return log(f"[saturnian/errors] Error in buildType downloading Saturnian build: {e}", log_level=4, event="error")
 
-    to_open = input(f"\n\n{cyan_colour}Manage your installation of the project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Change installation directory\n\n>>> ")
+
+    to_open = input(f"\n\n{cyan_colour}Manage your installation of the project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Quick uninstall/reinstall\n[5] Change installation directory\n\n>>> ")
     match to_open.lower():
         case "0":
             return choice1()
@@ -1997,28 +2058,90 @@ def ProjectSaturnian():
             sleep(4)
         case "2":
             log("[saturnian/Updater] Uninstalling Saturnian...")
+            log(f"\nNOTE: By continuing, you will delete ALL files in the directory \"{preferred_install_location}\\SaturnianGame\". Any files you may have added to this directory will be deleted.")
+            log(f"\n{yellow_colour}Are you sure you want to continue? (y/n){reset_colour}")
+            delete_choice = input("\n\n>>> ")
+            if delete_choice.lower() == "n":
+                log("Okay, returning to main menu...")
+                return ProjectSaturnian()
             try:
                 # Remove directory tree
                 # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
-                for file in os.listdir(f"{preferred_install_location}\\SaturnianGame"):
-                    try:
-                        os.remove(f"{preferred_install_location}\\SaturnianGame\\{file}")
-                        log(f"{green_colour}[saturnian/Updater] Removed {file}", log_level=2, output=True)
-                    except Exception as e:
-                        log(f"[saturnian/errors] Error removing {file}: {e}", log_level=3)
-                try:
-                    os.rmdir(f"{preferred_install_location}\\SaturnianGame")
-                    os.remove(f"{preferred_install_location}\\Saturnian.bin")
-                    log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame folder", log_level=2, output=True)
-                except Exception as e:
-                    return log(f"[saturnian/errors] Error removing SaturnianGame folder: {e}", log_level=4, event="error")
-                log(f"{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
+                dir_path = f"{preferred_install_location}\\SaturnianGame"
+
+                # walk through all files and directories
+                for root, dirs, files in os.walk(dir_path, topdown=False):
+                    for name in files:
+                        #  full file path construct anddelete
+                        file_path = os.path.join(root, name)
+                        os.remove(file_path)
+                        log(f"{green_colour}[saturnian/Updater] Removed {file_path}", log_level=2, output=True)
+                    for name in dirs:
+                        # full dir path construct and delete
+                        dir_to_remove = os.path.join(root, name)
+                        os.rmdir(dir_to_remove)
+                        log(f"{green_colour}[saturnian/Updater] Removed directory {dir_to_remove}", log_level=2, output=True)
+
+                # remove root directory
+                os.rmdir(dir_path)
+                log(f"{green_colour}[saturnian/Updater] Removed root @ {dir_path}", log_level=2, output=True)
+
+                os.remove(f"{preferred_install_location}\\Saturnian.bin")
+                log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
+
+                log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
             except Exception as e:
-                return log(f"[saturnian/errors] Error uninstalling Saturnian: {e}", log_level=4, event="error")
+                log(f"\n[saturnian/errors] An issue occurred when fully uninstalling Saturnian:\n> {e}", log_level=4, event="error")
+                return sleep(1)
         case "3":
             preferred_install_location = read_datafile_attribute("install_dir")
             Popen(f'explorer /select,"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"')
+
         case "4":
+            log("[saturnian/Updater] Uninstalling Saturnian...")
+            try:
+                # Remove directory tree
+                # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
+                dir_path = f"{preferred_install_location}\\SaturnianGame"
+
+                # walk through all files and directories
+                for root, dirs, files in os.walk(dir_path, topdown=False):
+                    for name in files:
+                        #  full file path construct anddelete
+                        file_path = os.path.join(root, name)
+                        os.remove(file_path)
+                        log(f"{green_colour}[saturnian/Updater] Removed {file_path}", log_level=2, output=True)
+                    for name in dirs:
+                        # full dir path construct and delete
+                        dir_to_remove = os.path.join(root, name)
+                        os.rmdir(dir_to_remove)
+                        log(f"{green_colour}[saturnian/Updater] Removed directory {dir_to_remove}", log_level=2, output=True)
+
+                # remove root directory
+                os.rmdir(dir_path)
+                log(f"{green_colour}[saturnian/Updater] Removed root @ {dir_path}", log_level=2, output=True)
+
+                os.remove(f"{preferred_install_location}\\Saturnian.bin")
+                log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
+
+                log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
+            except Exception as e:
+                log(f"\n[saturnian/errors] Error fully uninstalling Saturnian: {e}", log_level=4, event="error")
+                sleep(1)
+                log("\n[saturnian/errors] Attempting to reinstall Saturnian...")
+
+            log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
+            result = download_saturnian_build()
+
+            if not result:
+                log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
+                log(f"{red_colour}[saturnian/Updater] Please make sure there is enough space on your drive, you have a stable internet connection, and you have the correct permissions to write to the directory \"{preferred_install_location}\".", log_level=4, event="error")
+                return ProjectSaturnian()
+            log(f"{green_colour}[saturnian/Updater] Update download was successful.")
+
+            write_datafile_attribute("current_version", saturnian_current_version)
+            write_datafile_attribute("tier", server_json_response["type"])
+        case "5":
             log("[saturnian/Updater] Changing installation directory...")
             start_time = time()
             try:
@@ -2365,65 +2488,70 @@ def videomaker():
     else:
         two()
 
+def get_ydl_info(title, type, directory):
+    directory = os.path.join(directory, title + '.%(ext)s')
+    ydl_opts_bestboth = {
+        'format': 'bestvideo+bestaudio/best',
+        'outtmpl': directory
+    }
+
+    ydl_opts_bestvideo = {
+        'format': 'bestvideo/best',
+        'outtmpl': directory
+    }
+
+    ydl_opts_bestaudio = {
+        'format': 'bestaudio/best',
+        'outtmpl': directory
+    }
+
+    match type:
+        case "both":
+            return ydl_opts_bestboth
+        case "video":
+            return ydl_opts_bestvideo
+        case "audio":
+            return ydl_opts_bestaudio
+
 
 def yt_download():
-    log("Hi!")
-    # Create a YoutubeDL object
+    log("Initialising downloader...", 1, True)
     ydl = youtube_dl.YoutubeDL()
-
-    def get_ydl_info(title, type, directory):
-        directory = os.path.join(directory, title + '.%(ext)s')
-        ydl_opts_bestboth = {
-            'format': 'bestvideo+bestaudio/best',
-            'outtmpl': directory
-        }
-
-        ydl_opts_bestvideo = {
-            'format': 'bestvideo/best',
-            'outtmpl': directory
-        }
-
-        ydl_opts_bestaudio = {
-            'format': 'bestaudio/best',
-            'outtmpl': directory
-        }
-
-        match type:
-            case "both":
-                return ydl_opts_bestboth
-            case "video":
-                return ydl_opts_bestvideo
-            case "audio":
-                return ydl_opts_bestaudio
+    save_dir = get_draggietools_setting("ydl_default_dir")
+    if not save_dir:
+        log("No default directory set to download to, you can set one in the settings menu.", 3, True)
+    else:
+        log(f"Files will be downloaded to: {green_colour}{save_dir}{reset_colour}", 1, True)
 
     # Get the best audio stream link
-    youtube_video = input("Enter the URL of the video or playlist:\n\n>>> ")
+    youtube_video = input("Enter the URL of the video/playlist, or the query to search for:\n\n>>> ")
     start_time = time()
-    try:
-        audio_info = ydl.extract_info(youtube_video, download=False)
-    except youtube_dl.utils.YoutubeDLError as e:
-        log(e, 3, False)
+
+    if "http" not in youtube_video:
         try:
+            log(f"A valid URL protocol (HTTP(s)) was not provided, searching for term {green_colour}\"{youtube_video}\"{reset_colour}...", 1, True)
             audio_info = ydl.extract_info(f"ytsearch:{youtube_video}", download=False)['entries'][0]
             youtube_video = audio_info['webpage_url']
         except youtube_dl.utils.YoutubeDLError as e:
             log("There was an error getting information from the provided URL. Please try again later.", log_level=3)
             log(e, 4, False)
             choice1()
+    else:
+        try:
+            audio_info = ydl.extract_info(youtube_video, download=False)
+        except youtube_dl.utils.YoutubeDLError as e:
+            log(f"{red_colour}There was an error getting information from the provided URL. Please try again later.", log_level=3)
+            log(f"{e}{reset_colour}", 4, True)
+            choice1()
 
-    log(f"\n\n[draggietools] Found matching video: {audio_info['title']}\n\n")
-    highest_audio_url = ''
-    
-    highest_video_url = ''
-    highest_video_format = ''
-    highest_audio_format = ''
-
+    log(f"\n\n[draggietools] Found a matching video with title: {green_colour}{audio_info['title']}{reset_colour}. URL: {green_colour}{youtube_video}{reset_colour}", 1, True)
     # print attributes of audio_info object
-    log("Available formats:")
+    log(f"{blue_colour}[DEBUG] Available formats:")
     for format in audio_info['formats']:
-        log(f"{format['format']} is available at {format['url'] if 'manifest_url' not in format else 'n/a'}")
+        log(f"{blue_colour}{format['format']}{reset_colour} is available at {green_colour}{format['url'] if 'manifest_url' not in format else 'n/a'}")
+    print(f"-----------------------\n{reset_colour}", end="")
 
-    if 'duration' in audio_info:
+    if 'duration' in audio_info if audio_info else False:
         log("Not a playlist")
 
         def get_format(extract_type):
@@ -2456,14 +2584,19 @@ def yt_download():
             log()
 
             return highest_format
-          
             # log(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
 
-        what_to_do = input("\n\nWhat do you want to do?\n[1] Download audio\n[2] Download video\n[3] Download both\n[4] Download both and merge into one file\n\n>>> ")
-        save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
+        save_dir = get_draggietools_setting("ydl_default_dir")
+        if not save_dir:
+            save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
+            ask_for_default = input("Do you want to set this as your default directory? (y/n)\n\n>>> ")
+            if ask_for_default == "y":
+                set_draggietools_setting("ydl_default_dir", save_dir)
+                log(f"Set {save_dir} as your default directory for YouTube downloads.", 1, False)
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir, exist_ok=True)
 
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir, exist_ok=True)
+        what_to_do = input(f"\n\nWhat do you want to do?\n{red_colour}[0] Restart Downloader Tool{reset_colour}\n[1] Download audio\n[2] Download video\n[3] Download both\n[4] Download both and merge into one file\n\n>>> ")
 
         start_time_download = time()
         match what_to_do:
@@ -2483,42 +2616,55 @@ def yt_download():
                 ydl_opts_2 = get_ydl_info(f"video-{audio_info['title']}", "video", directory=save_dir)
                 with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
                     ydl.download([youtube_video])
-            case _: # case "4":
+            case "4": # case "4":
                 ydl_opts_2 = get_ydl_info(f"both-ytdl-default-{audio_info['title']}", "both", directory=save_dir)
                 with youtube_dl.YoutubeDL(ydl_opts_2) as ydl:
                     ydl.download([youtube_video])
+            case _: # case "0":
+                log("Cancelled download.", 3, False)
+                return yt_download()
 
     else:
         try:
             if audio_info['entries']:
                 log("Playlist detected", 1, False)
         except KeyError:
-            return log("Not a playlist, not a video, no clue what to do with this URL", 4, True)
+            return log("Not a playlist, not a video, don't know to do with this URL. Report this to DraggieTools on GitHub.", log_level=3, output=True)
 
         log("Going through a playlist...", 1, False)
-        what_to_do = input("What do you want to do?\n[1] Download audio\n[2] Download video\n[3] Download both and merge into one file\n\n>>> ")
-        save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
+        what_to_do = input("What do you want to do?\n[0] Go back\n[1] Download audio\n[2] Download video\n[3] Download both and merge into one file\n\n>>> ")
+
+        if not save_dir:
+            save_dir = input("Enter the directory you want to save the file to:\n\n>>> ")
+            ask_for_default = input("Do you want to set this as your default directory? (y/n)\n\n>>> ")
+            if ask_for_default == "y":
+                set_draggietools_setting("ydl_default_dir", save_dir)
+                log(f"Set {save_dir} as your default directory for YouTube downloads.", 1, False)
 
         if not os.path.exists(save_dir):
             os.makedirs(save_dir, exist_ok=True)
 
         start_time_download = time()
         # Download every video in the playlist
-        if what_to_do == "1": # download best audio
-            for video in audio_info['entries']:
-                ydl_opts = get_ydl_info(title=video['title'], type="audio", directory=save_dir)
-                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([video['webpage_url']])
-        if what_to_do == "2": # download best video
-            for video in audio_info['entries']:
-                ydl_opts = get_ydl_info(title=video['title'], type="video", directory=save_dir)
-                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([video['webpage_url']])
-        if what_to_do == "3": # download both
-            for video in audio_info['entries']:
-                ydl_opts = get_ydl_info(title=video['title'], type="both", directory=save_dir)
-                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([video['webpage_url']])
+        match what_to_do:
+            case "1": # download best audio
+                for video in audio_info['entries']:
+                    ydl_opts = get_ydl_info(title=video['title'], type="audio", directory=save_dir)
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([video['webpage_url']])
+            case "2": # download best video
+                for video in audio_info['entries']:
+                    ydl_opts = get_ydl_info(title=video['title'], type="video", directory=save_dir)
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([video['webpage_url']])
+            case "3": # download both
+                for video in audio_info['entries']:
+                    ydl_opts = get_ydl_info(title=video['title'], type="both", directory=save_dir)
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([video['webpage_url']])
+            case _: # case "0":
+                log("Cancelled download.", 3, False)
+                return yt_download()
 
     log(f"{green_colour}[download]  Finished in {round(time() - start_time_download, 2)} seconds.")
     log(f"{green_colour}[ytdl]      Finished in {round(time() - start_time, 2)} seconds.")

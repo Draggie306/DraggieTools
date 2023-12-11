@@ -1,0 +1,8 @@
+- Added setting and getting settings for efficiency
+- Significantly improved the YouTube video downloader
+ - Now included default directory for downloads!
+
+[ProjectSaturnian] 
+- Reduced log outputs during Saturnian token encryption and decryption
+- Significantly improved uninstallation process
+- Added new option to quickly uninstall and reinstall Saturnian
