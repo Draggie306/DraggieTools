@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 81
-version = "0.8.19"
-build_date = 1702321194
+build = 82
+version = "0.8.20"
+build_date = 1703166666
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -622,6 +622,9 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
         download_file(download_url, save_dir)
     else:
         try:
+            if not path.exists(save_dir):
+                os.makedirs(path.dirname(save_dir), exist_ok=True)
+                log(f"Created directory {path.dirname(save_dir)}", 2, False, component="dash")
             download_file(download_url, save_dir)
         except KeyboardInterrupt:
             log("Keyboard interrupt: going back to first choice.", 3, False, component="dash")
@@ -636,7 +639,14 @@ def dash_get(*args, **kwargs):
     """
     # Networking component codename is dash
     log(f"Getting data from: ({args[0]})", 1, False, component="dash")
-    x = requests.get(*args, **kwargs)
+
+    headers = kwargs.get("headers", None)
+    if not headers:
+        headers = {
+            "User-Agent": "DraggieTools",
+        }
+
+    x = requests.get(*args, headers=headers, **kwargs)
     log(f"GET request returned with status code {x.status_code}. ({args[0]})", 1, False, component="dash")
     return x
 
@@ -1230,79 +1240,50 @@ def check_for_update():
         log(f"{phrases[language]['running_version']} {version} - {phrases[language]['build']} {build} - {phrases[language]['at']} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {phrases[language]['server_says']} {current_build_version}.")
 
 
-def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_json: Optional[dict] = None):
+def maniupulate_brawl_file(dir, app_version, arch_type: Optional[str] = None, app_name: Optional[str] = None, fingerprint_json: Optional[dict] = None):
     app_version = str(app_version)
-    log(f"{phrases[language]['interacting_allowed']} '{app_name}' {phrases[language]['file']}. [v{app_version}]")
+    if not app_name:
+        app_name = str(input("\nPlease enter the name of the app. This is case sensitive. (e.g. Brawl Stars, Boom Beach, Clash of Clans, Clash Royale, Clash Mini)\n\n>>> "))
+    log(f"{phrases[language]['interacting_allowed']} '{app_name}'! [v{app_version}]")
     if app_name is None:
         app_name = ""
-    if not fingerprint_json:
-        archive = zipfile.ZipFile(dir, 'r')
 
-        # Get fingerprint.json from archive
-
-        if arch_type == "IPA":
-            fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
-        else:
-            fingerprint_json = str(archive.read('assets/fingerprint.json'), encoding="UTF-8")
-
-        fingerprint_json = json.loads(fingerprint_json)
-
-        # find out what game it is
-
-        if "Brawl Stars" in app_name:
-            game_download_url = "game-assets.brawlstarsgame.com"
-            app_name = "Brawl Stars"
-        elif "Boom Beach" in app_name:
-            game_download_url = "game-assets.boombeach.com"
-            app_name = "Boom Beach"
-        elif "Clash of Clans" in app_name:
-            game_download_url = "game-assets.clashofclans.com"
-            app_name = "Clash of Clans"
-        elif "Clash Royale" in app_name:
-            game_download_url = "game-assets.clashroyaleapp.com"
-            app_name = "Clash Royale"
-        elif "Clash Mini" in app_name:
-            game_download_url = "game-assets.clashminigame.com"
-            app_name = "Clash Mini"
-        else:
-            app_name = "[unknown]"
-    else: # or just fingerprint json as that's all we really need
-        fingerprint_json = fingerprint_json
-        if "Brawl Stars" in app_name:
-            game_download_url = "game-assets.brawlstarsgame.com"
-            app_name = "Brawl Stars"
-        elif "Boom Beach" in app_name:
-            game_download_url = "game-assets.boombeach.com"
-            app_name = "Boom Beach"
-        elif "Clash of Clans" in app_name:
-            game_download_url = "game-assets.clashofclans.com"
-            app_name = "Clash of Clans"
-        elif "Clash Royale" in app_name:
-            game_download_url = "game-assets.clashroyaleapp.com"
-            app_name = "Clash Royale"
-        elif "Clash Mini" in app_name:
-            game_download_url = "game-assets.clashminigame.com"
-            app_name = "Clash Mini"
-        if not app_name:
-            game_choice = input("The file entered is a fingerprint file. Please specify the game you want to extract assets from.\n1. Brawl Stars\n2. Boom Beach\n3. Clash of Clans\n4. Clash Royale\n5. Clash Mini\n\n>>> ")
-            match game_choice:
-                case "1":
-                    game_download_url = "game-assets.brawlstarsgame.com"
-                    app_name = "[Fingerprint] Brawl Stars"
-                case "2":
-                    game_download_url = "game-assets.boombeach.com"
-                    app_name = "[Fingerprint] Boom Beach"
-                case "3":
-                    game_download_url = "game-assets.clashofclans.com"
-                    app_name = "[Fingerprint] Clash of Clans"
-                case "4":
-                    game_download_url = "game-assets.clashroyaleapp.com"
-                    app_name = "[Fingerprint] Clash Royale"
-                case "5":
-                    game_download_url = "game-assets.clashminigame.com"
-                    app_name = "[Fingerprint] Clash Mini"
-                case _:
-                    return log("Invalid choice. Exiting.")
+    if "Brawl Stars" in app_name:
+        game_download_url = "game-assets.brawlstarsgame.com"
+        app_name = "Brawl Stars"
+    elif "Boom Beach" in app_name:
+        game_download_url = "game-assets.boombeach.com"
+        app_name = "Boom Beach"
+    elif "Clash of Clans" in app_name:
+        game_download_url = "game-assets.clashofclans.com"
+        app_name = "Clash of Clans"
+    elif "Clash Royale" in app_name:
+        game_download_url = "game-assets.clashroyaleapp.com"
+        app_name = "Clash Royale"
+    elif "Clash Mini" in app_name:
+        game_download_url = "game-assets.clashminigame.com"
+        app_name = "Clash Mini"
+    else:
+        game_choice = input("Unable to detect app name. Please choose one of the following:\n\n[1] Brawl Stars\n[2] Boom Beach\n[3] Clash of Clans\n[4] Clash Royale\n[5] Clash Mini.\nIf your app is not listed, press enter.\n\n>>> ")
+        match game_choice:
+            case "1":
+                game_download_url = "game-assets.brawlstarsgame.com"
+                app_name = "[Fingerprint] Brawl Stars"
+            case "2":
+                game_download_url = "game-assets.boombeach.com"
+                app_name = "[Fingerprint] Boom Beach"
+            case "3":
+                game_download_url = "game-assets.clashofclans.com"
+                app_name = "[Fingerprint] Clash of Clans"
+            case "4":
+                game_download_url = "game-assets.clashroyaleapp.com"
+                app_name = "[Fingerprint] Clash Royale"
+            case "5":
+                game_download_url = "game-assets.clashminigame.com"
+                app_name = "[Fingerprint] Clash Mini"
+            case _:
+                game_download_url = input("Enter the game download URL. (e.g. game-assets.brawlstarsgame.com)\n\n>>> ")
+                app_name = input("Enter the app name. (e.g. Brawl Stars)\n\n>>> ")
 
     status_update(details="Extracting Supercell game assets", state=f"Loaded: {app_name} (v{app_version}) - {arch_type}")
 
@@ -1318,21 +1299,19 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                 if 'music/background' in item['file']:
                     log(f"Found 'music/background' in file: {item}", 1, False)
                     # The file field contains 'music/background'
-                    log(f"{phrases[language]['found_music_in_file']}{item['file']}")
-                    # Split the file field on the '\' character and take the first two elements
-                    dir_path = item['file'].split('/')[:2]
 
-                    # Join the elements back together with the '\' character
+                    log(f"{phrases[language]['found_music_in_file']}{item['file']}")
+                    dir_path = item['file'].split('/')[:2]
                     dir_path = '\\'.join(dir_path)
 
-                    # Create the directory and its parent directories if they do not already exist
+                    # in case the directory doesn't exist, create it
                     makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}', exist_ok=True)
                     tqdm_download(f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}')
                 else:
                     # log(f"Not in file {item}")
                     pass
             log("ok")
-        case "3": # this is the get list of new/modified/deleted files
+        case "3":  # this is the get list of new/modified/deleted files
             Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             amount_of_files = 0
 
@@ -1439,60 +1418,7 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
             files = 0
             archives = 0
             skips = 0
-            if file_cycle:
-                available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
-                for file in available_archives:
-                    log(f"Checked file '{file}' in {available_archives}")
-                    if file.lower().endswith(".ipa") or file.lower().endswith(".zip") or file.lower().endswith(".json"):
-                        with cf.ThreadPoolExecutor(max_workers=threads) as executor:
-                            futures = []
-
-                            log("An executor has been loaded", 1, False)
-
-                            if not file.lower().endswith(".json"):
-                                archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
-                                archives += 1
-                                log(f"{phrases[language]['searching_archive']} {file}")
-                                new_fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
-                                new_fingerprint_json = json.loads(new_fingerprint_json)
-                            else:
-                                new_fingerprint_json = json.loads(file)
-                            try:
-                                fingerprint_sha = new_fingerprint_json["sha"]
-                            except Exception as e:
-                                log(f"Unable to find a valid fingerprint.json file in {file}.\n{e}")
-
-                            for item in new_fingerprint_json['files']:
-                                # log(f"Searching file: {item}", end='\r')
-                                # log("\n")
-                                files += 1
-                                if search_term in item['file']:
-                                    log(f"Found '{search_term}' in file: {item}")
-                                    # The file field contains search_term
-                                    log(f"{phrases[language]['found']} {search_term} {phrases[language]['in_file']} {item['file']}")
-                                    hits += 1
-
-                                    # Split the file path on the '\' character and take all elements except the last one
-                                    dir_path = item["file"].split('/')[:-1]
-
-                                    # Join the elements back together with the '\' character
-                                    dir_path = '\\'.join(dir_path)
-
-                                    # Create the directory and its parent directories if they do not already exist
-                                    directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{dir_path}'
-                                    makedirs(directory_to_save_to, exist_ok=True)
-
-                                    if not os.path.isfile(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'):
-                                        futures.append(executor.submit(tqdm_download, f'https://{game_download_url}/{fingerprint_sha}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'))
-                                    else:
-                                        log(f"{phrases[language]['not_downloading_exists']}{item['file']} {phrases[language]['not_downloading_exists_2']}")
-                                        skips += 1
-                                else:
-                                    pass
-                                    # log(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
-                    else:
-                        log(f"{phrases[language]['unsupported_extension_1']} {file} {phrases[language]['unsupported_extension_2']}")
-            else:
+            if not file_cycle:
                 archives += 1
                 with cf.ThreadPoolExecutor(max_workers=threads) as executor:
                     log("An executor has been loaded", 1, False)
@@ -1508,8 +1434,63 @@ def maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_js
                             url = f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}'
                             path = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}'
                             futures.append(executor.submit(tqdm_download, url, path))
-            log(f"{phrases[language]['found']} {hits} {phrases[language]['matching_files']} {files} {phrases[language]['total_files_in']} {archives} {phrases[language]['available_archives']} {skips} {phrases[language]['files_already_exist']}")
-            status_update(details=f"{phrases[language]['S_as']}", state=f"{files} {phrases[language]['S_as_1']} {hits} {phrases[language]['S_as_2']}")
+                log(f"{phrases[language]['found']} {hits} {phrases[language]['matching_files']} {files} {phrases[language]['total_files_in']} {archives} {phrases[language]['available_archives']} {skips} {phrases[language]['files_already_exist']}")
+                status_update(details=f"{phrases[language]['S_as']}", state=f"{files} {phrases[language]['S_as_1']} {hits} {phrases[language]['S_as_2']}")
+                return maniupulate_brawl_file(dir=dir, app_version=app_version, arch_type=arch_type, app_name=app_name, fingerprint_json=fingerprint_json)
+
+            available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
+            for file in available_archives:
+                log(f"Checked file '{file}' in {available_archives}")
+                if not file.lower().endswith(".ipa") or file.lower().endswith(".zip") or file.lower().endswith(".json"):
+                    log(f"{phrases[language]['unsupported_extension_1']} {file} {phrases[language]['unsupported_extension_2']}")
+                    return choice1()
+                with cf.ThreadPoolExecutor(max_workers=threads) as executor:
+                    futures = []
+
+                    log("An executor has been loaded", 1, False)
+
+                    if not file.lower().endswith(".json"):
+                        archive = zipfile.ZipFile(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds\\{file}", 'r')
+                        archives += 1
+                        log(f"{phrases[language]['searching_archive']} {file}")
+                        new_fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
+                        new_fingerprint_json = json.loads(new_fingerprint_json)
+                    else:
+                        new_fingerprint_json = json.loads(file)
+                    try:
+                        fingerprint_sha = new_fingerprint_json["sha"]
+                    except Exception as e:
+                        log(f"Unable to find a valid fingerprint.json file in {file}.\n{e}")
+
+                    for item in new_fingerprint_json['files']:
+                        # log(f"Searching file: {item}", end='\r')
+                        # log("\n")
+                        files += 1
+                        if search_term in item['file']:
+                            log(f"Found '{search_term}' in file: {item}")
+                            # The file field contains search_term
+                            log(f"{phrases[language]['found']} {search_term} {phrases[language]['in_file']} {item['file']}")
+                            hits += 1
+
+                            # Split the file path on the '\' character and take all elements except the last one
+                            dir_path = item["file"].split('/')[:-1]
+
+                            # Join the elements back together with the '\' character
+                            dir_path = '\\'.join(dir_path)
+
+                            # Create the directory and its parent directories if they do not already exist
+                            directory_to_save_to = f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{dir_path}'
+                            makedirs(directory_to_save_to, exist_ok=True)
+
+                            if not os.path.isfile(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'):
+                                futures.append(executor.submit(tqdm_download, f'https://{game_download_url}/{fingerprint_sha}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\ALL\\{item["file"]}'))
+                            else:
+                                log(f"{phrases[language]['not_downloading_exists']}{item['file']} {phrases[language]['not_downloading_exists_2']}")
+                                skips += 1
+                        else:
+                            pass
+                            # log(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
+            return maniupulate_brawl_file(dir=dir, app_version=app_version, arch_type=arch_type, app_name=app_name, fingerprint_json=fingerprint_json)
         case "6":
             Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}"')
         case _:
@@ -1532,31 +1513,37 @@ def init_filetype(dir):
     Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
     try:
         arch_type = None
+        new_fingerprint_json = None
+        game = None
 
         for file in archive.filelist:
-            if file.is_dir() and file.filename.endswith("Payload/"):
-                arch_type = "IPA"
+            # log(f"Checking file: {file.filename}")
             if file.filename.endswith("fingerprint.json"):
                 new_fingerprint_json = str(archive.read(file), encoding="UTF-8")
                 new_fingerprint_json = json.loads(new_fingerprint_json)
                 version_name = new_fingerprint_json['version']
-            if file.filename.endswith('.app/'):
-                app_name = path.splitext(file.filename)[0]
-        if not arch_type:
-            arch_type = "APK"
-            new_fingerprint_json = str(archive.read('assets/fingerprint.json'), encoding="UTF-8")
-            new_fingerprint_json = json.loads(new_fingerprint_json)
-            version_name = new_fingerprint_json['version']
-            log(f"{phrases[language]['read_asset']}v{version_name}")
-            app_name = "Brawl Stars"
-            log({phrases[language]['apk_name_warning']})
+                log(f"Found fingerprint.json file! Version: {version_name}, files loaded: {len(new_fingerprint_json['files'])}")
+
+                if "laser" in file.filename:
+                    app_name = "Brawl Stars"
+                elif "magic" in file.filename:
+                    app_name = "Clash of Clans"
+                elif "scroll" in file.filename:
+                    app_name = "Clash Royale"
+                elif "board" in file.filename:
+                    app_name = "Clash Mini"
+
+        if not new_fingerprint_json:
+            log("Unable to find fingerprint.json file which is required to extract the assets!", 4)
 
         if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
             mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
             log(f"Made directory: {Brawl_AppData_Directory}\\Versions\\{version_name}")
 
         log(f"{phrases[language]['detected_architecture']}{arch_type}")
-        maniupulate_brawl_file(dir, f"{version_name}", app_name, arch_type, fingerprint_json=None)
+
+        log(f"Game detected: {app_name}")
+        maniupulate_brawl_file(dir=dir, app_version=f"{version_name}", app_name=app_name, fingerprint_json=new_fingerprint_json)
     except Exception as e:
         log(f"\n[WARNING] An error has occured which cannot be resolved: {e}")
         logging.error(e)
@@ -1630,7 +1617,7 @@ def autobrawlextractor():
     def number_one():
         log(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
         log("\nUse an .ipa file or .apk file (for iOS and Android decices, respectively). Must not be unzipped.")
-        log("[0] Go back.\n[1] Search for all downloadable versions.\n[2] Decode CSV Files with LZMA.")
+        log("[0] Go back.\n[1] Search for all downloadable versions.\n[2] Decode CSV Files with LZMA.\n(Alternatively, enter path or drag and drop the file here.)\n")
 
         amount_of_files = 0
 
@@ -1642,125 +1629,126 @@ def autobrawlextractor():
 
         location = input("\n>>> ")
 
-        if location == "1":
-            log("Fetching a list of all trusted versions from GitHub...")
-            git_brawl_builds = dash_get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
-            git_brawl_builds = git_brawl_builds.text
-            urls = git_brawl_builds.splitlines()
-            version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
-            for i, version_name in enumerate(version_names):
-                log(f"[{i + 1}]   {version_name}")
-            selected_version = (input("\nPlease select a version to download: ('*' to download them all, '0' to see other apps.).\n\n>>> "))
-            if selected_version == "*":
-                log("You have chosen to download ALL builds. If you would like to stop it, you will need to press Ctrl+C.")
-                amount = len(urls)
-                downloaded_amount = 0
-                for line in urls:
-                    source = line.strip().split(' (')
-                    source_url = source[0]
-                    source_loc = source[1].strip(')')
-                    real_file_name = path.basename(urlsplit(source_url).path)
-                    if "Baguette Brigaders" in source_loc:
-                        source_loc = (f"a verified source: {source_loc}")
-                    log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                    tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-                    downloaded_amount += 1
-                    log(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
-                log(f"{downloaded_amount} builds have been saved!\n\n")
-                number_one()
-            if selected_version == "0":
-                clash_mini = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/board.txt"
-                clash_of_clans = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/magic.txt"
-
-                game_choice = input("Which game would you like to download builds for?\n\n[1] Clash Mini\n[2] Clash of Clans\n\n>>> ")
-
-                if game_choice == "1":
-                    game = clash_mini
-                if game_choice == "2":
-                    game = clash_of_clans
-
+        match location:
+            case "1":
                 log("Fetching a list of all trusted versions from GitHub...")
-                git_clash_mini_builds = dash_get(game)
-                urls = (git_clash_mini_builds.text).splitlines()
-
-                if game_choice == "1":
-                    version_names = [re.search(r"board-(\d+\.\d+)", url).group(1) for url in urls]
-                if game_choice == "2":
-                    version_names = [re.search(r"magic-(\d+\.\d+)", url).group(1) for url in urls]
+                git_brawl_builds = dash_get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
+                git_brawl_builds = git_brawl_builds.text
+                urls = git_brawl_builds.splitlines()
+                version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
                 for i, version_name in enumerate(version_names):
                     log(f"[{i + 1}]   {version_name}")
-
-                selected_version = input("\nChoose a version to download: ('*' to download them all).\n\n>>> ")
-
+                selected_version = (input("\nPlease select a version to download: ('*' to download them all, '0' to see other apps.).\n\n>>> "))
                 if selected_version == "*":
-                    source = line.strip().split(' (')
-                    source_url = source[0]
-                    source_loc = source[1].strip(')')
-                    real_file_name = path.basename(urlsplit(source_url).path)
-                    if "Baguette Brigaders" in source_loc:
-                        source_loc = (f"a verified source: {source_loc}")
-                    log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                    tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-                else:
-                    selected_url = urls[int(selected_version) - 1]
-                    source = selected_url.strip().split(' (')
-                    source_url = source[0]
-                    source_loc = source[1].strip(')')
-                    real_file_name = path.basename(urlsplit(source_url).path)
-                    if "Baguette Brigaders" in source_loc:
-                        source_loc = (f"a verified source: {source_loc}")
+                    log("You have chosen to download ALL builds. If you would like to stop it, you will need to press Ctrl+C.")
+                    amount = len(urls)
+                    downloaded_amount = 0
+                    for line in urls:
+                        source = line.strip().split(' (')
+                        source_url = source[0]
+                        source_loc = source[1].strip(')')
+                        real_file_name = path.basename(urlsplit(source_url).path)
+                        if "Baguette Brigaders" in source_loc:
+                            source_loc = (f"a verified source: {source_loc}")
                         log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                    tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-                    log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+                        tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                        downloaded_amount += 1
+                        log(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
+                    log(f"{downloaded_amount} builds have been saved!\n\n")
+                    number_one()
+                if selected_version == "0":
+                    clash_mini = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/board.txt"
+                    clash_of_clans = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/magic.txt"
 
-            selected_url = urls[int(selected_version) - 1]
-            source = selected_url.strip().split(' (')
-            source_url = source[0]
-            source_loc = source[1].strip(')')
-            real_file_name = path.basename(urlsplit(source_url).path)
-            if "Baguette Brigaders" in source_loc:
-                source_loc = (f"a verified source: {source_loc}")
-                log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-            tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-            log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
-            number_one()
+                    game_choice = input("Which game would you like to download builds for?\n\n[1] Clash Mini\n[2] Clash of Clans\n\n>>> ")
 
-        if location == "":
-            files = []
-            f = 0
-            for file in listdir(Downloaded_Builds_AppData_Directory):
-                files.append(file)
-            for i in files:
-                log(f"[{f}] {i}")
-                f += 1
-            x = input("\nChoose file\n\n>>> ")
-            try:
-                init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{files[int(x)]}")
-            except ValueError:
-                # Initialize variables to store the highest version number and corresponding filename
-                highest_version = 0.0
-                highest_version_file = ""
-                # Iterate through each file in the list
-                for f in files:
-                    # Use regular expression to search for a string of digits with a dot in between (e.g., "x.x")
-                    match = re.search(r"(\d+\.\d+)", f)
-                    # If a match is found (i.e., if the file contains a version number of the format "x.x")
-                    if match:
-                        # Extract the version number as a float
-                        archive_version = float(match.group(1))
-                        # Compare the version number to the current highest version number (just iterating over the list to find the maximum value)
-                        if archive_version > highest_version:
-                            highest_version = archive_version
-                            highest_version_file = f
+                    if game_choice == "1":
+                        game = clash_mini
+                    if game_choice == "2":
+                        game = clash_of_clans
 
-                log(f"No valid build specified, resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
-                init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
-        if location == "2":
-            csv_decoder()
-        if location == "0":
-            main()
-        else:
-            init_filetype(location)
+                    log("Fetching a list of all trusted versions from GitHub...")
+                    git_clash_mini_builds = dash_get(game)
+                    urls = (git_clash_mini_builds.text).splitlines()
+
+                    if game_choice == "1":
+                        version_names = [re.search(r"board-(\d+\.\d+)", url).group(1) for url in urls]
+                    if game_choice == "2":
+                        version_names = [re.search(r"magic-(\d+\.\d+)", url).group(1) for url in urls]
+                    for i, version_name in enumerate(version_names):
+                        log(f"[{i + 1}]   {version_name}")
+
+                    selected_version = input("\nChoose a version to download: ('*' to download them all).\n\n>>> ")
+
+                    if selected_version == "*":
+                        source = line.strip().split(' (')
+                        source_url = source[0]
+                        source_loc = source[1].strip(')')
+                        real_file_name = path.basename(urlsplit(source_url).path)
+                        if "Baguette Brigaders" in source_loc:
+                            source_loc = (f"a verified source: {source_loc}")
+                        log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                        tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                    else:
+                        selected_url = urls[int(selected_version) - 1]
+                        source = selected_url.strip().split(' (')
+                        source_url = source[0]
+                        source_loc = source[1].strip(')')
+                        real_file_name = path.basename(urlsplit(source_url).path)
+                        if "Baguette Brigaders" in source_loc:
+                            source_loc = (f"a verified source: {source_loc}")
+                            log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                        tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                        log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+
+                selected_url = urls[int(selected_version) - 1]
+                source = selected_url.strip().split(' (')
+                source_url = source[0]
+                source_loc = source[1].strip(')')
+                real_file_name = path.basename(urlsplit(source_url).path)
+                if "Baguette Brigaders" in source_loc:
+                    source_loc = (f"a verified source: {source_loc}")
+                    log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
+                tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+                number_one()
+
+            case "":
+                files = []
+                f = 0
+                for file in listdir(Downloaded_Builds_AppData_Directory):
+                    files.append(file)
+                for i in files:
+                    log(f"[{f}] {i}")
+                    f += 1
+                x = input("\nChoose file\n\n>>> ")
+                try:
+                    init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{files[int(x)]}")
+                except ValueError:
+                    # Initialize variables to store the highest version number and corresponding filename
+                    highest_version = 0.0
+                    highest_version_file = ""
+                    # Iterate through each file in the list
+                    for f in files:
+                        # Use regular expression to search for a string of digits with a dot in between (e.g., "x.x")
+                        match = re.search(r"(\d+\.\d+)", f)
+                        # If a match is found (i.e., if the file contains a version number of the format "x.x")
+                        if match:
+                            # Extract the version number as a float
+                            archive_version = float(match.group(1))
+                            # Compare the version number to the current highest version number (just iterating over the list to find the maximum value)
+                            if archive_version > highest_version:
+                                highest_version = archive_version
+                                highest_version_file = f
+
+                    log(f"No valid build specified, resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
+                    init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
+            case "2":
+                csv_decoder()
+            case "0":
+                main()
+            case _:
+                init_filetype(location)
     number_one()
 
 
@@ -1867,11 +1855,11 @@ def ProjectSaturnian():
         if login.status_code == 200:
             log(f"\n\n{green_colour}Login successful.\n")
             server_token = login.json()["auth_token"]
-            log(f"Server returned token: {server_token}", log_level=1)
+            # log(f"Server returned token: {server_token}", log_level=1)
             newly_encrypted_token = encrypt_token(server_token)
-            log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1)
+            log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1, output=False)
             write_token(newly_encrypted_token)
-            log("Token written to file.", log_level=1)
+            log("Token written to file.", log_level=1, output=False)
             preferred_install_location = input("\n\nWould you like to install the required files to the default location [1] or a custom location [2]?\n\n>>> ")
             if preferred_install_location == "1":
                 write_datafile_attribute("install_dir", saturnian_appdir)
@@ -1955,8 +1943,11 @@ def ProjectSaturnian():
             log(f"[saturnian/errors.account] ERROR: Received Saturnian version status code: {x.status_code}", log_level=4)
             error_message = json.loads(x.content)
             log(f"[saturnian/errors.account] ERROR: {error_message['message']}", log_level=4)
+            if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
+                os.remove(f"{saturnian_appdir}\\token.bin")
+                log("[saturnian/errors.account] Your token has expired. Please log in again.", log_level=4)
+                ProjectSaturnian()
             sleep(4)
-            choice1()
 
     server_json_response = get_saturnian_info(known_token)
     saturnian_current_version = server_json_response["currentVersion"]
