@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 82
-version = "0.8.20"
-build_date = 1703166666
+build = 83
+version = "0.8.21"
+build_date = 1703343617
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -961,40 +961,46 @@ def secret_menu():
     Popen(f'explorer /select,"{DraggieTools_AppData_Directory}\\{x}.mp4"')
 
 
-"""def torrent_downloader():
-    return log("The torrent downloader will be enabled in a later version of the program.")
-    # Create a session object
-    s = lt.session()
+def torrent_downloader():
+    try:
+        import libtorrent as lt
+    except ImportError as e:
+        log(f"Unable to import libtorrent. {e}\nPlease compile it yourself and put it in the same directory as DraggieTools.exe", 4, True)
 
-    # Set the session settings
-    s.listen_on(6881, 6891)
+    def download_torrent(magnet_link):
+        # Create a session
+        session = lt.session({'listen_interfaces': '0.0.0.0:6881'})
 
-    # Create a torrent_info object from the .torrent file
-    x = input("Where do you want to download the torrent to? Right click to paste.\n\n>>> ")
+        # Get torrent info from the magnet link
+        torrent_info = lt.torrent_info(magnet_link)
 
-    # Add the magnet link to the session
-    params = {
-        'save_path': x,
-        'storage_mode': lt.storage_mode_t(2),
-        'paused': False,
-        'auto_managed': True,
-        'duplicate_is_error': True
-    }
+        # Add torrent to the session
+        torrent_handle = session.add_torrent({'ti': torrent_info, 'save_path': '.'})
 
-    link = input("Enter the magnet link.\n\n>>> ")
+        # Get the status of the torrent
+        torrent_status = torrent_handle.status()
 
-    th = s.add_magnet_uri(link, params)
+        print('Starting download:', torrent_status.name)
 
-    # Set the download and upload rate limits
-    # th.set_download_limit(8 * 1024)
-    # th.set_upload_limit(2 * 1024)
+        # While the torrent is not seeding (i.e., it's still downloading)
+        while not torrent_status.is_seeding:
+            torrent_status = torrent_handle.status()
 
-    # Start downloading the magnet link
-    while (not th.is_seed()):
-        s.wait_for_alert(1000)
+            print('\r%.2f%% complete (down: %.1f kB/s up: %.1f kB/s peers: %d) %s' % (
+                torrent_status.progress * 100, torrent_status.download_rate / 1000, torrent_status.upload_rate / 1000,
+                torrent_status.num_peers, torrent_status.state), end=' ')
 
-    # log the torrent status
-    log(th.status())"""
+            # Check for alerts
+            alerts = session.pop_alerts()
+            for alert in alerts:
+                if alert.category() & lt.alert.category_t.error_notification:
+                    print(alert)
+
+            sys.stdout.flush()
+
+            time.sleep(1)
+
+        print(torrent_handle.status().name, 'download complete')
 
 
 def cleanup_files():
@@ -1914,6 +1920,7 @@ def ProjectSaturnian():
         if login.status_code == 200:
             response = json.loads(login.content)
             log(f"{green_colour}Token login successful. Received response: {response}", output=False)
+            status_update(details=f"Logged in as: {response['account']}", state="Project Saturnian")
             return token
         else:
             log(f"{red_colour}Token login failed.")
@@ -2663,6 +2670,7 @@ def yt_download():
 
 def draggieclient():
     # Project Lily: aka DraggieClient
+    status_update(details="Installing software", state="Project Lily")
     lily_initial_choice = input("\nWhat do you want to do?\n[0] Go back\n[1] Install\n[2] Uninstall\n[3] View Logs\n[4] Manage Settings\n\n>>> ")
 
     try:
@@ -2938,11 +2946,11 @@ def choice1():
                 status_update(details="Modifying GameUserSettings.ini...")
                 fort_file_mod()
             case "7":
-                status_update(details="Installing software")
+                status_update(details="Managing Project Saturnian", state="Project Saturnian")
                 ProjectSaturnian()
             case "8":
                 status_update(details="Downloading a torrent")
-                # torrent_downloader()
+                torrent_downloader()
             case "9":
                 status_update(details="Extracting Supercell game assets")
                 autobrawlextractor()
