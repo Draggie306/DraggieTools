@@ -1,0 +1,2 @@
+- Remove cdn.discordapp.com as a hardcoded cdn url due to deprecation
+- Add faster bank files extraction

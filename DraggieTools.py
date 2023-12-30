@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 83
-version = "0.8.21"
-build_date = 1703343617
+build = 84
+version = "0.8.22"
+build_date = 1703946693
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -66,7 +66,7 @@ print_loading_message("tqdm.tqdm")
 from tqdm import tqdm
 
 print_loading_message("shutil.copyfile, shutil.SameFileError")
-from shutil import SameFileError, copyfile
+from shutil import SameFileError, copyfile, move
 
 print_loading_message("pathlib")
 import pathlib
@@ -110,6 +110,9 @@ import re
 
 print_loading_message("lzma")
 import lzma
+
+print_loading_message("subprocess")
+import subprocess
 
 print_loading_message("urllib.parse.urlsplit")
 from urllib.parse import urlsplit
@@ -188,7 +191,7 @@ client = None
 
 phrases = {
     'english': {
-        'menu_options': f'\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n{magenta_colour}[7] ProjectSaturnian{reset_colour}\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n{magenta_colour}[13] Install DraggieClient{reset_colour}\n[14] YouTube Downloader\n[15] Bank Files Extractor\n[16] VideoMaker\n[17] VBS Script Launcher\n[18] CMD Executor\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
+        'menu_options': f'\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n{magenta_colour}[7] ProjectSaturnian{reset_colour}\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n{magenta_colour}[13] Install DraggieClient{reset_colour}\n[14] YouTube Downloader\n{magenta_colour}[15] Bank Files Extractor{reset_colour}\n[16] VideoMaker\n[17] VBS Script Launcher\n[18] CMD Executor\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
         'key_error': 'Key error occurred: ',
         'backup': '\n\nResorting to backup',
         'downloading': 'Downloading.',
@@ -762,42 +765,46 @@ log(f"[MainInit] Language set to {language}", 2, False)
 
 
 def cmini_extraction():
-    log("CMINI_EXTRACTION")
-    import subprocess
-    bankfilepath = input("Enter the INPUT PATH. This must contain the bank files.\n\n>>> ")
-    outputpath = input("Enter the output path to nicely put everything in afterwards.\n\n>>> ")
-    if not os.path.exists(outputpath):
-        os.makedirs(outputpath)
+    log("Entering cmini_extraction function for Bank File Extraction", 2, False)
+    bankfilepath = input(f"Enter the {lily_colour}INPUT PATH{reset_colour}. This is the folder containing the .bank files you wish to extract.\nIf you do not have this, you can search for them using AutoBrawlExtractor (option 9).\n\n>>> ")
+    outputpath = input(f"Now, enter the {lily_colour}OUTPUT PATH{reset_colour}. This is where the extracted files will be placed.\n\n>>> ")
+    os.makedirs(outputpath, exist_ok=True)
 
-    utils_path = input("Enter the path to the folder with all the required dependencies. Leave blank and they will be downloaded to the output directory.\n\n>>> ")
+    utils_path = os.path.join(outputpath, ".utils")
+    if not os.path.exists(utils_path):
+        log("Dependencies don't seem to be present. Downloading to .utils folder...", 1, False)
+        using_ibaguette = False
 
-    # quickbms_exe = input("Enter the path to the quickBMS.exe file:\n\n\n>>>")
-    # bmsfile = input("Enter the path to the script.bms file:\n\n\n>>>")
-
-    if utils_path == "":
         utils_path = outputpath + r"\.utils" # create a folder called .utils in the output directory
         makedirs(utils_path, exist_ok=True)
+        archive_link = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/bankFileExt/.utils.zip" if not using_ibaguette else \
+            "https://cdn.ibaguette.com/cdn/Tools/bankFileExt/.utils.zip"
         log(f"Downloading utility prerequisite files to {utils_path} directory...", 1, True)
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803066313322548/fmodex.dll", utils_path + r"\fmodex.dll")
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803066674028594/fmodL.dll", utils_path + r"\fmodL.dll")
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803067022159913/fsb_dec.bat", outputpath + r"\fsb_dec.bat") # batchfile must be in parent directory
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803067772948561/fsb_aud_extr.exe", utils_path + r"\fsb_aud_extr.exe")
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803068121067530/fmod_extr.exe", utils_path + r"\fmod_extr.exe")
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803068439830659/Script.bms", utils_path + r"\Script.bms")
-        tqdm_download("https://cdn.discordapp.com/attachments/1100802918527008778/1100803068813135955/quickbms.exe", utils_path + r"\quickbms.exe")
+        tqdm_download(archive_link, utils_path + r"\.utils.zip")
+        with open(utils_path + r"\.utils.zip", 'rb') as zip_ref:
+            with zipfile.ZipFile(zip_ref, 'r') as zip:
+                zip.extractall(utils_path)
         log(f"All files downloaded! Utils path = {utils_path}", 1, False)
 
     quickbms_exe = utils_path + r"\quickbms.exe"
     fsb_aud_extr_exe = utils_path + r"\fsb_aud_extr.exe"
     bmsfile = utils_path + r"\Script.bms"
-    batchfile = outputpath + r"\fsb_dec.bat" # batchfile limitation: must be in the same directory as the fsb files
 
-    log(f"batchfile_path: {batchfile}")
+    # batchfile limitation: below must be in the same directory as the fsb files
+    move(utils_path + r"\fsb_dec.bat", outputpath + r"\fsb_dec.bat") # source THEN destination
+
+    batchfile = outputpath + r"\fsb_dec.bat"
+    log(f"batchfile_path: {batchfile}", output=False)
 
     # Check if all the files exist
 
     if not os.path.isfile(quickbms_exe) or not os.path.isfile(bmsfile) or not os.path.isfile(batchfile) or not os.path.isfile(fsb_aud_extr_exe):
-        log("Missing files! Please redownload the dependencies.")
+        log("Missing files, redownloading...", 2, False)
+        for file in os.listdir(utils_path):
+            log(f"Deleting {file}...", 2, True)
+            os.remove(os.path.join(utils_path, file))
+        os.rmdir(utils_path)
+        cmini_extraction()
         return
 
     # Replace content in batchfile to match the path to the fsb_aud_extr.exe file
@@ -809,7 +816,8 @@ def cmini_extraction():
         file_contents = file.read()
         modified_contents = file_contents.replace(target_string, replacement_string)
 
-    with open(batchfile, 'w') as file:
+    with open(batchfile, 'w+') as file:
+        log(f"Writing to batchfile: {modified_contents}", 2, False)
         file.write(modified_contents)
 
     # Execute the quickbms extractor file with parameters
@@ -832,13 +840,19 @@ def cmini_extraction():
     # log the output
 
     log(output_str, 1)
-    log("Successfully extracted some files!")
+    log(f"Completed extraction of .fsb files from .bank files. Output path: {outputpath}", 2, True)
 
     # Run the batchfile
 
     log("Running batchfile to extract all the files from the fsb files...", 2, False)
+    with open(batchfile, "r") as file:
+        file_contents = file.read()
+        log(f"Batchfile contents: {file_contents}", 2, False)
+
     log(f"{magenta_colour}Executing command with subprocess.Popen: {batchfile}. working directory is {outputpath}", 2, True)
     start_anim_loading(f"{magenta_colour}Extracting waveform files from FSB... this make take some time...")
+    log(f"Full command: \n{batchfile}\nstdout: {proc.stdout}\ncwd: {outputpath}", 2, False)
+
     proc = subprocess.Popen([batchfile], stdout=subprocess.PIPE, cwd=outputpath)
     output = proc.communicate()[0]
     output_str = output.decode()
@@ -1203,12 +1217,12 @@ def check_for_update():
         log(f"Unable to overwrite older version. {e}", 4)
 
     try:
-        current_build_version = int((dash_get('https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt')).text)
+        current_build_version = int((dash_get('https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/build.txt')).text)
     except Exception as e:
         log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
         current_build_version = build
     if build < current_build_version: # if build is less than current version - so there's an update available.
-        release_notes = str((dash_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
+        release_notes = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n", event="success")
         if language == "english":
             versions_to_get = current_build_version - build
@@ -1221,7 +1235,7 @@ def check_for_update():
 
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
-                version_patch = str((dash_get(f"https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
+                version_patch = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}\n\n")
             log(f"\n{string}\n")
 
@@ -1638,7 +1652,7 @@ def autobrawlextractor():
         match location:
             case "1":
                 log("Fetching a list of all trusted versions from GitHub...")
-                git_brawl_builds = dash_get("https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/brawl_builds.txt")
+                git_brawl_builds = dash_get("https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/brawl_builds.txt")
                 git_brawl_builds = git_brawl_builds.text
                 urls = git_brawl_builds.splitlines()
                 version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
@@ -1663,15 +1677,18 @@ def autobrawlextractor():
                     log(f"{downloaded_amount} builds have been saved!\n\n")
                     number_one()
                 if selected_version == "0":
-                    clash_mini = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/board.txt"
-                    clash_of_clans = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/Addons/AutoBrawlExtractor/ipas/magic.txt"
+                    clash_mini = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/ipas/board.txt"
+                    clash_of_clans = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/ipas/magic.txt"
+                    brawl_stars = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/ipas/laser.txt"
 
-                    game_choice = input("Which game would you like to download builds for?\n\n[1] Clash Mini\n[2] Clash of Clans\n\n>>> ")
+                    game_choice = input("Which game would you like to download builds for?\n\n[1] Clash Mini\n[2] Clash of Clans\n[3] Brawl Stars\n\n>>> ")
 
                     if game_choice == "1":
                         game = clash_mini
                     if game_choice == "2":
                         game = clash_of_clans
+                    if game_choice == "3":
+                        game = brawl_stars
 
                     log("Fetching a list of all trusted versions from GitHub...")
                     git_clash_mini_builds = dash_get(game)
@@ -1681,6 +1698,9 @@ def autobrawlextractor():
                         version_names = [re.search(r"board-(\d+\.\d+)", url).group(1) for url in urls]
                     if game_choice == "2":
                         version_names = [re.search(r"magic-(\d+\.\d+)", url).group(1) for url in urls]
+                    if game_choice == "3":
+                        version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
+
                     for i, version_name in enumerate(version_names):
                         log(f"[{i + 1}]   {version_name}")
 
