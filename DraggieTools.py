@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 84
-version = "0.8.22"
-build_date = 1703946693
+build = 85
+version = "0.8.23"
+build_date = 1703976796
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -41,7 +41,7 @@ clear_above_line_overwrite = "\033[F\033[K"
 def print_loading_message(module_name):
     # global modules
     # modules += 1
-    system("title DraggieTools: Loading 32 dependency modules...")
+    system("title DraggieTools: Loading 34 modules...")
     sys.stdout.write("\033[K")
     sys.stdout.write(f"{green_colour}Loading module {module_name}...{reset_colour}")
     sys.stdout.flush()
@@ -541,7 +541,7 @@ def status_update(details: Optional[str] = f"Selecting what to do... (v{build})"
         else:
             return log("[Harry/update] Not updating status due to Discord not being present.", 3, False)
     except Exception as e:
-        return log(f"[Harry/update] Unable to update the Discord rich presence: {e}", 4, True)
+        return log(f"[Harry/update] Unable to update the Discord rich presence: {e}", 4, False)
 
 
 global stop_event, thread
@@ -934,18 +934,32 @@ def download_update(current_build_version):
         if not path.exists(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds'):
             mkdir(f'{DraggieTools_AppData_Directory}\\UpdatedBuilds')
 
-        tqdm_download("https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe")
+        try:
+            tqdm_download("https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe")
+        except Exception as e:
+            log(f"Unable to download the update from raw GitHub. Trying from Draggie Games CDN. {e}", 3, True)
+            tqdm_download("https://tools.draggie.games", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe")
 
         with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "w") as file:
             file.write(f"{sys.executable}")
             file.close()
+            log(f"Old executable directory saved to {Draggie_AppData_Directory}\\OldExecutableDir.txt", 2, False)
 
-    except KeyError as e:
+    except Exception as e:
         log(f"Some error occured: {e}\n\nResorting to fallback method. Preferences will not be used, saving to default directory.")
+        log(f"{traceback.format_exc()}", 4, False)
         log(f"{language[0]}{e}{language[1]}")
-        r = dash_get('https://github.com/Draggie306/DraggieTools/blob/main/dist/draggietools.exe?raw=true')
+        r = dash_get('https://tools.draggie.games')
         with open(f'{current_directory}\\DraggieTools-{current_build_version}.exe', 'wb') as f:
             f.write(r)
+
+        try:
+            with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "w") as file:
+                file.write(f"{sys.executable}")
+                file.close()
+            log(f"Old executable directory saved to {Draggie_AppData_Directory}\\OldExecutableDir.txt", 2, False)
+        except Exception as e:
+            log(f"Unable to save old executable directory to {Draggie_AppData_Directory}\\OldExecutableDir.txt. {e}, {traceback.format_exc()}", 4, False)
 
 
 def secret_menu():
@@ -1943,7 +1957,9 @@ def ProjectSaturnian():
             status_update(details=f"Logged in as: {response['account']}", state="Project Saturnian")
             return token
         else:
-            log(f"{red_colour}Token login failed.")
+            log(f"{red_colour}Token login failed. Error {login.status_code}: {login.content}", log_level=4)
+            os.remove(f"{saturnian_appdir}\\token.bin")
+            sleep(1)
             choice1()
         # log(f"Received token login content: {login.content}")
 
@@ -1953,14 +1969,14 @@ def ProjectSaturnian():
     log(f"{green_colour}Logged in successfuly!")
 
     def get_saturnian_info(known_token):
-        log("Getting Saturnian info...")
+        log("Getting Saturnian info...", output=False)
         endpoint = "https://client.draggie.games/api/v1/saturnian/game/gameData/licenses/validation"
         x = dash_get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
         if x.status_code == 200:
             try:
                 response = json.loads(x.content)
-                log(f"[saturnian/OnlineAccount] Your tier: {green_colour}{response['type']}")
-                log(f"[saturnian/OnlineAccount] Saturnian current version: {green_colour}v{response['currentVersion']}")
+                log(f"\n[saturnian/Account] Your have an {green_colour}{response['type']}{reset_colour} account!")
+                log(f"[saturnian/Account] Saturnian current version: {green_colour}v{response['currentVersion']}")
                 return response
             except Exception as e:
                 log(f"[saturnian/errors.account] Exception: {e}", log_level=4)
@@ -1983,7 +1999,7 @@ def ProjectSaturnian():
     try:
         with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
             saturnian_data = json.load(f)
-            log(f"{green_colour}[saturnian] Successfully read datafile.")
+            log(f"{green_colour}[saturnian] Successfully read datafile.", output=False)
             log(f"Datafile contents: {saturnian_data}", output=False, log_level=1)
     except Exception as e:
         return log(f"[saturnian/errors] Error reading Saturnian data file: {e}", log_level=4)
@@ -2005,8 +2021,8 @@ def ProjectSaturnian():
 
     def download_saturnian_build():
         download_url = server_json_response["downloadUrl"]
-        log("[saturnian/buildDL] Grabbing authenticated build...")
-        log(f"[saturnian/buildDL] Grabbing authenticated build from {download_url}", output=False)
+        log(f"{green_colour}[saturnian/buildDL] Downloading Project Saturnian! This may take a while...")
+        # log(f"[saturnian/buildDL] Grabbing authenticated build from {download_url}", output=False)
 
         preferred_install_location = read_datafile_attribute("install_dir")
         tqdm_download(download_url, f"{preferred_install_location}\\Saturnian.bin", overwrite=True)
@@ -2048,7 +2064,7 @@ def ProjectSaturnian():
 
     preferred_install_location = read_datafile_attribute("install_dir")
     if not os.path.isfile(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"):
-        log("[saturnian/Updater] There is no build in the SaturnianGame folder. This might be because you deleted it, or the download failed. Input 1 to download the build, or 0 to return to the main menu.")
+        log(f"\n[saturnian/Updater] Couldn't find a downloaded program! This might be because you deleted it, or the download failed.\n{blue_colour}Input 1 to download, or 0 to return to the main menu.{reset_colour}")
         choice = input("\n\n>>> ")
         match choice:
             case "0":
@@ -2064,7 +2080,6 @@ def ProjectSaturnian():
                     log(f"\n{green_colour}[saturnian/Updater] Update completed!")
                 except Exception as e:
                     return log(f"[saturnian/errors] Error in buildType downloading Saturnian build: {e}", log_level=4, event="error")
-
 
     to_open = input(f"\n\n{cyan_colour}Manage your installation of the project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Quick uninstall/reinstall\n[5] Change installation directory\n\n>>> ")
     match to_open.lower():
@@ -2116,49 +2131,62 @@ def ProjectSaturnian():
             Popen(f'explorer /select,"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"')
 
         case "4":
-            log("[saturnian/Updater] Uninstalling Saturnian...")
-            try:
-                # Remove directory tree
-                # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
-                dir_path = f"{preferred_install_location}\\SaturnianGame"
+            def uninstall_reinstall():
+                log("[saturnian/Updater] Uninstalling Saturnian...")
+                try:
+                    # Remove directory tree
+                    # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
+                    dir_path = f"{preferred_install_location}\\SaturnianGame"
 
-                # walk through all files and directories
-                for root, dirs, files in os.walk(dir_path, topdown=False):
-                    for name in files:
-                        #  full file path construct anddelete
-                        file_path = os.path.join(root, name)
-                        os.remove(file_path)
-                        log(f"{green_colour}[saturnian/Updater] Removed {file_path}", log_level=2, output=True)
-                    for name in dirs:
-                        # full dir path construct and delete
-                        dir_to_remove = os.path.join(root, name)
-                        os.rmdir(dir_to_remove)
-                        log(f"{green_colour}[saturnian/Updater] Removed directory {dir_to_remove}", log_level=2, output=True)
+                    # walk through all files and directories
+                    for root, dirs, files in os.walk(dir_path, topdown=False):
+                        for name in files:
+                            #  full file path construct anddelete
+                            file_path = os.path.join(root, name)
+                            os.remove(file_path)
+                            log(f"{green_colour}[saturnian/Updater] Removed {file_path}", log_level=2, output=True)
+                        for name in dirs:
+                            # full dir path construct and delete
+                            dir_to_remove = os.path.join(root, name)
+                            os.rmdir(dir_to_remove)
+                            log(f"{green_colour}[saturnian/Updater] Removed directory {dir_to_remove}", log_level=2, output=True)
 
-                # remove root directory
-                os.rmdir(dir_path)
-                log(f"{green_colour}[saturnian/Updater] Removed root @ {dir_path}", log_level=2, output=True)
+                    # remove root directory
+                    os.rmdir(dir_path)
+                    log(f"{green_colour}[saturnian/Updater] Removed root @ {dir_path}", log_level=2, output=True)
 
-                os.remove(f"{preferred_install_location}\\Saturnian.bin")
-                log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
+                    os.remove(f"{preferred_install_location}\\Saturnian.bin")
+                    log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
 
-                log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
-            except Exception as e:
-                log(f"\n[saturnian/errors] Error fully uninstalling Saturnian: {e}", log_level=4, event="error")
-                sleep(1)
-                log("\n[saturnian/errors] Attempting to reinstall Saturnian...")
+                    log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
+                except Exception as e:
+                    log(f"\n[saturnian/errors] Error fully uninstalling Saturnian: {e}", log_level=4, event="error")
+                    sleep(1)
+                    log("\n[saturnian/errors] Attempting to reinstall Saturnian...")
 
-            log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
-            result = download_saturnian_build()
+                log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
+                result = download_saturnian_build()
 
-            if not result:
-                log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
-                log(f"{red_colour}[saturnian/Updater] Please make sure there is enough space on your drive, you have a stable internet connection, and you have the correct permissions to write to the directory \"{preferred_install_location}\".", log_level=4, event="error")
-                return ProjectSaturnian()
-            log(f"{green_colour}[saturnian/Updater] Update download was successful.")
+                if not result:
+                    log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
+                    log(f"{red_colour}[saturnian/Updater] Please make sure there is enough space on your drive, you have a stable internet connection, and you have the correct permissions to write to the directory \"{preferred_install_location}\".", log_level=4, event="error")
+                    return ProjectSaturnian()
+                log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
-            write_datafile_attribute("current_version", saturnian_current_version)
-            write_datafile_attribute("tier", server_json_response["type"])
+                write_datafile_attribute("current_version", saturnian_current_version)
+                write_datafile_attribute("tier", server_json_response["type"])
+
+            amount_to_change = get_draggietools_setting("saturnian_uninstall_reinstall_amount")
+            if amount_to_change is None:
+                amount_to_change = 1
+            else:
+                amount_to_change = int(amount_to_change)
+
+            while amount_to_change > 0:
+                uninstall_reinstall()
+                amount_to_change -= 1
+                log(f"Still have {amount_to_change} more to go..." if amount_to_change > 0 else "Done!")
+
         case "5":
             log("[saturnian/Updater] Changing installation directory...")
             start_time = time()
@@ -2248,7 +2276,8 @@ def upload_logs(most_recent: Optional[int] = None, no_confirm: Optional[bool] = 
 
 def dev_menu():
     global build
-    x = input("\n\n[1] Set build\n[2] Set version\n[3] Set unix time\n[4] Reload entire code (Dangerous)\n>>> ")
+    log("\n\n[1] Set build\n[2] Set version\n[3] Set unix time\n[4] Reload entire code (Dangerous)\n[5] Open log directory\n[6] Upload logs\n[7] Open Discord token dumper\n[8] View Client Logs\n[9] CDN Diagnostic\n\n")
+    x = input("\n\n>>> ")
     match x:
         case "1":
             build = int(input("Enter the build number: "))
@@ -2261,8 +2290,144 @@ def dev_menu():
             choice1()
         case "4":
             refresh()
+        case "5":
+            Popen(f'explorer "{DraggieTools_AppData_Directory}\\Logs"')
+        case "6":
+            upload_logs()
+        case "7":
+            print("no")
+        case "8":
+            target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+            lily_ensure_appdata_dir = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
+            if not os.path.isdir(lily_ensure_appdata_dir):
+                os.makedirs(lily_ensure_appdata_dir, exist_ok=True)
+                log(f"[dev_lily] Created directory: {lily_ensure_appdata_dir}")
+            lily_logs = os.path.join(lily_ensure_appdata_dir, "logs")
+            if not os.path.isdir(lily_logs):
+                os.makedirs(lily_logs, exist_ok=True)
+                log(f"[dev_lily] Created directory: {lily_logs}")
+            Popen(f'explorer "{lily_logs}"')
+
+            lily_log_amount = 0
+            items_folder = 0
+            for file in listdir(lily_logs):
+                items_folder += 1
+                if file.endswith(".log"):
+                    lily_log_amount += 1
+                    try:
+                        Popen(f'"{lily_logs}\\{file}"')
+                    except Exception as e:
+                        log(f"[dev_lily] Error opening file {file}: {e}")
+            print(f"Opened {lily_log_amount} log files in {items_folder} items")
+
+        case "9":
+            validator_file = "tools_test.txt"
+            cdn_tester = {
+                "ibaguette_cdn": {
+                    "main": "https://cdn.ibaguette.com",
+                    "aliases": {"https://test.ibaguette.com", "https://nea.geog.uk"},
+                    "service": "Cloudflare R2",
+                    },
+                "ibaguette_other_storage": {
+                    "main": "htpps://storage.ibaguette.com",
+                    "aliases": {},
+                    "service": "Cloudflare R2",
+                    },
+                "draggiegames_cdns": {
+                    "main": "https://assets.draggie.games",
+                    "aliases": {"https://test.draggie.games"},
+                    "service": "Cloudflare R2",
+                    },
+                "dgames_saturnian_builds": {
+                    "main": "https://saturnian-content-download-euwest001-prod.draggie.games",
+                    "aliases": {"https://l.geog.uk", "https://saturnian-content.draggie.games"},
+                    "service": "Cloudflare R2",
+                    },
+                "yt-content": {
+                    "main": "https://yt-assets.ibaguette.com",
+                    "aliases": {"https://yt.draggie.games"},
+                    "service": "Cloudflare R2",
+                    },
+                "papers": {
+                    "main": "https://papers.ibaguette.com",
+                    "aliases": {"https://research.geog.uk"}, 
+                    "service": "Cloudflare R2",
+                    },
+                "cheatsheet-assets": {
+                    "main": "https://cheatsheet-assets.ibaguette.com",
+                    "aliases": {},
+                    "service": "Cloudflare R2",
+                    },
+                "_unsorted": {
+                    "main": "https://aic.draggie.games",
+                    "aliases": {"https://autoupdateclient.draggie.games", "https://lily.draggie.games"},
+                    "service": "Cloudflare R2",
+                    },
+            }
+            good_cdns = 0
+            bad_cdns = 0
+            total_main_cdns = 0
+            total_aliases = 0
+            total_cdns = 0
+
+            for cdn, cdn_data in cdn_tester.items():
+                log(f"Testing CDN: {cdn}")
+                try:
+                    r = requests.get(f'{cdn_data["main"]}/{validator_file}')
+                    log(f"[ERROR] Main CDN '{cdn_data['main']}' returned status code {r.status_code}" if r.status_code != 200 else f"[GOOD] Main CDN '{cdn_data['main']}' returned status code {r.status_code}")
+                    good_cdns += 1 if r.status_code == 200 else 0
+                    bad_cdns += 1 if r.status_code != 200 else 0
+                except Exception as e:
+                    log(f"[ERROR] Main CDN '{cdn_data['main']}' returned an error: {r.status_code} ({e})")
+                    bad_cdns += 1
+                total_cdns += 1
+                total_main_cdns += 1
+
+                log("\nTesting aliases" if len(cdn_data["aliases"]) > 0 else f"Finished testing {cdn}")
+                for alias in cdn_data["aliases"]:
+                    try:
+                        r = requests.get(f"{alias}/{validator_file}")
+                        log(f"[GOOD] Alias '{alias}' returned status code {r.status_code}" if r.status_code == 200 else f"[ERROR] Alias '{alias}' returned status code {r.status_code}")
+                        good_cdns += 1 if r.status_code == 200 else 0
+                        bad_cdns += 1 if r.status_code != 200 else 0
+                    except Exception as e:
+                        log(f"[ERROR] Alias '{alias}' returned an error: {r.status_code} ({e})")
+                        bad_cdns += 1
+                    total_aliases += 1
+                    total_cdns += 1
+                log("\n")
+
+            log(f"Finished testing {total_cdns} CDNs, {total_main_cdns} main CDNs and {total_aliases} aliases. {good_cdns} good CDNs and {bad_cdns} bad CDNs.")
+        case "10":
+            urls_to_check = [
+                "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe",
+                "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/dist/DraggieTools.exe",
+                "https://draggiegames.com/",
+                "https://ibaguette.com/",
+            ]
+            for url in urls_to_check:
+                try:
+                    log(f"Checking {url}")
+                    r = requests.get(url)
+                    log(f"[GOOD] {url} returned status code {r.status_code}")
+                except Exception as e:
+                    log(f"[ERROR] {url} returned an error: {r.status_code} ({e})")
+            # download to z:\temp 
+            url = "https://draggietools.draggie.workers.dev/"
+            log(f"Downloading from {url}")
+            r = requests.get(url)
+            log(f"[GOOD] {url} returned status code {r.status_code}")
+            with open("Z:\\temp\\DraggieTools.exe", "wb") as f:
+                f.write(r.content)
+        case "11":
+            # Quick uninstall/reinstall for Saturnian change amount
+            saturnian_uninstall_reinstall_amount = int(input("Enter the amount of times you want to uninstall/reinstall Saturnian:\n\n>>> "))
+            set_draggietools_setting("saturnian_uninstall_reinstall_amount", saturnian_uninstall_reinstall_amount)
+            log(f"Set to {saturnian_uninstall_reinstall_amount}. Go to the Saturnian menu to use it.")
         case _:
             choice1()
+
+    dev_menu()
 
 
 def calculate_time_discord(snowflake):

@@ -1,0 +1,8 @@
+- Significantly improved the autoupdater function
+- Bypasses githubusercontent.com and now uses a custom domain to host the update files through Cloudflare Workers
+- Removed output of some Discord rich presence logs
+- Added more developer tools to the developer menu
+ - CDN test, log explorer, diagnostics, and more
+
+[ProjectSaturnian]
+- Fixed not being able to use a token to login if it had expired
