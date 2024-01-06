@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 85
-version = "0.8.23"
-build_date = 1703976796
+build = 86
+version = "0.9.0"
+build_date = 1704505539
 username = getpass.getuser()
 current_exe_path = sys.executable
 
@@ -19,7 +19,8 @@ start_time = time.time()
 import os
 from os import environ, listdir, makedirs, mkdir, path, remove, startfile, system
 
-system("title DraggieTools: Loading modules...")
+system("chcp 65001")
+system("title DraggieTools: Loading 35 modules...")
 
 green_colour = "\033[92m"
 red_colour = "\033[91m"
@@ -41,7 +42,6 @@ clear_above_line_overwrite = "\033[F\033[K"
 def print_loading_message(module_name):
     # global modules
     # modules += 1
-    system("title DraggieTools: Loading 34 modules...")
     sys.stdout.write("\033[K")
     sys.stdout.write(f"{green_colour}Loading module {module_name}...{reset_colour}")
     sys.stdout.flush()
@@ -149,6 +149,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 print_loading_message("requests")
 import requests
 
+print_loading_message("io")
+import io
+
 # Codename Guide:
 """
 DraggieTools: This file and binary exe
@@ -180,6 +183,7 @@ elif elapsed_time < very_slow_time:
 
 sys.stdout.write("\r")
 sys.stdout.flush()
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 
 system(f"title DraggieTools v{version} (build {build}) initialised in {round(elapsed_time, 7)}s")
 
@@ -191,7 +195,7 @@ client = None
 
 phrases = {
     'english': {
-        'menu_options': f'\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n{magenta_colour}[7] ProjectSaturnian{reset_colour}\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n{magenta_colour}[13] Install DraggieClient{reset_colour}\n[14] YouTube Downloader\n{magenta_colour}[15] Bank Files Extractor{reset_colour}\n[16] VideoMaker\n[17] VBS Script Launcher\n[18] CMD Executor\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
+        'menu_options': f'\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n{magenta_colour}[7] Draggie Games Library{reset_colour}\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n{magenta_colour}[13] Install DraggieClient{reset_colour}\n[14] YouTube Downloader\n{magenta_colour}[15] Bank Files Extractor{reset_colour}\n[16] VideoMaker\n[17] VBS Script Launcher\n[18] CMD Executor\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
         'key_error': 'Key error occurred: ',
         'backup': '\n\nResorting to backup',
         'downloading': 'Downloading.',
@@ -219,9 +223,9 @@ phrases = {
         'interacting_allowed': "Interacting allowed for",
         'file': 'file.',
         'input_threads': "Input the amount of threads to use to download files with:\n\n>>> ",
-        'select_options': "Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract additions\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ",
+        'select_options': "Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract changes\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ",
         'read_info_from_file': "Read the following information from file",
-        'amount_of_files': "Amount of files",
+        'amount_of_files': "Amount of assets",
         'fingerprint_hash': "Fingerprint hash",
         'found_music_in_file': 'Found "music/background" in file: ',
         'search_term_input': "Enter the term to search all files for and it will be downloaded:\n\n>>> ",
@@ -474,7 +478,7 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
         case _:
             logging.info(text)
 
-    if event is not None:
+    if event:
         if event == "Success":
             colour = green_colour
         elif event == "Warning":
@@ -486,6 +490,8 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
         text = f"{colour}{text}{reset_colour}"
 
     if output:
+        if log_level == 1 and dev_mode:
+            print(f"{cyan_colour}[debug]:{reset_colour} {text}")
         if log_level is None:
             log_level = 2
         if log_level <= 2:
@@ -496,7 +502,8 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
             print(f"{red_colour}{text}{reset_colour}")
     else:
         if log_level == 1:
-            # print(f"{text}{cyan_colour} [debug] {reset_colour}")
+            if dev_mode:
+                print(f"{cyan_colour}[dev debug]: {text}{reset_colour}")
             pass
 
     # if output else logging.info("The above log was not shown to the console")
@@ -604,31 +611,36 @@ def refresh2():
     exec(open(__file__).read())
 
 
+class CustomTqdm(tqdm):
+    def format_meter(self, *args, **kwargs):
+        kwargs['n_fmt'] = f"{kwargs['n'] / 1024:,.3f}"
+        kwargs['total_fmt'] = f"{kwargs['total'] / 1024:,.3f}"
+        return super().format_meter(*args, **kwargs)
+
+
 def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite: Optional[bool] = False, return_exceptions: Optional[bool] = False):
     # Networking component codename is dash
-    def download_file(download_url, save_dir):
+    def download_file(download_url, save_dir, desc: Optional[str] = None):
         response = dash_get(download_url, stream=True)
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
-        written = 0
-        desc = download_url.split("/")[-1]
-        log(f"Attempting to download a file. Content length: {total_size} bytes. ({download_url})", 1, False, component="dash")
-        print(blue_colour)
+        desc = download_url.split("/")[-1] if desc is None else desc
+        # print(f"desc: {desc}")
+        custom_bar_format = "{desc} - {percentage:3.2f}% |{bar}| ({n_fmt}MiB / {total_fmt}MiB @ {rate_fmt}) [{elapsed} elapsed, {remaining} remaining]{postfix}"
         with open(save_dir, "wb") as f:
-            for data in tqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc):
-                written = written + len(data)
+            for data in CustomTqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc, bar_format=custom_bar_format):
                 f.write(data)
         print(reset_colour)
         log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False, component="dash")
 
     if return_exceptions:
-        download_file(download_url, save_dir)
+        download_file(download_url, save_dir, desc)
     else:
         try:
             if not path.exists(save_dir):
                 os.makedirs(path.dirname(save_dir), exist_ok=True)
                 log(f"Created directory {path.dirname(save_dir)}", 2, False, component="dash")
-            download_file(download_url, save_dir)
+            download_file(download_url, save_dir, desc)
         except KeyboardInterrupt:
             log("Keyboard interrupt: going back to first choice.", 3, False, component="dash")
             return choice1()
@@ -643,13 +655,7 @@ def dash_get(*args, **kwargs):
     # Networking component codename is dash
     log(f"Getting data from: ({args[0]})", 1, False, component="dash")
 
-    headers = kwargs.get("headers", None)
-    if not headers:
-        headers = {
-            "User-Agent": "DraggieTools",
-        }
-
-    x = requests.get(*args, headers=headers, **kwargs)
+    x = requests.get(*args, **kwargs)
     log(f"GET request returned with status code {x.status_code}. ({args[0]})", 1, False, component="dash")
     return x
 
@@ -1274,77 +1280,82 @@ def check_for_update():
         log(f"{phrases[language]['running_version']} {version} - {phrases[language]['build']} {build} - {phrases[language]['at']} {datetime.fromtimestamp(build_date).strftime('%Y-%m-%d %H:%M:%S')}. {phrases[language]['server_says']} {current_build_version}.")
 
 
-def maniupulate_brawl_file(dir, app_version, arch_type: Optional[str] = None, app_name: Optional[str] = None, fingerprint_json: Optional[dict] = None):
-    app_version = str(app_version)
-    if not app_name:
-        app_name = str(input("\nPlease enter the name of the app. This is case sensitive. (e.g. Brawl Stars, Boom Beach, Clash of Clans, Clash Royale, Clash Mini)\n\n>>> "))
-    log(f"{phrases[language]['interacting_allowed']} '{app_name}'! [v{app_version}]")
-    if app_name is None:
-        app_name = ""
+def maniupulate_brawl_file(dir, app_version: Optional[str] = None, arch_type: Optional[str] = None, app_name: Optional[str] = None, fingerprint_json: Optional[dict] = None, server_hostname: Optional[str] = None):
+    # dir is the directory of the archive. Typically ends in .ipa or .apk, or .json (for fingerprint.json)
+    # app_version is the version of the app, e.g. 36.270
+    # Arch_type is either IPA or APK. This doesn't really matter, but formats can be different.
+    # app_name is the name of the app, e.g. Brawl Stars
+    # fingerprint_json is the fingerprint.json file as a dict. This will override all other parameters if it is not None.
 
-    if "Brawl Stars" in app_name:
-        game_download_url = "game-assets.brawlstarsgame.com"
-        app_name = "Brawl Stars"
-    elif "Boom Beach" in app_name:
-        game_download_url = "game-assets.boombeach.com"
-        app_name = "Boom Beach"
-    elif "Clash of Clans" in app_name:
-        game_download_url = "game-assets.clashofclans.com"
-        app_name = "Clash of Clans"
-    elif "Clash Royale" in app_name:
-        game_download_url = "game-assets.clashroyaleapp.com"
-        app_name = "Clash Royale"
-    elif "Clash Mini" in app_name:
-        game_download_url = "game-assets.clashminigame.com"
-        app_name = "Clash Mini"
-    else:
-        game_choice = input("Unable to detect app name. Please choose one of the following:\n\n[1] Brawl Stars\n[2] Boom Beach\n[3] Clash of Clans\n[4] Clash Royale\n[5] Clash Mini.\nIf your app is not listed, press enter.\n\n>>> ")
-        match game_choice:
+    log(f"Parameters: dir={dir}, app_version={app_version}, arch_type={arch_type}, app_name={app_name}, fingerprint_json={bool(fingerprint_json)}, server_hostname={server_hostname}") if dev_mode else None
+
+    app_version = str(app_version) if app_version else "Unknown version"
+    server_hostname = None if not server_hostname else server_hostname
+
+    download_urls = {
+        "Brawl Stars": "game-assets.brawlstarsgame.com",
+        "Boom Beach": "game-assets.boombeach.com",
+        "Clash of Clans": "game-assets.clashofclans.com",
+        "Clash Royale": "game-assets.clashroyaleapp.com",
+        "Clash Mini": "game-assets.clashminigame.com",
+    }
+
+    for app in download_urls:
+        if app_name is not None and app_name in app:
+            server_hostname = download_urls[app]
+            log(f"Found server hostname for {app_name}: {server_hostname}")
+            break
+
+    if not server_hostname:
+        if "{'file': 'image/brawl_icon.png', 'sha': '1d4c42c9968153c3e220c1420ea87ecc62808afd'}" in fingerprint_json['files']:
+            server_hostname = download_urls["Brawl Stars"]
+        elif "font/BoomBeach.ttf" in fingerprint_json['files']:
+            server_hostname = download_urls["Boom Beach"]
+        elif "font/ClashofClans" in fingerprint_json['files']:
+            server_hostname = download_urls["Clash of Clans"]
+
+        log(f"\nCouldn't reliably find server hostname for {app_name}, please input the correct one if this is wrong.\nYou can press [enter] to continue with: '{server_hostname}')")
+        log("Alternatively, here are the options:")
+
+        iterations = 0
+        for app in download_urls:
+            iterations += 1
+            log(f"{iterations}: {app}" if iterations != len(download_urls) else f"{iterations}: {app}", 1, True)
+
+        server_hostname = input("\n\n>>> ")
+
+        match server_hostname.lower():
+            case "":
+                log(f"Continuing with {server_hostname}")
             case "1":
-                game_download_url = "game-assets.brawlstarsgame.com"
-                app_name = "[Fingerprint] Brawl Stars"
+                server_hostname = download_urls["Brawl Stars"]
             case "2":
-                game_download_url = "game-assets.boombeach.com"
-                app_name = "[Fingerprint] Boom Beach"
+                server_hostname = download_urls["Boom Beach"]
             case "3":
-                game_download_url = "game-assets.clashofclans.com"
-                app_name = "[Fingerprint] Clash of Clans"
+                server_hostname = download_urls["Clash of Clans"]
             case "4":
-                game_download_url = "game-assets.clashroyaleapp.com"
-                app_name = "[Fingerprint] Clash Royale"
+                server_hostname = download_urls["Clash Royale"]
             case "5":
-                game_download_url = "game-assets.clashminigame.com"
-                app_name = "[Fingerprint] Clash Mini"
+                server_hostname = download_urls["Clash Mini"]
             case _:
-                game_download_url = input("Enter the game download URL. (e.g. game-assets.brawlstarsgame.com)\n\n>>> ")
-                app_name = input("Enter the app name. (e.g. Brawl Stars)\n\n>>> ")
+                server_hostname = server_hostname
+        log(f"Set base download URL to {server_hostname}")
 
-    status_update(details="Extracting Supercell game assets", state=f"Loaded: {app_name} (v{app_version}) - {arch_type}")
+    status_update(details="Extracting Supercell game assets", state=f"Loaded {app_name} v{app_version} ({arch_type})")
+    game_download_url = server_hostname
 
+    # "Select options:\n\n1) See basic info and fingerprint hash\n2) Compare music to old version and extract additions\n3) Compare files to another version\n4) Download all background music files\n5) Download all files containing a string\n6) Open this archive's downloaded file folder\n0) Go back   \n\n>>> ",
     x = input(phrases[language]['select_options'])
     match x:
         case "1":
             log(f"{l10n_text('read_info_from_file')}:\n{l10n_text('fingerprint_hash')}: {fingerprint_json['sha']}\n{l10n_text('amount_of_files')}: {len(fingerprint_json['files'])}\n\n")
         case "2":
-            if not fingerprint_json:
-                fingerprint_json = str(archive.read(f'{app_name}res/fingerprint.json'), encoding="UTF-8")
-                fingerprint_json = json.loads(fingerprint_json)
-            for item in fingerprint_json['files']:
-                if 'music/background' in item['file']:
-                    log(f"Found 'music/background' in file: {item}", 1, False)
-                    # The file field contains 'music/background'
-
-                    log(f"{phrases[language]['found_music_in_file']}{item['file']}")
-                    dir_path = item['file'].split('/')[:2]
-                    dir_path = '\\'.join(dir_path)
-
-                    # in case the directory doesn't exist, create it
-                    makedirs(f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{dir_path}', exist_ok=True)
-                    tqdm_download(f'https://{game_download_url}/{fingerprint_json["sha"]}/{item["file"]}', f'{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}\\{item["file"]}')
-                else:
-                    # log(f"Not in file {item}")
-                    pass
-            log("ok")
+            # Build index of current files in the directory
+            json_files = []
+            return log("Not implemented yet")
+            for file in listdir(dir):
+                if file.endswith(".json"):
+                    json_files.append(file)
         case "3":  # this is the get list of new/modified/deleted files
             Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             amount_of_files = 0
@@ -1470,7 +1481,7 @@ def maniupulate_brawl_file(dir, app_version, arch_type: Optional[str] = None, ap
                             futures.append(executor.submit(tqdm_download, url, path))
                 log(f"{phrases[language]['found']} {hits} {phrases[language]['matching_files']} {files} {phrases[language]['total_files_in']} {archives} {phrases[language]['available_archives']} {skips} {phrases[language]['files_already_exist']}")
                 status_update(details=f"{phrases[language]['S_as']}", state=f"{files} {phrases[language]['S_as_1']} {hits} {phrases[language]['S_as_2']}")
-                return maniupulate_brawl_file(dir=dir, app_version=app_version, arch_type=arch_type, app_name=app_name, fingerprint_json=fingerprint_json)
+                return maniupulate_brawl_file(dir=dir, app_version=app_version, arch_type=arch_type, app_name=app_name, fingerprint_json=fingerprint_json, server_hostname=server_hostname)
 
             available_archives = listdir(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             for file in available_archives:
@@ -1524,25 +1535,34 @@ def maniupulate_brawl_file(dir, app_version, arch_type: Optional[str] = None, ap
                         else:
                             pass
                             # log(f"Unable to find the search term {search_term} in v{new_fingerprint_json['version']}: {item}")
-            return maniupulate_brawl_file(dir=dir, app_version=app_version, arch_type=arch_type, app_name=app_name, fingerprint_json=fingerprint_json)
+            return maniupulate_brawl_file(dir=dir, app_version=app_version, arch_type=arch_type, app_name=app_name, fingerprint_json=fingerprint_json, server_hostname=server_hostname)
         case "6":
             Popen(f'explorer /select,"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{app_version}"')
         case _:
             autobrawlextractor()
 
-    maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_json=fingerprint_json)
+    maniupulate_brawl_file(dir, app_version, app_name, arch_type, fingerprint_json=fingerprint_json, server_hostname=server_hostname)
 
 
 def init_filetype(dir):
     """
     Initialises and checks the validity of the archive version provided. If the file provided is not valid, then the program will exit.\nMay return the game.
     """
+    # remove ", ', from dir
+    dir = dir.replace("'", "")
+    dir = dir.replace('"', "")
+
+    dir = os.path.abspath(dir)
     app_name = None
-    if dir.endswith(".json"):
-        with open(dir, "r") as json_file:
-            fingerprint_json = json.loads(json_file.read())
-        version_name = fingerprint_json['version']
-        maniupulate_brawl_file(dir, f"{version_name}", app_name=None, arch_type="fingerprint", fingerprint_json=fingerprint_json)
+    try:
+        if "fingerprint.json" in dir:
+            with open(dir, "r") as json_file:
+                fingerprint_json = json.loads(json_file.read())
+            version_name = fingerprint_json['version']
+            log(f"[init_filetype] Found fingerprint.json file! Version: {version_name}, files loaded: {len(fingerprint_json['files'])}]")
+            maniupulate_brawl_file(dir, f"{version_name}", app_name=None, arch_type="fingerprint", fingerprint_json=fingerprint_json)
+    except Exception as e:
+        log(f"Unable to load fingerprint.json file. {e}", 4, True)
     archive = zipfile.ZipFile(dir, 'r')
     Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
     try:
@@ -1794,6 +1814,7 @@ def autobrawlextractor():
 
 def ProjectSaturnian():
     saturnian_appdir = f"{Draggie_AppData_Directory}\\Saturnian"
+    entitlements_json = f"{saturnian_appdir}\\entitlements_data.json"
 
     cached_token = None
     username = getpass.getuser()
@@ -1804,11 +1825,18 @@ def ProjectSaturnian():
     fernet_key = Fernet(base64.urlsafe_b64encode(hash_key))
     log(f"fernet_key: {fernet_key}", output=False)
 
-    if not os.path.isfile(f"{saturnian_appdir}\\Saturnian_data.json"):
+    if not os.path.isfile(entitlements_json):
         log("[saturnian] No data file found. Creating one now...", log_level=3)
         os.makedirs(saturnian_appdir, exist_ok=True)
-        with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
-            first_info = {"current_version": None, "tier": None, "install_dir": saturnian_appdir}
+        with open(entitlements_json, "w") as f:
+            first_info = {
+                "default": {
+                    "current_version": None, "tier": None, "install_dir": saturnian_appdir
+                },
+                "saturnian_beta_tester": {
+                    "current_version": None, "tier": None, "install_dir": saturnian_appdir
+                }
+            }
             json.dump(first_info, f)
             log(f"{green_colour}[saturnian] Gamedata file created successfully.")
 
@@ -1851,68 +1879,73 @@ def ProjectSaturnian():
             f.write(encrypted_token.encode())
             # log(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
 
-    def read_datafile_attribute(attribute):
+    def read_datafile_attribute(attribute, entitlement:Optional[str] = "default"):
         """
-        Reads the datafile and returns the value of the attribute.
+        Reads the datafile and returns the value of the attribute under the given entitlement
         """
         try:
-            with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
-                saturnian_data = json.load(f)
-                # log(f"[saturnian/datafile] Read datafile: {saturnian_data}")
-            return saturnian_data[attribute]
+            with open(entitlements_json, "r") as f:
+                entitlements_data = json.load(f)
+                log(f"[gamesManager/ReadDatafile] Read datafile: {entitlements_data}", log_level=1, output=False)
+            # Fix for errors which occur when entitlement is not found
+            if entitlement not in entitlements_data:
+                entitlements_data[entitlement] = {}
+
+            return entitlements_data[entitlement].get(attribute)
         except Exception as e:
             if attribute == "install_dir":
                 log(f"[saturnian/datafile] Error reading datafile for attribute {attribute}, returning default value: {saturnian_appdir}", log_level=3)
                 return saturnian_appdir
             return log(f"[saturnian/datafile] Error reading Saturnian data file: {e}", log_level=4)
 
-    def write_datafile_attribute(attribute, value):
+    def write_datafile_attribute(attribute, value, entitlement):
         """
         Writes the value of the attribute to the datafile.
         """
         try:
-            with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
-                saturnian_data = json.load(f)
-                # log(f"[saturnian/datafile] Read datafile: {saturnian_data}", log_level=1)
-            saturnian_data[attribute] = value
-            with open(f"{saturnian_appdir}\\Saturnian_data.json", "w") as f:
-                json.dump(saturnian_data, f, indent=4)
-                log(f"[saturnian/datafile] Wrote attribute {attribute} to datafile: {value}", output=False)
+            with open(entitlements_json, "r") as f:
+                entitlements_data = json.load(f)
+                log(f"[gamesManager/WriteDatafile] Read datafile: {entitlements_data}", log_level=1, output=False)
+            entitlements_data.setdefault(entitlement, {})[attribute] = value
+            entitlements_data[entitlement][attribute] = value
+            with open(entitlements_json, "w") as f:
+                json.dump(entitlements_data, f, indent=4)
+                log(f"[saturnian/datafile] Wrote attribute {attribute} under entitlement {entitlement} to datafile: {value}", log_level=1)
         except Exception as e:
             log(f"[saturnian/datafile] Error writing attribute {attribute} to datafile: {e}", log_level=4)
 
     cached_token = read_tokenfile_contents()
 
     if not cached_token:
-        log(f"\n\n[ProjectSaturnian] {red_colour}You must log in to download builds from the gameserver, and to validate your license.{reset_colour}", log_level=3)
-        log(f"[ProjectSaturnian] {magenta_colour}If you do not have an account, you can create one at:{cyan_colour} https://alpha.draggiegames.com/register{reset_colour}", log_level=3)
+        log(f"\n\n[DraggieGamesAccounts] {red_colour}You must log in to download builds from the gameserver, and to validate your license.{reset_colour}", log_level=3)
+        log(f"[DraggieGamesAccounts] {magenta_colour}If you do not have an account, you can create one at:{cyan_colour} https://alpha.draggiegames.com/register{reset_colour}", log_level=3)
         log(f"\n\n{yellow_colour}Please enter your Draggie Games login credentials below.{reset_colour}", log_level=3)
         email = input("\nDraggie Games email: ")
         password = getpass.getpass("\nPassword (will not be shown): ")
         log(f"{blue_colour}Logging in...")
         login = dash_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
 
-        if login.status_code == 200:
-            log(f"\n\n{green_colour}Login successful.\n")
-            server_token = login.json()["auth_token"]
-            # log(f"Server returned token: {server_token}", log_level=1)
-            newly_encrypted_token = encrypt_token(server_token)
-            log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1, output=False)
-            write_token(newly_encrypted_token)
-            log("Token written to file.", log_level=1, output=False)
-            preferred_install_location = input("\n\nWould you like to install the required files to the default location [1] or a custom location [2]?\n\n>>> ")
-            if preferred_install_location == "1":
-                write_datafile_attribute("install_dir", saturnian_appdir)
-            elif preferred_install_location == "2":
-                custom_install_location = input("Please enter the full path to the directory you would like to install the game to.\n\n>>> ")
-                if not os.path.isdir(custom_install_location):
-                    os.makedirs(custom_install_location, exist_ok=True)
-                    log(f"Created directory: {custom_install_location}")
-                write_datafile_attribute("install_dir", custom_install_location)
-
-        else:
+        if not login.status_code == 200:
             log("\n\nLogin failed! Please try again.", log_level=4)
-            ProjectSaturnian()
+            return ProjectSaturnian()
+
+        log(f"\n\n{green_colour}Login successful.\n")
+        server_token = login.json()["auth_token"]
+        # log(f"Server returned token: {server_token}", log_level=1)
+        newly_encrypted_token = encrypt_token(server_token)
+        log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1, output=False)
+        write_token(newly_encrypted_token)
+        log("Token written to file.", log_level=1, output=False)
+
+        preferred_install_location = input("\n\nWould you like to install the required files to the default location [1] or a custom location [2]?\n\n>>> ")
+        if preferred_install_location == "2":
+            custom_install_location = input("Please enter the full path to the directory you would like to install the game to.\n\n>>> ")
+            if not os.path.isdir(custom_install_location):
+                os.makedirs(custom_install_location, exist_ok=True)
+                log(f"Created directory: {custom_install_location}")
+            write_datafile_attribute("install_dir", custom_install_location, "default")
+        else:
+            write_datafile_attribute("install_dir", saturnian_appdir, "default")
 
     try:
         cached_token = read_tokenfile_contents()
@@ -1945,62 +1978,118 @@ def ProjectSaturnian():
 
     # After validating the token, we can use it to log in.
 
-    log(f"\n\n{green_colour}Token decryption successful!")
-    log("Logging in to your account...")
+    log(f"\n\n{green_colour}Token decryption successful!", output=False)
+    log("Logging in to your account...\n")
 
     def token_login(token):
+        headers = {
+            "Authorisation": f"{token}",
+            "User-Agent": "SaturnianUpdater/DraggieTools",
+            "From": "SaturnianUpdater/DraggieTools",
+            "DraggieTools-Version": f"{build}",
+        }
+
         endpoint = "https://client.draggie.games/token_login"
-        login = dash_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"})
-        if login.status_code == 200:
-            response = json.loads(login.content)
-            log(f"{green_colour}Token login successful. Received response: {response}", output=False)
-            status_update(details=f"Logged in as: {response['account']}", state="Project Saturnian")
-            return token
-        else:
-            log(f"{red_colour}Token login failed. Error {login.status_code}: {login.content}", log_level=4)
+        login = dash_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"}, headers=headers)
+        if not login.status_code == 200:
+            log(f"{red_colour}Token login failed. Error {login.status_code}: {login.content}\n\n{login.text['message'] if login.text else 'No message returned.'}", log_level=3)
             os.remove(f"{saturnian_appdir}\\token.bin")
             sleep(1)
-            choice1()
+            return choice1()
+
+        response = json.loads(login.content)
+        log(f"{green_colour}Token login successful. Received response: {response}", output=False)
+        log(f"{green_colour}{response['message']}", output=True)
+        status_update(details=f"Logged in as: {response['account']}", state="Project Saturnian")
+        return token
         # log(f"Received token login content: {login.content}")
 
-    new_token = token_login(token)
-    known_token = new_token
+    known_token = token_login(token)
     # log(f"new_token: {known_token}")
-    log(f"{green_colour}Logged in successfuly!")
+    log(f"{green_colour}Logged in successfully!\n", output=True)
 
-    def get_saturnian_info(known_token):
-        log("Getting Saturnian info...", output=False)
+    def get_entitlement_info(known_token):
+        log("Getting entitlements info...", output=False)
+
+        headers = {
+            "Authorisation": known_token,
+            "User-Agent": "SaturnianUpdater/DraggieTools",
+            "From": "SaturnianUpdater/DraggieTools",
+            "DraggieTools-Version": f"{build}",
+        }
+
         endpoint = "https://client.draggie.games/api/v1/saturnian/game/gameData/licenses/validation"
-        x = dash_get(endpoint, json={"token": known_token, "from": "SaturnianUpdater/DraggieTools"})
-        if x.status_code == 200:
-            try:
-                response = json.loads(x.content)
-                log(f"\n[saturnian/Account] Your have an {green_colour}{response['type']}{reset_colour} account!")
-                log(f"[saturnian/Account] Saturnian current version: {green_colour}v{response['currentVersion']}")
-                return response
-            except Exception as e:
-                log(f"[saturnian/errors.account] Exception: {e}", log_level=4)
-                log(f"[saturnian/errors] Received version status code: {x.status_code}", log_level=4)
-                choice1()
-        else:
+        x = dash_get(endpoint, headers=headers)
+        if not x.status_code == 200:
             log(f"[saturnian/errors.account] ERROR: Received Saturnian version status code: {x.status_code}", log_level=4)
             error_message = json.loads(x.content)
-            log(f"[saturnian/errors.account] ERROR: {error_message['message']}", log_level=4)
+            log(f"[saturnian/errors.account] \n\nvvvvvvvvvvvvvvvvvvvvvvvvvvvv\nERROR: {error_message['message']}\n^^^^^^^^^^^^^^^^^^^^^^^^^^", log_level=4)
             if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
                 os.remove(f"{saturnian_appdir}\\token.bin")
-                log("[saturnian/errors.account] Your token has expired. Please log in again.", log_level=4)
-                ProjectSaturnian()
-            sleep(4)
+                log("\n[saturnian/errors.account] Your token may have expired. Please log in again.", log_level=4)
+                return ProjectSaturnian()
 
-    server_json_response = get_saturnian_info(known_token)
-    saturnian_current_version = server_json_response["currentVersion"]
+        try:
+            response = json.loads(x.content)
+
+            # New server logic (v0.8.6) - the server now returns a list of entitlements, which are used to determine the account type.
+            # This means that the user can redeem multiple entitlements. Display the entitlements to the user, and let them choose which one to use.
+            entitlements = response["entitlements"]
+            # print(entitlements)
+
+            """
+            Entitlements example:
+            {
+                'saturnian_alpha_tester': {'currentVersion': '14', 'downloadUrl': 'https://saturnian-co.../build.zip', 'type': 'alpha', 'friendlyName': 'Saturnian Alpha Tester', 'folderName': 'SaturnianGame'},
+                'saturnian_beta_tester': {'currentVersion': '0', 'downloadUrl': 'n/a', 'type': 'beta', 'friendlyName': 'Saturnian Beta Tester', 'folderName': 'SaturnianGame'},
+            }
+            """
+
+            if len(entitlements) > 1:
+                log(f"\n[DGames/Account] You have {green_colour}{len(entitlements)}{reset_colour} entitlements. Please choose one to manage.")
+
+                matchIntToEntitlement = {}
+                for i, entitlement in enumerate(entitlements):
+                    log(f"[{i}]: {entitlements[entitlement]['friendlyName']}")
+                    matchIntToEntitlement[i] = entitlement
+                choice = input("\n\n>>> ")
+
+                try:
+                    entitlement = entitlements[matchIntToEntitlement[int(choice)]]
+                except Exception as e:
+                    log(f"[saturnian/errors.account] Error choosing entitlement: {e}", log_level=4)
+                    return choice1()
+
+                log(f"\n[saturnian/Account] You have a {green_colour}{entitlement['friendlyName']}{reset_colour} account!")
+                log(f"[saturnian/Account] Current version: {entitlement['currentVersion']} ({entitlement['type']})")
+                return entitlement
+
+            else:
+                # get first
+                entitlement = entitlements[list(entitlements.keys())[0]]
+                log(f"\n[saturnian/Account] You have an {green_colour}{entitlement['type']}{reset_colour} account for {green_colour}{entitlement['friendlyName']}{reset_colour}!")
+                log(f"[saturnian/Account] Current version: {entitlement['currentVersion']}")
+                return entitlement
+
+        except Exception as e:
+            log(f"[saturnian/errors.account] Exception: {e}", log_level=4)
+            log(f"[saturnian/errors] Received version status code: {x.status_code}", log_level=4)
+            choice1()
+
+    server_entitlement_response = get_entitlement_info(known_token)
+
+    if not server_entitlement_response:
+        log("[saturnian/errors] No entitlements found! Make sure you have a valid account.", log_level=4)
+        return choice1()
+
+    saturnian_current_version = server_entitlement_response["currentVersion"]
 
     # Read the json file
     try:
-        with open(f"{saturnian_appdir}\\Saturnian_data.json", "r") as f:
-            saturnian_data = json.load(f)
+        with open(entitlements_json, "r") as f:
+            entitlement_alldata = json.load(f)
             log(f"{green_colour}[saturnian] Successfully read datafile.", output=False)
-            log(f"Datafile contents: {saturnian_data}", output=False, log_level=1)
+            log(f"entitlement_alldata contents: {entitlement_alldata}", output=False, log_level=1)
     except Exception as e:
         return log(f"[saturnian/errors] Error reading Saturnian data file: {e}", log_level=4)
 
@@ -2019,19 +2108,19 @@ def ProjectSaturnian():
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
 
-    def download_saturnian_build():
-        download_url = server_json_response["downloadUrl"]
+    def download_saturnian_build(path_to_download=Optional[str]):
+        download_url = server_entitlement_response["downloadUrl"]
         log(f"{green_colour}[saturnian/buildDL] Downloading Project Saturnian! This may take a while...")
         # log(f"[saturnian/buildDL] Grabbing authenticated build from {download_url}", output=False)
 
-        preferred_install_location = read_datafile_attribute("install_dir")
-        tqdm_download(download_url, f"{preferred_install_location}\\Saturnian.bin", overwrite=True)
+        preferred_install_location = read_datafile_attribute("install_dir", server_entitlement_response["id"])
+        tqdm_download(download_url, f"{preferred_install_location}\\Saturnian.bin", overwrite=True, desc=f"Project Saturnian v{saturnian_current_version}")
 
         log(f"{green_colour}[saturnian/buildDL] Download complete. Decompressing...")
         start_anim_loading("Decompressing...")
         try:
             with zipfile.ZipFile(f"{preferred_install_location}\\Saturnian.bin", "r") as zip_ref:
-                zip_ref.extractall(f"{preferred_install_location}\\SaturnianGame")
+                zip_ref.extractall(f"{preferred_install_location}\\{server_entitlement_response['folderName']}")
         except Exception as e:
             stop_anim_loading()
             log(f"\n{red_colour}[saturnian/errors] Error extracting Saturnian build: {e}", log_level=4, event="error")
@@ -2041,29 +2130,47 @@ def ProjectSaturnian():
         sys.stdout.write("\r")  # TODO: make it clear the line above
         sys.stdout.flush()
         log(f"\n{green_colour}[saturnian/buildDL] Extraction complete.")
-        write_datafile_attribute("current_version", saturnian_current_version)
+        write_datafile_attribute("current_version", saturnian_current_version, server_entitlement_response["id"])
         return 1
 
-    if saturnian_current_version != read_datafile_attribute("current_version"):
-        log(f"{yellow_colour}[saturnian/Updater] Local game version is different from server version! Input 1 to download and install the new version.")
+    current_version = read_datafile_attribute("current_version", server_entitlement_response["id"])
+    if saturnian_current_version != current_version:
+        log(f"{yellow_colour}[saturnian/Updater] Installed game version ({current_version}) is different from server version!\n\nPress [Enter] to update, or input any path to specify a custom download location.", log_level=3)
         choice = input("\n\n>>> ")
         match choice:
-            case "1":
-                log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
-                result = download_saturnian_build()
-                if not result:
-                    return log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
-                log(f"{green_colour}[saturnian/Updater] Update download was successful.")
-
-                write_datafile_attribute("current_version", saturnian_current_version)
-                write_datafile_attribute("tier", server_json_response["type"])
-                promote_project_lily()
+            case "":
+                log("[saturnian/Updater] Downloading build...")
+            case "0":
+                return choice1()
             case _:
-                log("Okay, returning to main menu...")
-                ProjectSaturnian()
+                log(f"[saturnian/Updater] Downloading build to {choice}...")
+                write_datafile_attribute("install_dir", choice, server_entitlement_response["id"])
 
-    preferred_install_location = read_datafile_attribute("install_dir")
-    if not os.path.isfile(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"):
+        log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
+        result = download_saturnian_build()
+        if not result:
+            return log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
+        log(f"{green_colour}[saturnian/Updater] Update download was successful.")
+
+        write_datafile_attribute(attribute="current_version", value=saturnian_current_version, entitlement=server_entitlement_response["id"])
+        write_datafile_attribute("tier", server_entitlement_response["type"], server_entitlement_response["id"])
+        promote_project_lily()
+
+    preferred_install_location = read_datafile_attribute("install_dir", server_entitlement_response["id"])
+
+    # folder_structure_to_find_exe_in = (f"{preferred_install_location}\\{server_entitlement_response['folderName']}")
+    folder_structure_to_find_exe_in = os.path.join(preferred_install_location, server_entitlement_response['folderName'])
+
+    exe_found = False
+    if os.path.isdir(folder_structure_to_find_exe_in):
+        for filename in os.listdir(folder_structure_to_find_exe_in):
+            if filename.endswith(".exe"):
+                log(f"[saturnian/findexec] Found executable file {filename} in {folder_structure_to_find_exe_in}.", 2, False)
+                exe_found = True
+                break
+
+    if not exe_found:
+        log(f"Unable to find executable in {preferred_install_location}\\{server_entitlement_response['folderName']}", log_level=4, output=True)
         log(f"\n[saturnian/Updater] Couldn't find a downloaded program! This might be because you deleted it, or the download failed.\n{blue_colour}Input 1 to download, or 0 to return to the main menu.{reset_colour}")
         choice = input("\n\n>>> ")
         match choice:
@@ -2071,7 +2178,7 @@ def ProjectSaturnian():
                 return choice1()
             case _:
                 try:
-                    os.makedirs(f"{preferred_install_location}\\SaturnianGame", exist_ok=True)
+                    os.makedirs(folder_structure_to_find_exe_in, exist_ok=True)
                     result = download_saturnian_build()
                     if not result:
                         log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
@@ -2081,17 +2188,19 @@ def ProjectSaturnian():
                 except Exception as e:
                     return log(f"[saturnian/errors] Error in buildType downloading Saturnian build: {e}", log_level=4, event="error")
 
-    to_open = input(f"\n\n{cyan_colour}Manage your installation of the project!{reset_colour}\n\n[0] Back to main menu\n[1] Open the game\n[2] Uninstall the project\n[3] Open the game folder\n[4] Quick uninstall/reinstall\n[5] Change installation directory\n\n>>> ")
+    to_open = input(f"\n\n{cyan_colour}Manage your installation of the game!{reset_colour}\n\n[0] Back to main menu\n[1] Back to Draggie Games menu\n[2] Open the game\n[3] Uninstall the project\n[4] Open the game folder\n[5] Quick uninstall/reinstall\n[6] Change installation directory\n[7] Sign out\n\n>>> ")
     match to_open.lower():
         case "0":
             return choice1()
         case "1":
-            preferred_install_location = read_datafile_attribute("install_dir")
-            Popen(f"{preferred_install_location}\\SaturnianGame\\Saturnian.exe")
-            sleep(4)
+            return ProjectSaturnian()
         case "2":
-            log("[saturnian/Updater] Uninstalling Saturnian...")
-            log(f"\nNOTE: By continuing, you will delete ALL files in the directory \"{preferred_install_location}\\SaturnianGame\". Any files you may have added to this directory will be deleted.")
+            preferred_install_location = read_datafile_attribute("install_dir", server_entitlement_response["id"])
+            Popen(f"{preferred_install_location}\\{server_entitlement_response['folderName']}")
+            sleep(4)
+        case "3":
+            log("[saturnian/Updater] Uninstalling project...")
+            log(f"\nNOTE: By continuing, you will delete ALL files in the directory \"{preferred_install_location}\\{server_entitlement_response['folderName']}\". Any files you may have added to this directory will be deleted.")
             log(f"\n{yellow_colour}Are you sure you want to continue? (y/n){reset_colour}")
             delete_choice = input("\n\n>>> ")
             if delete_choice.lower() == "n":
@@ -2100,7 +2209,7 @@ def ProjectSaturnian():
             try:
                 # Remove directory tree
                 # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
-                dir_path = f"{preferred_install_location}\\SaturnianGame"
+                dir_path = f"{preferred_install_location}\\{server_entitlement_response['folderName']}"
 
                 # walk through all files and directories
                 for root, dirs, files in os.walk(dir_path, topdown=False):
@@ -2126,11 +2235,10 @@ def ProjectSaturnian():
             except Exception as e:
                 log(f"\n[saturnian/errors] An issue occurred when fully uninstalling Saturnian:\n> {e}", log_level=4, event="error")
                 return sleep(1)
-        case "3":
-            preferred_install_location = read_datafile_attribute("install_dir")
-            Popen(f'explorer /select,"{preferred_install_location}\\SaturnianGame\\Saturnian.exe"')
-
         case "4":
+            preferred_install_location = read_datafile_attribute("install_dir")
+            Popen(f'explorer /select,"{preferred_install_location}\\{server_entitlement_response["folderName"]}"')
+        case "5":
             def uninstall_reinstall():
                 log("[saturnian/Updater] Uninstalling Saturnian...")
                 try:
@@ -2173,8 +2281,8 @@ def ProjectSaturnian():
                     return ProjectSaturnian()
                 log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
-                write_datafile_attribute("current_version", saturnian_current_version)
-                write_datafile_attribute("tier", server_json_response["type"])
+                write_datafile_attribute("current_version", saturnian_current_version, server_entitlement_response["id"])
+                write_datafile_attribute("tier", server_entitlement_response["type"], server_entitlement_response["id"])
 
             amount_to_change = get_draggietools_setting("saturnian_uninstall_reinstall_amount")
             if amount_to_change is None:
@@ -2187,7 +2295,7 @@ def ProjectSaturnian():
                 amount_to_change -= 1
                 log(f"Still have {amount_to_change} more to go..." if amount_to_change > 0 else "Done!")
 
-        case "5":
+        case "6":
             log("[saturnian/Updater] Changing installation directory...")
             start_time = time()
             try:
@@ -2202,12 +2310,17 @@ def ProjectSaturnian():
                 except Exception as e:
                     log(f"[saturnian/errors] Error moving files, there may be no files to move: {e}", log_level=3)
                 # Write the new data file with the new directory
-                write_datafile_attribute("install_dir", new_saturnian_install_dir)
+                write_datafile_attribute("install_dir", new_saturnian_install_dir, server_entitlement_response["id"])
                 end_time = time()
                 log(f"{green_colour}[saturnian/Updater] Installation directory changed successfully. Took {end_time - start_time} seconds.")
                 sleep(2)
             except Exception as e:
                 return log(f"[saturnian/errors] Error changing installation directory: {e}\n{traceback.format_exc()}", log_level=4, event="error")
+        case "7":
+            log("[saturnian/Updater] Signing out...")
+            os.remove(f"{saturnian_appdir}\\token.bin")
+            log("[saturnian/Updater] Token removed.")
+            ProjectSaturnian()
         case _:
             log(f"{red_colour}[saturnian/Updater] Invalid option. Please try again.")
             sleep(1)
@@ -3056,6 +3169,19 @@ def cmd_launcher():
             log(f"Error: {e}", log_level=3, output=True)
 
 
+def custom_discord_rpc():
+    return log("Feature is work in progress.", log_level=3)
+    log("Initialising...", log_level=1, output=True)
+    try:
+        with open(f"{DraggieTools_AppData_Directory}\\DiscordRPC\\CustomRPC.json", 'r') as f:
+            rpc_data = json.load(f)
+    except FileNotFoundError:
+        log("No RPC data found. Creating new file...", log_level=1, output=True)
+        with open(f"{DraggieTools_AppData_Directory}\\DiscordRPC\\CustomRPC.json", 'w') as f:
+            json.dump({
+                "details": "DraggieTools",
+            })
+
 def choice1():
     try:
         x = input(phrases[language]['menu_options'])
@@ -3131,7 +3257,7 @@ def choice1():
                 status_update(details="Modifying GameUserSettings.ini...")
                 fort_file_mod()
             case "7":
-                status_update(details="Managing Project Saturnian", state="Project Saturnian")
+                status_update(details="Managing Draggie Games Library", state="Draggie Games")
                 ProjectSaturnian()
             case "8":
                 status_update(details="Downloading a torrent")
