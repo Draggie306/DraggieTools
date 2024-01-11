@@ -4,6 +4,8 @@
 
 This is a set of useful tools packaged into a quick and easy CLI which helps me do things, and also may be useful for anyone else! You can either download the Python source file and run yourself with the required imports, or go to /dist/DraggieTools.exe and download the executable, no imports required.
 
+### [Click me to download!](https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe)
+
 This has been optimised for Windows (using Windows paths and PyInstaller) so other systems may not work correctly. (Merge requests are always welcome though if you want to change this!)
 
 For AutoBrawlExtractor, scroll down to see how it works.
