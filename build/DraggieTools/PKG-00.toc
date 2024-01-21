@@ -35,7 +35,7 @@
    'PYMODULE'),
   ('pyiboot01_bootstrap',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
    'PYSOURCE'),
   ('pyi_rth_inspect',
    'D:\\Draggie '
@@ -53,13 +53,13 @@
    'D:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_win32comgenpy.py',
    'PYSOURCE'),
-  ('pyi_rth_pkgutil',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
-   'PYSOURCE'),
   ('pyi_rth_setuptools',
    'D:\\Draggie '
    'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgutil',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
    'PYSOURCE'),
   ('pyi_rth_pkgres',
    'D:\\Draggie '
@@ -72,314 +72,305 @@
   ('DraggieTools',
    'D:\\Draggie Programs\\Tools\\DraggieTools\\DraggieTools.py',
    'PYSOURCE'),
-  ('python310.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\python310.dll',
+  ('python312.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\python312.dll',
    'BINARY'),
-  ('pywin32_system32\\pythoncom310.dll',
+  ('pywin32_system32\\pythoncom312.dll',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pywin32_system32\\pythoncom310.dll',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\pywin32_system32\\pythoncom312.dll',
    'BINARY'),
-  ('pywin32_system32\\pywintypes310.dll',
+  ('pywin32_system32\\pywintypes312.dll',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\pywin32_system32\\pywintypes310.dll',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_des3.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_des3.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA512.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA512.pyd',
-   'BINARY'),
-  ('Cryptodome\\Util\\_strxor.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Util\\_strxor.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_BLAKE2s.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2s.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_aesni.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_aesni.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_cbc.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cbc.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA256.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA256.pyd',
-   'BINARY'),
-  ('Cryptodome\\Math\\_modexp.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Math\\_modexp.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_keccak.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_keccak.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_x25519.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_x25519.pyd',
-   'BINARY'),
-  ('Cryptodome\\Util\\_cpuid_c.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Util\\_cpuid_c.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_BLAKE2b.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2b.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_RIPEMD160.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_RIPEMD160.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_ec_ws.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ec_ws.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_Salsa20.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_Salsa20.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ecb.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ecb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ofb.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ofb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_arc2.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_arc2.pyd',
-   'BINARY'),
-  ('Cryptodome\\Protocol\\_scrypt.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Protocol\\_scrypt.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_ghash_clmul.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_ghash_clmul.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_MD5.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD5.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ctr.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ctr.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_ocb.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_ocb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_ghash_portable.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_ghash_portable.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA1.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA1.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_ed25519.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ed25519.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_aes.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_aes.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
-   'BINARY'),
-  ('Cryptodome\\PublicKey\\_ed448.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\PublicKey\\_ed448.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_MD4.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD4.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_chacha20.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_chacha20.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_des.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_des.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_MD2.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_MD2.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA224.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA224.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_cfb.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cfb.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_blowfish.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_blowfish.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_poly1305.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_poly1305.pyd',
-   'BINARY'),
-  ('Cryptodome\\Cipher\\_raw_cast.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_raw_cast.pyd',
-   'BINARY'),
-  ('Cryptodome\\Hash\\_SHA384.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Hash\\_SHA384.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\pywin32_system32\\pywintypes312.dll',
    'BINARY'),
   ('Cryptodome\\Cipher\\_pkcs1_decode.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_pkcs1_decode.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_pkcs1_decode.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_chacha20.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_chacha20.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_aes.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_aes.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_cfb.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_cfb.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_ed448.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\PublicKey\\_ed448.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_x25519.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\PublicKey\\_x25519.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_cast.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_cast.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_ocb.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_ocb.pyd',
    'BINARY'),
   ('Cryptodome\\Cipher\\_ARC4.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Cryptodome\\Cipher\\_ARC4.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_ARC4.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_ghash_portable.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_ghash_portable.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_cbc.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_cbc.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_aesni.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_aesni.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_des.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_des.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_arc2.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_arc2.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_BLAKE2b.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2b.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_MD4.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_MD4.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_eksblowfish.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA384.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_SHA384.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_blowfish.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_blowfish.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_keccak.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_keccak.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_Salsa20.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_Salsa20.pyd',
+   'BINARY'),
+  ('Cryptodome\\Math\\_modexp.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Math\\_modexp.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_ed25519.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\PublicKey\\_ed25519.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_des3.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_des3.pyd',
+   'BINARY'),
+  ('Cryptodome\\Util\\_strxor.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Util\\_strxor.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_MD2.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_MD2.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_ecb.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_ecb.pyd',
+   'BINARY'),
+  ('Cryptodome\\PublicKey\\_ec_ws.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\PublicKey\\_ec_ws.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_MD5.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_MD5.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA1.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_SHA1.pyd',
+   'BINARY'),
+  ('Cryptodome\\Protocol\\_scrypt.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Protocol\\_scrypt.pyd',
+   'BINARY'),
+  ('Cryptodome\\Util\\_cpuid_c.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Util\\_cpuid_c.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_ofb.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_ofb.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA224.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_SHA224.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA512.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_SHA512.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_SHA256.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_SHA256.pyd',
+   'BINARY'),
+  ('Cryptodome\\Cipher\\_raw_ctr.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Cipher\\_raw_ctr.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_poly1305.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_poly1305.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_RIPEMD160.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_RIPEMD160.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_ghash_clmul.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_ghash_clmul.pyd',
+   'BINARY'),
+  ('Cryptodome\\Hash\\_BLAKE2s.pyd',
+   'D:\\Draggie '
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Cryptodome\\Hash\\_BLAKE2s.pyd',
    'BINARY'),
   ('select.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\select.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\select.pyd',
    'EXTENSION'),
   ('pyexpat.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\pyexpat.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\pyexpat.pyd',
    'EXTENSION'),
   ('_ssl.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_ssl.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_ssl.pyd',
    'EXTENSION'),
   ('_decimal.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_decimal.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_decimal.pyd',
    'EXTENSION'),
   ('_hashlib.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_hashlib.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_hashlib.pyd',
    'EXTENSION'),
   ('_multiprocessing.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_multiprocessing.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_multiprocessing.pyd',
    'EXTENSION'),
   ('_socket.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_socket.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_socket.pyd',
    'EXTENSION'),
   ('_ctypes.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_ctypes.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_ctypes.pyd',
    'EXTENSION'),
   ('_queue.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_queue.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_queue.pyd',
    'EXTENSION'),
-  ('_bz2.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_bz2.pyd',
+  ('_wmi.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_wmi.pyd',
    'EXTENSION'),
   ('win32\\win32api.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\win32api.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\win32\\win32api.pyd',
+   'EXTENSION'),
+  ('_bz2.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_bz2.pyd',
    'EXTENSION'),
   ('unicodedata.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\unicodedata.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\unicodedata.pyd',
    'EXTENSION'),
   ('win32\\win32trace.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\win32trace.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\win32\\win32trace.pyd',
    'EXTENSION'),
   ('Pythonwin\\win32ui.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\win32ui.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Pythonwin\\win32ui.pyd',
    'EXTENSION'),
   ('win32\\_win32sysloader.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32\\_win32sysloader.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\win32\\_win32sysloader.pyd',
    'EXTENSION'),
-  ('libtorrent\\__init__.cp310-win_amd64.pyd',
+  ('_brotli.cp312-win_amd64.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\libtorrent\\__init__.cp310-win_amd64.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\_brotli.cp312-win_amd64.pyd',
    'EXTENSION'),
-  ('zstandard\\_cffi.cp310-win_amd64.pyd',
+  ('_cffi_backend.cp312-win_amd64.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\zstandard\\_cffi.cp310-win_amd64.pyd',
-   'EXTENSION'),
-  ('zstandard\\backend_c.cp310-win_amd64.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\zstandard\\backend_c.cp310-win_amd64.pyd',
-   'EXTENSION'),
-  ('_brotli.cp310-win_amd64.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\_brotli.cp310-win_amd64.pyd',
-   'EXTENSION'),
-  ('_cffi_backend.cp310-win_amd64.pyd',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\_cffi_backend.cp310-win_amd64.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\_cffi_backend.cp312-win_amd64.pyd',
    'EXTENSION'),
   ('cryptography\\hazmat\\bindings\\_rust.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography\\hazmat\\bindings\\_rust.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\_rust.pyd',
    'EXTENSION'),
-  ('charset_normalizer\\md__mypyc.cp310-win_amd64.pyd',
+  ('charset_normalizer\\md__mypyc.cp312-win_amd64.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\md__mypyc.cp310-win_amd64.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\charset_normalizer\\md__mypyc.cp312-win_amd64.pyd',
    'EXTENSION'),
-  ('charset_normalizer\\md.cp310-win_amd64.pyd',
+  ('charset_normalizer\\md.cp312-win_amd64.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\charset_normalizer\\md.cp310-win_amd64.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\charset_normalizer\\md.cp312-win_amd64.pyd',
    'EXTENSION'),
   ('_asyncio.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_asyncio.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_asyncio.pyd',
    'EXTENSION'),
   ('win32com\\shell\\shell.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\win32comext\\shell\\shell.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\win32comext\\shell\\shell.pyd',
    'EXTENSION'),
   ('psutil\\_psutil_windows.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\psutil\\_psutil_windows.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\psutil\\_psutil_windows.pyd',
    'EXTENSION'),
   ('_overlapped.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_overlapped.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_overlapped.pyd',
    'EXTENSION'),
-  ('websockets\\speedups.cp310-win_amd64.pyd',
+  ('websockets\\speedups.cp312-win_amd64.pyd',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets\\speedups.cp310-win_amd64.pyd',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets\\speedups.cp312-win_amd64.pyd',
    'EXTENSION'),
   ('_sqlite3.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_sqlite3.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_sqlite3.pyd',
    'EXTENSION'),
   ('_elementtree.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_elementtree.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_elementtree.pyd',
    'EXTENSION'),
   ('_lzma.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_lzma.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_lzma.pyd',
    'EXTENSION'),
   ('_uuid.pyd',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\_uuid.pyd',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\_uuid.pyd',
    'EXTENSION'),
   ('api-ms-win-crt-convert-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-convert-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-heap-l1-1-0.dll',
+  ('api-ms-win-crt-process-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-heap-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-process-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-environment-l1-1-0.dll',
+  ('api-ms-win-crt-runtime-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-environment-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-runtime-l1-1-0.dll',
    'BINARY'),
   ('VCRUNTIME140.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\VCRUNTIME140.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\VCRUNTIME140.dll',
+   'BINARY'),
+  ('api-ms-win-crt-stdio-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-stdio-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-locale-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-locale-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-time-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-time-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-conio-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
@@ -389,55 +380,51 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-math-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-stdio-l1-1-0.dll',
+  ('api-ms-win-crt-heap-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-stdio-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-heap-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-process-l1-1-0.dll',
+  ('api-ms-win-crt-environment-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-process-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-environment-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-filesystem-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-filesystem-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-crt-time-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-time-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-crt-string-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-string-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-runtime-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-runtime-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-utility-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-utility-l1-1-0.dll',
    'BINARY'),
   ('VCRUNTIME140_1.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\VCRUNTIME140_1.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\VCRUNTIME140_1.dll',
    'BINARY'),
-  ('libcrypto-1_1.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libcrypto-1_1.dll',
+  ('libssl-3.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\libssl-3.dll',
    'BINARY'),
-  ('libssl-1_1.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libssl-1_1.dll',
+  ('libcrypto-3.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\libcrypto-3.dll',
    'BINARY'),
-  ('libffi-7.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\libffi-7.dll',
+  ('libffi-8.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\libffi-8.dll',
    'BINARY'),
   ('Pythonwin\\mfc140u.dll',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\Pythonwin\\mfc140u.dll',
-   'BINARY'),
-  ('MSVCP140.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\MSVCP140.dll',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\Pythonwin\\mfc140u.dll',
    'BINARY'),
   ('python3.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\python3.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\python3.dll',
    'BINARY'),
   ('sqlite3.dll',
-   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python310\\DLLs\\sqlite3.dll',
+   'C:\\Users\\Draggie\\AppData\\Local\\Programs\\Python\\Python312\\DLLs\\sqlite3.dll',
    'BINARY'),
   ('ucrtbase.dll',
    'C:\\Program Files\\Eclipse '
@@ -447,13 +434,53 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-crt-multibyte-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-synch-l1-1-0.dll',
+  ('api-ms-win-core-string-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-string-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-memory-l1-1-0.dll',
+  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-memory-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-file-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-datetime-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-datetime-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-handle-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-handle-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-interlocked-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-interlocked-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-heap-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-heap-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processenvironment-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processenvironment-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-file-l2-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l2-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-errorhandling-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-errorhandling-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-sysinfo-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-sysinfo-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-console-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-console-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-file-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
@@ -463,89 +490,49 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-namedpipe-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-core-debug-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-debug-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-core-localization-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-localization-l1-2-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-handle-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-handle-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-processthreads-l1-1-1.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-1.dll',
-   'BINARY'),
-  ('api-ms-win-core-synch-l1-2-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-2-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-datetime-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-datetime-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-sysinfo-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-sysinfo-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-file-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-processthreads-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-console-l1-1-0.dll',
+  ('api-ms-win-core-synch-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-console-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-profile-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-profile-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
+  ('api-ms-win-core-libraryloader-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-libraryloader-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-heap-l1-1-0.dll',
+  ('api-ms-win-core-memory-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-heap-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-memory-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-errorhandling-l1-1-0.dll',
+  ('api-ms-win-core-synch-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-errorhandling-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-debug-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-debug-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-file-l2-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-file-l2-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-interlocked-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-interlocked-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-processenvironment-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processenvironment-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-string-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-string-l1-1-0.dll',
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-synch-l1-2-0.dll',
    'BINARY'),
   ('api-ms-win-core-timezone-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-timezone-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-core-processthreads-l1-1-1.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-1.dll',
+   'BINARY'),
   ('api-ms-win-core-util-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-util-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-libraryloader-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-18.0.2.101-hotspot\\bin\\api-ms-win-core-libraryloader-l1-1-0.dll',
    'BINARY'),
   ('base_library.zip',
    'D:\\Draggie '
@@ -553,77 +540,73 @@
    'DATA'),
   ('certifi\\py.typed',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\py.typed',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\certifi\\py.typed',
    'DATA'),
   ('certifi\\cacert.pem',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\certifi\\cacert.pem',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\certifi\\cacert.pem',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\LICENSE.BSD',
+  ('cryptography-41.0.7.dist-info\\INSTALLER',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\LICENSE.BSD',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\INSTALLER',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\RECORD',
+  ('cryptography-41.0.7.dist-info\\LICENSE.BSD',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\RECORD',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\LICENSE.BSD',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\REQUESTED',
+  ('cryptography-41.0.7.dist-info\\RECORD',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\REQUESTED',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\RECORD',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\METADATA',
+  ('cryptography-41.0.7.dist-info\\top_level.txt',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\METADATA',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\top_level.txt',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\top_level.txt',
+  ('cryptography-41.0.7.dist-info\\LICENSE.APACHE',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\top_level.txt',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\LICENSE.APACHE',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\INSTALLER',
+  ('cryptography-41.0.7.dist-info\\REQUESTED',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\INSTALLER',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\REQUESTED',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\WHEEL',
+  ('cryptography-41.0.7.dist-info\\LICENSE',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\WHEEL',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\LICENSE',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\LICENSE.APACHE',
+  ('cryptography-41.0.7.dist-info\\WHEEL',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\LICENSE.APACHE',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\WHEEL',
    'DATA'),
-  ('cryptography-41.0.4.dist-info\\LICENSE',
+  ('cryptography-41.0.7.dist-info\\METADATA',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\cryptography-41.0.4.dist-info\\LICENSE',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\cryptography-41.0.7.dist-info\\METADATA',
    'DATA'),
-  ('websockets-11.0.3.dist-info\\INSTALLER',
+  ('websockets-12.0.dist-info\\WHEEL',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\INSTALLER',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets-12.0.dist-info\\WHEEL',
    'DATA'),
-  ('websockets-11.0.3.dist-info\\RECORD',
+  ('websockets-12.0.dist-info\\INSTALLER',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\RECORD',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets-12.0.dist-info\\INSTALLER',
    'DATA'),
-  ('websockets-11.0.3.dist-info\\top_level.txt',
+  ('websockets-12.0.dist-info\\METADATA',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\top_level.txt',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets-12.0.dist-info\\METADATA',
    'DATA'),
-  ('websockets-11.0.3.dist-info\\METADATA',
+  ('websockets-12.0.dist-info\\top_level.txt',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\METADATA',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets-12.0.dist-info\\top_level.txt',
    'DATA'),
-  ('websockets-11.0.3.dist-info\\WHEEL',
+  ('websockets-12.0.dist-info\\RECORD',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\WHEEL',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets-12.0.dist-info\\RECORD',
    'DATA'),
-  ('websockets-11.0.3.dist-info\\REQUESTED',
+  ('websockets-12.0.dist-info\\LICENSE',
    'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\REQUESTED',
-   'DATA'),
-  ('websockets-11.0.3.dist-info\\LICENSE',
-   'D:\\Draggie '
-   'Programs\\Tools\\DraggieTools\\.venv\\lib\\site-packages\\websockets-11.0.3.dist-info\\LICENSE',
+   'Programs\\Tools\\DraggieTools\\.venv\\Lib\\site-packages\\websockets-12.0.dist-info\\LICENSE',
    'DATA')],
- 'python310.dll',
+ 'python312.dll',
  False,
  False,
  False,

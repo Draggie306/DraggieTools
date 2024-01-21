@@ -1,16 +1,17 @@
 print("Loading modules...")
 
-global build, client
+global build, client, stop_event, thread, use_slow_print_effect
 
 import getpass
 import sys
 import time
 
-build = 86
-version = "0.9.0"
-build_date = 1704505539
+build = 87
+version = "0.9.1"
+build_date = 1705783488
 username = getpass.getuser()
 current_exe_path = sys.executable
+use_slow_print_effect = False
 
 dev_mode = False
 
@@ -21,6 +22,11 @@ from os import environ, listdir, makedirs, mkdir, path, remove, startfile, syste
 
 system("chcp 65001")
 system("title DraggieTools: Loading 35 modules...")
+
+
+"""def print(text, end="\n", flush=True):
+    sys.stdout.write(f"{text}{end}")"""
+
 
 green_colour = "\033[92m"
 red_colour = "\033[91m"
@@ -195,7 +201,8 @@ client = None
 
 phrases = {
     'english': {
-        'menu_options': f'\n[0] Quit\n[1] Install to desktop\n[2] Install to custom directory\n[3] Refresh updates\n[4] Change language\n[5] View source code\n[6] Modify Fortnite Settings\n{magenta_colour}[7] Draggie Games Library{reset_colour}\n[8] Torrent Downloader\n[9] AutoBrawlExtractor\n[10] Clean Up Files\n[11] Parse Discord StoreChannel\n[12] Reload Discord RPC\n{magenta_colour}[13] Install DraggieClient{reset_colour}\n[14] YouTube Downloader\n{magenta_colour}[15] Bank Files Extractor{reset_colour}\n[16] VideoMaker\n[17] VBS Script Launcher\n[18] CMD Executor\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
+        'menu_pre_options': f"{red_colour}NOTE! In Tools v1.0.0, we will be updating to a more friendly GUI-based system! The one you're seeing now is temporary and will look much better in the future.{reset_colour}\n\nItems in {magenta_colour}magenta{reset_colour} have been recently optimised.\nItems in {green_colour}green{reset_colour} are new, and may be being worked on.\nItems in {yellow_colour}yellow{reset_colour} are in early development.\n",
+        'menu_options': f'[0] Quit\n[1] Manage installation\n[2] Refresh updates\n[3] Change language\n{yellow_colour}[4] Optimise Fortnite Settings{reset_colour}\n{green_colour}[5] Manage your Draggie Games Library{reset_colour}\n{yellow_colour}[6] Torrent Downloader{reset_colour}\n[7] Supercell Game Tools\n[8] Clean Up Files\n{magenta_colour}[9] Discord Utilities{reset_colour}\n{magenta_colour}[10] Install DraggieClient{reset_colour}\n[11] YouTube Downloader\n{magenta_colour}[12] Bank Files Extractor{reset_colour}\n[13] VideoMaker\n[14] VBS Script Launcher\n\n[dev] Open Developer Menu\n[log] Upload logs  \n\n>>> ',
         'key_error': 'Key error occurred: ',
         'backup': '\n\nResorting to backup',
         'downloading': 'Downloading.',
@@ -263,6 +270,7 @@ phrases = {
         'download_new_files': "Would you like to download new files?",
     },
     'french': {
+        'menu_pre_options': f"Les éléments en {magenta_colour}magenta{reset_colour} ont été récemment optimisés. Les éléments en {green_colour}vert{reset_colour} sont nouveaux et peuvent être en cours de développement.\nLes éléments en {yellow_colour}jaune{reset_colour} sont en développement précoce.\n{red_colour}NOTE ! Dans les outils v1.0, nous allons passer à un système plus convivial basé sur l'interface graphique ! (Ceci est temporaire !){reset_colour}",
         'key_error': 'Erreur de clé: ',
         'backup': '\n\nRecourir à la sauvegarde',
         'downloading': 'Téléchargement.',
@@ -311,6 +319,16 @@ default_draggietools_settings = {
 }
 
 
+def slow_print(text, end="\n", flush=True):
+    """
+    Gives the illusion of text being typed out slowly.
+    """
+    for char in text:
+        sleep(random.uniform(0.01, 0.05))
+        print(char, end="", flush=True)
+    print(end=end, flush=flush)
+
+
 def set_draggietools_setting(setting: str, value: str) -> bool:
     """
     Sets a setting in the DraggieTools settings file. If the setting does not exist, it will be created.\n
@@ -320,7 +338,7 @@ def set_draggietools_setting(setting: str, value: str) -> bool:
     settings_dir = f"{DraggieTools_AppData_Directory}\\tools_settings.json"
     if not path.exists(settings_dir):
         with open(settings_dir, "w") as f:
-            print(f"[DraggieToolsSettings] Settings file not found. Creating one at {settings_dir}", 2, True)
+            log(f"[DraggieToolsSettings] Settings file not found. Creating one at {settings_dir}", 2, True)
             json.dump(default_draggietools_settings, f, indent=4)
     with open(settings_dir, "r") as f:
         data = json.load(f)
@@ -405,19 +423,19 @@ else:
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\Logs"):
     mkdir(f"{DraggieTools_AppData_Directory}\\Logs")
-    print(f"[MainInit] Made DraggieTools_AppData_Directory Logs: {DraggieTools_AppData_Directory}\\Logs", 2)
+    print(f"[MainInit] Made DraggieTools_AppData_Directory Logs: {DraggieTools_AppData_Directory}\\Logs")
 
 if not path.exists(DraggieTools_AppData_Directory):
     mkdir(DraggieTools_AppData_Directory)
-    print(f"[MainInit] Made DraggieTools_AppData_Directory: {DraggieTools_AppData_Directory}", 2)
+    print(f"[MainInit] Made DraggieTools_AppData_Directory: {DraggieTools_AppData_Directory}")
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache"):
     mkdir(f"{DraggieTools_AppData_Directory}\\UpdatedBuildsCache")
-    print(f"[MainInit] Made UpdatedBuildsCache Directory: {DraggieTools_AppData_Directory}\\UpdatedBuildsCache", 2)
+    print(f"[MainInit] Made UpdatedBuildsCache Directory: {DraggieTools_AppData_Directory}\\UpdatedBuildsCache")
 
 if not path.exists(f"{DraggieTools_AppData_Directory}\\SourceCode"):
     mkdir(f"{DraggieTools_AppData_Directory}\\SourceCode")
-    print(f"[MainInit] Made SourceCode Directory: {DraggieTools_AppData_Directory}\\SourceCode", 2)
+    print(f"[MainInit] Made SourceCode Directory: {DraggieTools_AppData_Directory}\\SourceCode")
 
 
 print(f"{clear_above_line_overwrite}Loading functions...")
@@ -446,37 +464,54 @@ if dev_mode:
 logging.debug(f"[MainInit] Took {elapsed_time} to load modules")
 
 
-def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event: Optional[str] = None, component: Optional[str] = None) -> None:
-    """
-    Logs and prints the text inputted. The logging level is 1: DEBUG, 2: INFO (Default), 3: WARNING, 4: ERROR, 5: CRITICAL\n
-    :param text: The text to log\n
-    :param log_level: The logging level\n
-    :param output: Whether to output the text to the console\n
-    :param event: The event to log (Success, Warning, Error, None). Gives the text a colour, overwrites log_level implied colour\n
-    :param component: The component of the program that is logging the text. Codenames are used for this\n
-    """
+def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, stacklevel: Optional[int] = None, component: Optional[str] = None, event: Optional[str] = None, raw: Optional[bool] = False):
+    global use_slow_print_effect
+    if raw:
+        print(text, flush=True)
+        log(f"[CalledRaw] {text}", 1, False, stacklevel=stacklevel)
 
-    if component is not None:
+    if not stacklevel:
+        stacklevel = 1
+
+    if component:
         if component.lower() == "dash":
-            text = f"{lily_colour}[dashNetworking]{reset_colour} {text}"
+            text = f"[dashNetworking] {text}"
         elif component.lower() == "main":
             text = f"[Main] {text}"
         elif component.lower() == "updater":
             text = f"[Updater] {text}"
 
+    if output and not raw:
+        if use_slow_print_effect:
+            slow_print(text)
+        else:
+            print(text)
+    else:
+        if log_level == 1:
+            if dev_mode:
+                print(f"{cyan_colour}[dev debug]: {text}{reset_colour}")
+
+    text = f"{datetime.now().strftime(r'[%d/%m/%Y %H:%M:%S.%f]').ljust(30)} | {text}"
+
     match log_level:
         case 1:
-            logging.debug(text)
+            log_prefix = "DEBUG"
+            logging.debug(msg=f"{log_prefix}: {text}", stacklevel=stacklevel)
         case 2:
-            logging.info(text)
+            log_prefix = "INFO"
+            logging.info(msg=f"{log_prefix}: {text}", stacklevel=stacklevel)
         case 3:
-            logging.warning(text)
+            log_prefix = "WARNING"
+            logging.warning(msg=f"{log_prefix}: {text}", stacklevel=stacklevel)
         case 4:
-            logging.error(text)
+            log_prefix = "ERROR"
+            logging.error(msg=f"{log_prefix}: {text}", stacklevel=stacklevel)
         case 5:
-            logging.critical(text)
+            log_prefix = "CRITICAL"
+            logging.critical(msg=f"{log_prefix}: {text}", stacklevel=stacklevel)
         case _:
-            logging.info(text)
+            log_prefix = "INFO"
+            logging.info(msg=f"{log_prefix}: {text}", stacklevel=stacklevel)
 
     if event:
         if event == "Success":
@@ -488,25 +523,6 @@ def log(text, log_level: Optional[int] = 2, output: Optional[bool] = True, event
         else:
             colour = blue_colour
         text = f"{colour}{text}{reset_colour}"
-
-    if output:
-        if log_level == 1 and dev_mode:
-            print(f"{cyan_colour}[debug]:{reset_colour} {text}")
-        if log_level is None:
-            log_level = 2
-        if log_level <= 2:
-            print(f"{text}{reset_colour}")
-        elif log_level == 3:
-            print(f"{yellow_colour}{text}{reset_colour}")
-        else:
-            print(f"{red_colour}{text}{reset_colour}")
-    else:
-        if log_level == 1:
-            if dev_mode:
-                print(f"{cyan_colour}[dev debug]: {text}{reset_colour}")
-            pass
-
-    # if output else logging.info("The above log was not shown to the console")
 
 
 async def harry_loader():
@@ -551,7 +567,7 @@ def status_update(details: Optional[str] = f"Selecting what to do... (v{build})"
         return log(f"[Harry/update] Unable to update the Discord rich presence: {e}", 4, False)
 
 
-global stop_event, thread
+
 
 
 def start_anim_loading(text):
@@ -574,13 +590,16 @@ def loading_icon(stop_event, text):
             sleep(0.1)
 
 
-def get_first_line_of_term(search_phrase, file):
+def get_first_line_of_term(search_phrase, file, return_line_string: Optional[bool] = False) -> int | str | None:
     with open(file, 'r', encoding="UTF-8") as f:
         line_num = 0
         for line in f.readlines():
             line_num += 1
             if line.find(search_phrase) >= 0:
+                if return_line_string:
+                    return line
                 return (int(line_num))
+    return None
 
 
 def replace_line(file_name, line_num, text):
@@ -631,7 +650,7 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
             for data in CustomTqdm(response.iter_content(block_size), total=ceil(total_size // block_size), unit="KB", desc=desc, bar_format=custom_bar_format):
                 f.write(data)
         print(reset_colour)
-        log(f"Downloaded the file! {total_size} bytes. ({download_url})", 1, False, component="dash")
+        log(f"[TQDM] Downloaded the file! {total_size} bytes. ({download_url})", 1, False, component="dash")
 
     if return_exceptions:
         download_file(download_url, save_dir, desc)
@@ -645,7 +664,7 @@ def tqdm_download(download_url, save_dir, desc: Optional[str] = None, overwrite:
             log("Keyboard interrupt: going back to first choice.", 3, False, component="dash")
             return choice1()
         except Exception as e:
-            log(f"\n[DownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4, component="dash")
+            log(f"\n[TQDMDownloadError] An error has occurred downloading the file. {download_url}\n{e}\n{traceback.format_exc()}", 4, component="dash")
 
 
 def dash_get(*args, **kwargs):
@@ -702,7 +721,7 @@ def tqdm_download2(download_url, save_dir, desc=None, num_threads: Optional[int]
             for future in as_completed(futures):
                 future.result()
 
-    with open(save_dir, "wb") as f: # merge the chunks
+    with open(save_dir, "wb") as f:  # merge the chunks
         for i in range(num_threads):
             with open(f"{save_dir}.part{i * chunk_size}", "rb") as part_file:
                 f.write(part_file.read())
@@ -714,34 +733,35 @@ def change_language() -> str:
     language = None
     while language is None:
         status_update(details="Choosing language", state="English or French?")
-        x = input("Choose language\nChoisissez la langue\nEnglish = 1, French = 2\n\n>>> ")
+        x = input("\n\n\n\nChoose a language! Input the number and hit enter.\nChoisissez une langue ! Entrez le numéro et appuyez sur Entrée.\n\n[1] English\n[2] Français\n\n>>> ")
+        lang_pref_dir = f"{DraggieTools_AppData_Directory}\\Language_Preference.txt"
         if x == "2":
-            log("La langue est maintenant francais.")
+            log("La langue est maintenant le français !")
             language = 'french'
-            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
+            with open(lang_pref_dir, "w+", encoding="UTF-8") as x:
                 x.close()
-            log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
-            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w", encoding="UTF-8") as x:
+            log(f"File at path '{lang_pref_dir}' cleared")
+            with open(lang_pref_dir, "w", encoding="UTF-8") as x:
                 x.write("french")
                 x.close()
-            log(f"({datetime.now()}.strftime('%Y-%m-%d %H:%M:%S'): File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'French'")
+            log(f"File at path '{lang_pref_dir}' written with 'French'")
             language_chosen = "french"
         else:
-            log("Language updated to English.")
+            log("The language has been set to English!")
             language = 'english'
-            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w+", encoding="UTF-8") as x:
+            with open(lang_pref_dir, "w+", encoding="UTF-8") as x:
                 x.close()
-            log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' cleared")
+            log(f"File at path '{lang_pref_dir}' cleared")
 
-            with open(f"{DraggieTools_AppData_Directory}\\Language_Preference.txt", "w") as x:
+            with open(lang_pref_dir, "w") as x:
                 x.write("english")
                 x.close()
-            log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: File at path '{DraggieTools_AppData_Directory}\\Language_Preference.txt' written with 'English'")
+            log(f"File at path '{lang_pref_dir}' written with 'English'")
             language_chosen = "english"
     status_update(details="Choosing language", state=f"Set language to {language_chosen}!")
     sleep(0.1)
     if dev_mode:
-        log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Language successfully changed to {language_chosen}")
+        log(f"Language successfully changed to {language_chosen}")
     return language_chosen
 
 
@@ -765,6 +785,13 @@ def get_language() -> str:
         language = change_language()
     return language
 
+# clear_above_line_overwrit - run 50 times
+
+
+temp = 0
+while temp < 50:
+    print(f"\r{clear_above_line_overwrite}", end="")
+    temp += 1
 
 language = get_language()
 log(f"[MainInit] Language set to {language}", 2, False)
@@ -781,9 +808,9 @@ def cmini_extraction():
         log("Dependencies don't seem to be present. Downloading to .utils folder...", 1, False)
         using_ibaguette = False
 
-        utils_path = outputpath + r"\.utils" # create a folder called .utils in the output directory
+        utils_path = outputpath + r"\.utils"  # create a folder called .utils in the output directory
         makedirs(utils_path, exist_ok=True)
-        archive_link = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/bankFileExt/.utils.zip" if not using_ibaguette else \
+        archive_link = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Addons/bankFileExt/.utils.zip" if not using_ibaguette else \
             "https://cdn.ibaguette.com/cdn/Tools/bankFileExt/.utils.zip"
         log(f"Downloading utility prerequisite files to {utils_path} directory...", 1, True)
         tqdm_download(archive_link, utils_path + r"\.utils.zip")
@@ -797,7 +824,7 @@ def cmini_extraction():
     bmsfile = utils_path + r"\Script.bms"
 
     # batchfile limitation: below must be in the same directory as the fsb files
-    move(utils_path + r"\fsb_dec.bat", outputpath + r"\fsb_dec.bat") # source THEN destination
+    move(utils_path + r"\fsb_dec.bat", outputpath + r"\fsb_dec.bat")  # source THEN destination
 
     batchfile = outputpath + r"\fsb_dec.bat"
     log(f"batchfile_path: {batchfile}", output=False)
@@ -943,7 +970,7 @@ def download_update(current_build_version):
         try:
             tqdm_download("https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe")
         except Exception as e:
-            log(f"Unable to download the update from raw GitHub. Trying from Draggie Games CDN. {e}", 3, True)
+            log(f"Unable to download the update from raw GitHub. Trying from the custom Draggie Games content delivery network. {e}", 3, False)
             tqdm_download("https://tools.draggie.games", f"{DraggieTools_AppData_Directory}\\UpdatedBuilds\\DraggieTools-{current_build_version}.exe")
 
         with open(f"{Draggie_AppData_Directory}\\OldExecutableDir.txt", "w") as file:
@@ -1114,98 +1141,139 @@ def fort_file_mod():
 
     log(f"Established uplink with {fort_ini_directory}")
 
-    y = input("What would you like to change?\n1) Framerates\n2) Graphics Settings\nType 0 to open the directory\n\n>>> ")
+    log("What would you like to do?\n[0] Go back\n[1] Open the file in explorer\n[2] Modify framerate settings\n[3] Modify graphics settings\n[4] Select optimisations\n>>> ")
 
-    if y == "1":
-        z = input("Okay, what type of framerate?\n\n1) FrameRateLimit (In-game and lobby) - note this will overwrite all other settings\n2) FrontendFrameRateLimit (Max Lobby FPS)\n\n>>> ")
-        if z == "1":
-            try:
-                fps = int(input("Input desired FPS here:\n\n>>> "))
-            except ValueError:
-                log("Disallowed input. Try again")
-                return main()
+    y = input("\n\n>>> ")
 
-            x = get_first_line_of_term("FrameRateLimit=", fort_ini_directory)
-
-            replace_line(fort_ini_directory, x, f'FrameRateLimit={fps}.000000\n')
-
-            log(f"Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings], line {x}")
-
-        if z == "2":
-            try:
-                fps = int(input("Input desired FPS here:\n\n>>> "))
-            except ValueError:
-                log("Disallowed input. Try again")
-                return main()
-
-            x = get_first_line_of_term("FrontendFrameRateLimit=", fort_ini_directory)
-            log(f"first line of the codees = {x}")
-
-            replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
-            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
-            logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
-            log("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
-
-    if y == "2":
-        graphics_settings = ["Low", "Medium", "High", "Epic"]
-        eligible_settings = [
-            ["3D Resolution", "View Distance", "Shadows", "Post Processing", "Textures", "Effects", "(hidden) Foliage", "(hidden) Shading", "Anti Aliasing", "(RTX only) Global Illumination", "(RTX only) Reflections"],
-            ["sg.ResolutionQuality", "sg.ViewDistanceQuality", "sg.ShadowQuality", "sg.PostProcessQuality", "sg.TextureQuality", "sg.EffectsQuality", "sg.FoliageQuality", "sg.ShadingQuality", "sg.AntiAliasingQuality", "sg.GlobalIlluminationQuality", "sg.ReflectionQuality"]
-        ]
-
-        other_settings = [
-            ["Culture", "Using DX12", "Using GPU Crash Debugging", "Ray Tracing", "Performance Mode Mesh Quality"],
-            ["Culture", "bUseD3D12InGame", "bUseGPUCrashDebugging", "r.RayTracing.EnableInGame", "MeshQuality"]
-        ]
-
-        log("Reading graphics settings and quality presets...")
-
-        for i in range(len(eligible_settings[1])):
-            try:
-                x = int(get_first_line_of_term(f"{eligible_settings[1][i]}=", fort_ini_directory))
-                with open(fort_ini_directory, "r") as ini_file:
-                    lines = ini_file.readlines()
-                    target_line = (lines[x - 1])
-
-                quality = target_line.split("=")
-                quality = quality[1].split("\\")
-                quality_level = int(quality[0])
-
-                if eligible_settings[0][i] == "3D Resolution":
-                    log(f"{eligible_settings[0][i]} = {quality_level}%")
-                else:
-                    log(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
-                sleep(0.05)
-            except Exception as e:
-                log(f"Could not find the value associated with {eligible_settings[0][i]} - {e}")
-
-        log("\nSearching for other settings...\n")
-
-        for i in range(len(other_settings[1])):
-            try:
-                x = get_first_line_of_term(f"{other_settings[1][i]}=", fort_ini_directory)
-                with open(fort_ini_directory, "r") as ini_file:
-                    lines = ini_file.readlines()
-                    target_line = (lines[x - 1])
-
-                quality = target_line.split("=")
-                quality = quality[1].split("\n")
-                quality_level = (quality[0])
-
-                log(f"{other_settings[0][i]} is set to '{quality_level}'")
-            except Exception as e:
-                log(f"Could not find the value associated with {other_settings[0][i]} - {e}")
-
-        choice2 = input("\n\n1) Go back\n2) Modify a value\n\n>>> ")
-
-        if choice2 != "2":
+    match y:
+        case "0":
             return
-        else:
-            log("Default values are 0 for LOW/OFF\n1 for MEDIUM\n2 for HIGH\n3 for EPIC")
-            log("\nOk, what would you like to change?")
+        case "4":
+            cosmetic_streaming = get_first_line_of_term("CosmeticStreamingEnabled=", fort_ini_directory, return_line_string=True)
+            if "CodeSet_Disabled" not in cosmetic_streaming:
+                # always ask for user confirmation before modifying the file
+                log("Cosmetic streaming is enabled. This downloads cosmetics in the background, which can cause lag spikes.\nWould you like to disable it? (y/n)")
+                cosm_choice = input("\n\n>>> ")
+                match cosm_choice:
+                    case "y":
+                        replace_line(fort_ini_directory, cosmetic_streaming, "CosmeticStreamingEnabled=CodeSet_Disabled\n")
+                        log("Disabled cosmetic streaming!")
+                    case _:
+                        log("Okay, not disabling cosmetic streaming.")
+            else:
+                log("Cosmetic streaming is disabled. This downloads cosmetics in the background, which can cause lag spikes")
 
-    if y == "0":
-        Popen(f'explorer /select,"{fort_ini_directory}"')
+            preferred_rendermode = get_first_line_of_term("PreferredRHI", fort_ini_directory, return_line_string=True)
+            if "dx12" not in preferred_rendermode.lower():
+                log("DX12 is not enabled. This can be beneficial for performance on some (newer) hardware, and unlock more advanced graphics settings.\nWould you like to enable it? (y/n)")
+                dx12_choice = input("\n\n>>> ")
+                match dx12_choice:
+                    case "y":
+                        replace_line(fort_ini_directory, preferred_rendermode, "PreferredRHI=dx12\n")
+                        log("Enabled DX12!")
+                    case _:
+                        log("Okay, not enabling DX12.")
+
+            vsync = get_first_line_of_term("bUseVSync=", fort_ini_directory, return_line_string=True)
+            if "false" not in vsync.lower():
+                log("VSync is enabled. This can cause input lag.\nWould you like to disable it? (y/n)")
+                vsync_choice = input("\n\n>>> ")
+                match vsync_choice:
+                    case "y":
+                        replace_line(fort_ini_directory, vsync, "bUseVSync=False\n")
+                        log("Disabled VSync!")
+                    case _:
+                        log("Okay, not disabling VSync.")
+
+        case "1":
+            Popen(f'explorer /select,"{fort_ini_directory}"')
+        case "2":
+            z = input("Okay, what type of framerate?\n\n1) FrameRateLimit (In-game and lobby) - note this will be priority over all other settings\n2) FrontendFrameRateLimit (Max Lobby FPS)\n\n>>> ")
+            if z == "1":
+                try:
+                    fps = int(input("Input desired FPS here:\n\n>>> "))
+                except ValueError:
+                    log("Disallowed input. Try again")
+                    return main()
+
+                x = get_first_line_of_term("FrameRateLimit=", fort_ini_directory)
+
+                replace_line(fort_ini_directory, x, f'FrameRateLimit={fps}.000000\n')
+
+                log(f"Modified config FrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings], line {x}")
+
+            if z == "2":
+                try:
+                    fps = int(input("Input desired FPS here:\n\n>>> "))
+                except ValueError:
+                    log("Disallowed input. Try again")
+                    return main()
+
+                x = get_first_line_of_term("FrontendFrameRateLimit=", fort_ini_directory)
+                log(f"first line of the codees = {x}")
+
+                replace_line(fort_ini_directory, x, f'FrontendFrameRateLimit={fps}\n')
+                logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
+                logging.debug(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: main/fort_file_mod: {fort_ini_directory} has been modified! FrontendFrameRateLimit={fps}")
+                log("Successfully modified config FrontendFrameRateLimit in section [/Script/FortniteGame.FortGameUserSettings]")
+
+        case "3":
+            graphics_settings = ["Low", "Medium", "High", "Epic"]
+            eligible_settings = [
+                ["3D Resolution", "View Distance", "Shadows", "Post Processing", "Textures", "Effects", "(hidden) Foliage", "(hidden) Shading", "Anti Aliasing", "(RTX only) Global Illumination", "(RTX only) Reflections"],
+                ["sg.ResolutionQuality", "sg.ViewDistanceQuality", "sg.ShadowQuality", "sg.PostProcessQuality", "sg.TextureQuality", "sg.EffectsQuality", "sg.FoliageQuality", "sg.ShadingQuality", "sg.AntiAliasingQuality", "sg.GlobalIlluminationQuality", "sg.ReflectionQuality"]
+            ]
+
+            other_settings = [
+                ["Culture", "Using DX12", "Using GPU Crash Debugging", "Ray Tracing", "Performance Mode Mesh Quality"],
+                ["Culture", "bUseD3D12InGame", "bUseGPUCrashDebugging", "r.RayTracing.EnableInGame", "MeshQuality"]
+            ]
+
+            log("Reading graphics settings and quality presets...")
+
+            for i in range(len(eligible_settings[1])):
+                try:
+                    x = int(get_first_line_of_term(f"{eligible_settings[1][i]}=", fort_ini_directory))
+                    with open(fort_ini_directory, "r") as ini_file:
+                        lines = ini_file.readlines()
+                        target_line = (lines[x - 1])
+
+                    quality = target_line.split("=")
+                    quality = quality[1].split("\\")
+                    quality_level = int(quality[0])
+
+                    if eligible_settings[0][i] == "3D Resolution":
+                        log(f"{eligible_settings[0][i]} = {quality_level}%")
+                    else:
+                        log(f"{eligible_settings[0][i]} = {graphics_settings[quality_level]}")
+                    sleep(0.05)
+                except Exception as e:
+                    log(f"Could not find the value associated with {eligible_settings[0][i]} - {e}")
+
+            log("\nSearching for other settings...\n")
+
+            for i in range(len(other_settings[1])):
+                try:
+                    x = get_first_line_of_term(f"{other_settings[1][i]}=", fort_ini_directory)
+                    with open(fort_ini_directory, "r") as ini_file:
+                        lines = ini_file.readlines()
+                        target_line = (lines[x - 1])
+
+                    quality = target_line.split("=")
+                    quality = quality[1].split("\n")
+                    quality_level = (quality[0])
+
+                    log(f"{other_settings[0][i]} is set to '{quality_level}'")
+                except Exception as e:
+                    log(f"Could not find the value associated with {other_settings[0][i]} - {e}")
+
+            choice2 = input("\n\n1) Go back\n2) Modify a value\n\n>>> ")
+
+            if choice2 != "2":
+                return
+            else:
+                log("Default values are 0 for LOW/OFF\n1 for MEDIUM\n2 for HIGH\n3 for EPIC")
+                log("\nOk, what would you like to change?")
     main()
 
 
@@ -1237,12 +1305,12 @@ def check_for_update():
         log(f"Unable to overwrite older version. {e}", 4)
 
     try:
-        current_build_version = int((dash_get('https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/build.txt')).text)
+        current_build_version = int((dash_get('https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/build.txt')).text)
     except Exception as e:
         log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
         current_build_version = build
     if build < current_build_version: # if build is less than current version - so there's an update available.
-        release_notes = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
+        release_notes = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n", event="success")
         if language == "english":
             versions_to_get = current_build_version - build
@@ -1255,7 +1323,7 @@ def check_for_update():
 
             while current_build_version != (build + 1):
                 current_build_version = current_build_version - 1
-                version_patch = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
+                version_patch = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Release%20Notes/release_notes_v{(current_build_version)}.txt")).text)
                 string = (string + f"\nv{current_build_version}:\n{version_patch}\n\n")
             log(f"\n{string}\n")
 
@@ -1357,25 +1425,25 @@ def maniupulate_brawl_file(dir, app_version: Optional[str] = None, arch_type: Op
                 if file.endswith(".json"):
                     json_files.append(file)
         case "3":  # this is the get list of new/modified/deleted files
-            Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
+            downloadedbuilds_appdata_dir = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
             amount_of_files = 0
 
             # Get secondary IPA files
 
-            for i in listdir(Downloaded_Builds_AppData_Directory):
+            for i in listdir(downloadedbuilds_appdata_dir):
                 amount_of_files = amount_of_files + 1
 
             log(f"\n[Enter] Select one of the {amount_of_files} downloaded files.")
             files = []
             f = 0
 
-            for file in listdir(Downloaded_Builds_AppData_Directory):
+            for file in listdir(downloadedbuilds_appdata_dir):
                 files.append(file)
             for i in files:
                 log(f"[{f}] {i}")
                 f += 1
             x = input("\nChoose file\n\n>>> ")
-            ipa_2_dir = f"{Downloaded_Builds_AppData_Directory}\\{files[int(x)]}"
+            ipa_2_dir = f"{downloadedbuilds_appdata_dir}\\{files[int(x)]}"
 
             archive = zipfile.ZipFile(ipa_2_dir, 'r')
             if arch_type == "IPA":
@@ -1564,7 +1632,7 @@ def init_filetype(dir):
     except Exception as e:
         log(f"Unable to load fingerprint.json file. {e}", 4, True)
     archive = zipfile.ZipFile(dir, 'r')
-    Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
+    brawl_appdata_dir = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
     try:
         arch_type = None
         new_fingerprint_json = None
@@ -1591,8 +1659,8 @@ def init_filetype(dir):
             log("Unable to find fingerprint.json file which is required to extract the assets!", 4)
 
         if not path.exists(f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\Versions\\{version_name}"):
-            mkdir(f"{Brawl_AppData_Directory}\\Versions\\{version_name}")
-            log(f"Made directory: {Brawl_AppData_Directory}\\Versions\\{version_name}")
+            mkdir(f"{brawl_appdata_dir}\\Versions\\{version_name}")
+            log(f"Made directory: {brawl_appdata_dir}\\Versions\\{version_name}")
 
         log(f"{phrases[language]['detected_architecture']}{arch_type}")
 
@@ -1661,12 +1729,12 @@ def csv_decoder():
 
 
 def autobrawlextractor():
-    Brawl_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
-    Downloaded_Builds_AppData_Directory = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
-    if not path.exists(f"{Brawl_AppData_Directory}\\Versions"):
-        makedirs(f"{Brawl_AppData_Directory}\\Versions")
-    if not path.exists(Downloaded_Builds_AppData_Directory):
-        makedirs(Downloaded_Builds_AppData_Directory)
+    brawl_appdata_dir = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor")
+    downloadedbuilds_appdata_dir = (f"{environ_dir}\\AppData\\Roaming\\Draggie\\AutoBrawlExtractor\\DownloadedBuilds")
+    if not path.exists(f"{brawl_appdata_dir}\\Versions"):
+        makedirs(f"{brawl_appdata_dir}\\Versions")
+    if not path.exists(downloadedbuilds_appdata_dir):
+        makedirs(downloadedbuilds_appdata_dir)
 
     def number_one():
         log(r"Enter the location of your Supercell archive file, e.g D:\Downloads\brawl.ipa. IPA files are preferred.")
@@ -1675,7 +1743,7 @@ def autobrawlextractor():
 
         amount_of_files = 0
 
-        for i in listdir(Downloaded_Builds_AppData_Directory):
+        for i in listdir(downloadedbuilds_appdata_dir):
             amount_of_files = amount_of_files + 1
 
         if amount_of_files >= 1:
@@ -1686,7 +1754,7 @@ def autobrawlextractor():
         match location:
             case "1":
                 log("Fetching a list of all trusted versions from GitHub...")
-                git_brawl_builds = dash_get("https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/brawl_builds.txt")
+                git_brawl_builds = dash_get("https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Addons/AutoBrawlExtractor/brawl_builds.txt")
                 git_brawl_builds = git_brawl_builds.text
                 urls = git_brawl_builds.splitlines()
                 version_names = [re.search(r"laser-(\d+\.\d+)", url).group(1) for url in urls]
@@ -1705,15 +1773,15 @@ def autobrawlextractor():
                         if "Baguette Brigaders" in source_loc:
                             source_loc = (f"a verified source: {source_loc}")
                         log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                        tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                        tqdm_download(source_url, f"{downloadedbuilds_appdata_dir}\\{real_file_name}")
                         downloaded_amount += 1
-                        log(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
+                        log(f"\nSuccessfully downloaded build {real_file_name}. It is located at: {downloadedbuilds_appdata_dir}\\{real_file_name}\nOverall progress: {downloaded_amount}/{amount} (~{round((downloaded_amount/amount)*100)}%\n")
                     log(f"{downloaded_amount} builds have been saved!\n\n")
                     number_one()
                 if selected_version == "0":
-                    clash_mini = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/ipas/board.txt"
-                    clash_of_clans = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/ipas/magic.txt"
-                    brawl_stars = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@main/Addons/AutoBrawlExtractor/ipas/laser.txt"
+                    clash_mini = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Addons/AutoBrawlExtractor/ipas/board.txt"
+                    clash_of_clans = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Addons/AutoBrawlExtractor/ipas/magic.txt"
+                    brawl_stars = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Addons/AutoBrawlExtractor/ipas/laser.txt"
 
                     game_choice = input("Which game would you like to download builds for?\n\n[1] Clash Mini\n[2] Clash of Clans\n[3] Brawl Stars\n\n>>> ")
 
@@ -1748,7 +1816,7 @@ def autobrawlextractor():
                         if "Baguette Brigaders" in source_loc:
                             source_loc = (f"a verified source: {source_loc}")
                         log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                        tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
+                        tqdm_download(source_url, f"{downloadedbuilds_appdata_dir}\\{real_file_name}")
                     else:
                         selected_url = urls[int(selected_version) - 1]
                         source = selected_url.strip().split(' (')
@@ -1758,8 +1826,8 @@ def autobrawlextractor():
                         if "Baguette Brigaders" in source_loc:
                             source_loc = (f"a verified source: {source_loc}")
                             log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                        tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-                        log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+                        tqdm_download(source_url, f"{downloadedbuilds_appdata_dir}\\{real_file_name}")
+                        log(f"\nDownloaded build {real_file_name}\nIt is located at: {downloadedbuilds_appdata_dir}\\{real_file_name}\n")
 
                 selected_url = urls[int(selected_version) - 1]
                 source = selected_url.strip().split(' (')
@@ -1769,21 +1837,21 @@ def autobrawlextractor():
                 if "Baguette Brigaders" in source_loc:
                     source_loc = (f"a verified source: {source_loc}")
                     log(f"Downloading the build {real_file_name}. This file comes from {source_loc}")
-                tqdm_download(source_url, f"{Downloaded_Builds_AppData_Directory}\\{real_file_name}")
-                log(f"\nDownloaded build {real_file_name}\nIt is located at: {Downloaded_Builds_AppData_Directory}\\{real_file_name}\n")
+                tqdm_download(source_url, f"{downloadedbuilds_appdata_dir}\\{real_file_name}")
+                log(f"\nDownloaded build {real_file_name}\nIt is located at: {downloadedbuilds_appdata_dir}\\{real_file_name}\n")
                 number_one()
 
             case "":
                 files = []
                 f = 0
-                for file in listdir(Downloaded_Builds_AppData_Directory):
+                for file in listdir(downloadedbuilds_appdata_dir):
                     files.append(file)
                 for i in files:
                     log(f"[{f}] {i}")
                     f += 1
                 x = input("\nChoose file\n\n>>> ")
                 try:
-                    init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{files[int(x)]}")
+                    init_filetype(f"{downloadedbuilds_appdata_dir}\\{files[int(x)]}")
                 except ValueError:
                     # Initialize variables to store the highest version number and corresponding filename
                     highest_version = 0.0
@@ -1802,7 +1870,7 @@ def autobrawlextractor():
                                 highest_version_file = f
 
                     log(f"No valid build specified, resorting to regex expression to find the most recent version, which appears to be in file {highest_version_file}")
-                    init_filetype(f"{Downloaded_Builds_AppData_Directory}\\{highest_version_file}")
+                    init_filetype(f"{downloadedbuilds_appdata_dir}\\{highest_version_file}")
             case "2":
                 csv_decoder()
             case "0":
@@ -1812,7 +1880,13 @@ def autobrawlextractor():
     number_one()
 
 
-def ProjectSaturnian():
+def project_saturnian(state: Optional[str] = None, details: Optional[str] = None, known_token: Optional = None):
+    """
+    This function is used to manage the Saturnian project, now Draggie Games Account library.
+    It is used to authenticate with the Draggie Games Accounts server and download the latest version of the games redeemed on the user account.
+    :param state: Whether the user has safely logged in already, we do not need to post data to the server again.
+    :param known_token: The pre-existing response from the server, if it exists.
+    """
     saturnian_appdir = f"{Draggie_AppData_Directory}\\Saturnian"
     entitlements_json = f"{saturnian_appdir}\\entitlements_data.json"
 
@@ -1824,21 +1898,6 @@ def ProjectSaturnian():
     # create a Fernet key from the hash
     fernet_key = Fernet(base64.urlsafe_b64encode(hash_key))
     log(f"fernet_key: {fernet_key}", output=False)
-
-    if not os.path.isfile(entitlements_json):
-        log("[saturnian] No data file found. Creating one now...", log_level=3)
-        os.makedirs(saturnian_appdir, exist_ok=True)
-        with open(entitlements_json, "w") as f:
-            first_info = {
-                "default": {
-                    "current_version": None, "tier": None, "install_dir": saturnian_appdir
-                },
-                "saturnian_beta_tester": {
-                    "current_version": None, "tier": None, "install_dir": saturnian_appdir
-                }
-            }
-            json.dump(first_info, f)
-            log(f"{green_colour}[saturnian] Gamedata file created successfully.")
 
     def encrypt_token(token):
         log("[encrypt_token] encrypting token")
@@ -1879,7 +1938,7 @@ def ProjectSaturnian():
             f.write(encrypted_token.encode())
             # log(f"[write_token] Wrote encrypted token to file: {encrypted_token}")
 
-    def read_datafile_attribute(attribute, entitlement:Optional[str] = "default"):
+    def read_datafile_attribute(attribute, entitlement: Optional[str] = "default"):
         """
         Reads the datafile and returns the value of the attribute under the given entitlement
         """
@@ -1914,102 +1973,121 @@ def ProjectSaturnian():
         except Exception as e:
             log(f"[saturnian/datafile] Error writing attribute {attribute} to datafile: {e}", log_level=4)
 
-    cached_token = read_tokenfile_contents()
 
-    if not cached_token:
-        log(f"\n\n[DraggieGamesAccounts] {red_colour}You must log in to download builds from the gameserver, and to validate your license.{reset_colour}", log_level=3)
-        log(f"[DraggieGamesAccounts] {magenta_colour}If you do not have an account, you can create one at:{cyan_colour} https://alpha.draggiegames.com/register{reset_colour}", log_level=3)
-        log(f"\n\n{yellow_colour}Please enter your Draggie Games login credentials below.{reset_colour}", log_level=3)
-        email = input("\nDraggie Games email: ")
-        password = getpass.getpass("\nPassword (will not be shown): ")
-        log(f"{blue_colour}Logging in...")
-        login = dash_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
+    if not known_token:
+        log("Authenticating with the Draggie Games Accounts server...") 
 
-        if not login.status_code == 200:
-            log("\n\nLogin failed! Please try again.", log_level=4)
-            return ProjectSaturnian()
+        if not os.path.isfile(entitlements_json):
+            log("[saturnian] No data file found. Creating one now...", log_level=3)
+            os.makedirs(saturnian_appdir, exist_ok=True)
+            with open(entitlements_json, "w") as f:
+                first_info = {
+                    "default": {
+                        "current_version": None, "tier": None, "install_dir": saturnian_appdir
+                    },
+                    "saturnian_beta_tester": {
+                        "current_version": None, "tier": None, "install_dir": saturnian_appdir
+                    }
+                }
+                json.dump(first_info, f)
+                log(f"{green_colour}[saturnian] Gamedata file created successfully.")
 
-        log(f"\n\n{green_colour}Login successful.\n")
-        server_token = login.json()["auth_token"]
-        # log(f"Server returned token: {server_token}", log_level=1)
-        newly_encrypted_token = encrypt_token(server_token)
-        log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1, output=False)
-        write_token(newly_encrypted_token)
-        log("Token written to file.", log_level=1, output=False)
-
-        preferred_install_location = input("\n\nWould you like to install the required files to the default location [1] or a custom location [2]?\n\n>>> ")
-        if preferred_install_location == "2":
-            custom_install_location = input("Please enter the full path to the directory you would like to install the game to.\n\n>>> ")
-            if not os.path.isdir(custom_install_location):
-                os.makedirs(custom_install_location, exist_ok=True)
-                log(f"Created directory: {custom_install_location}")
-            write_datafile_attribute("install_dir", custom_install_location, "default")
-        else:
-            write_datafile_attribute("install_dir", saturnian_appdir, "default")
-
-    try:
         cached_token = read_tokenfile_contents()
+
         if not cached_token:
-            log("No cached token found. Please try again.", log_level=4)
-            ProjectSaturnian()
-        encrypted_token = cached_token
-        log(f"encrypted_token: {encrypted_token}", output=False)
-        decrypted_token = decrypt_token(encrypted_token)
-        # log(f"token: {decrypted_token}", output=False)
-        token = decrypted_token.decode()
-        # log(f"Final read token: {decrypted_token}", output=False)
-    except Exception:
-        clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
-        match clear_token:
-            case "y":
-                if not os.path.isdir(saturnian_appdir):
-                    os.makedirs(saturnian_appdir, exist_ok=True)
-                    log(f"[write_token] Created directory: {saturnian_appdir}")
-                if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
-                    os.remove(f"{saturnian_appdir}\\token.bin")
-                    log(f"[write_token] Deleted file: {saturnian_appdir}\\token.bin")
-                else:
-                    log(f"[write_token] File not found: {saturnian_appdir}\\token.bin", log_level=3)
-                ProjectSaturnian()
-            case _:
-                log("Exiting...")
-                return choice1()
-        return choice1()
+            log(f"\n\n[DraggieGamesAccounts] {red_colour}You must log in to download builds from the gameserver, and to validate your license.{reset_colour}", log_level=3)
+            log(f"[DraggieGamesAccounts] {magenta_colour}If you do not have an account, you can create one at:{cyan_colour} https://alpha.draggiegames.com/register{reset_colour}", log_level=3)
+            log(f"\n\n{yellow_colour}Please enter your Draggie Games login credentials below.{reset_colour}", log_level=3)
+            email = input(f"\n{yellow_colour}Email: {reset_colour}")
+            password = getpass.getpass(f"{yellow_colour}Password (hidden): {reset_colour}")
+            log(f"{blue_colour}Logging in...")
+            login = dash_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
 
-    # After validating the token, we can use it to log in.
+            if not login.status_code == 200:
+                log("\n\nLogin failed! Please try again.", log_level=4)
+                return project_saturnian()
 
-    log(f"\n\n{green_colour}Token decryption successful!", output=False)
-    log("Logging in to your account...\n")
+            log(f"\n\n{green_colour}Login successful.\n")
+            server_token = login.json()["auth_token"]
+            # log(f"Server returned token: {server_token}", log_level=1)
+            newly_encrypted_token = encrypt_token(server_token)
+            log(f"newly_encrypted_token: {newly_encrypted_token}", log_level=1, output=False)
+            write_token(newly_encrypted_token)
+            log("Token written to file.", log_level=1, output=False)
 
-    def token_login(token):
-        headers = {
-            "Authorisation": f"{token}",
-            "User-Agent": "SaturnianUpdater/DraggieTools",
-            "From": "SaturnianUpdater/DraggieTools",
-            "DraggieTools-Version": f"{build}",
-        }
+            preferred_install_location = input(f"{reset_colour}\n\nIf you would like to change the default install location, please enter it below. Otherwise, press enter.\n\n>>> ")
+            if preferred_install_location != "":
+                custom_install_location = preferred_install_location
+                if not os.path.isdir(custom_install_location):
+                    os.makedirs(custom_install_location, exist_ok=True)
+                    log(f"Created directory: {custom_install_location}")
+                write_datafile_attribute("install_dir", custom_install_location, "default")
+            else:
+                write_datafile_attribute("install_dir", saturnian_appdir, "default")
 
-        endpoint = "https://client.draggie.games/token_login"
-        login = dash_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"}, headers=headers)
-        if not login.status_code == 200:
-            log(f"{red_colour}Token login failed. Error {login.status_code}: {login.content}\n\n{login.text['message'] if login.text else 'No message returned.'}", log_level=3)
-            os.remove(f"{saturnian_appdir}\\token.bin")
-            sleep(1)
+        try:
+            cached_token = read_tokenfile_contents()
+            if not cached_token:
+                log("No cached token found. Please try again.", log_level=4)
+                project_saturnian()
+            encrypted_token = cached_token
+            log(f"encrypted_token: {encrypted_token}", output=False)
+            decrypted_token = decrypt_token(encrypted_token)
+            # log(f"token: {decrypted_token}", output=False)
+            token = decrypted_token.decode()
+            # log(f"Final read token: {decrypted_token}", output=False)
+        except Exception:
+            clear_token = input("There was an error reading the token file. Would you like to clear the cached token and try again? (y/n)\n\n>>> ")
+            match clear_token:
+                case "y":
+                    token_dir = f"{saturnian_appdir}\\token.bin"
+                    if not os.path.isdir(saturnian_appdir):
+                        os.makedirs(saturnian_appdir, exist_ok=True)
+                        log(f"[write_token] Created directory: {saturnian_appdir}")
+                    if os.path.isfile(token_dir):
+                        os.remove(token_dir)
+                        log(f"[write_token] Deleted file: {token_dir}")
+                    else:
+                        log(f"[write_token] File not found: {token_dir}", log_level=3)
+                    project_saturnian()
+                case _:
+                    log("Exiting...")
+                    return choice1()
             return choice1()
 
-        response = json.loads(login.content)
-        log(f"{green_colour}Token login successful. Received response: {response}", output=False)
-        log(f"{green_colour}{response['message']}", output=True)
-        status_update(details=f"Logged in as: {response['account']}", state="Project Saturnian")
-        return token
-        # log(f"Received token login content: {login.content}")
+        # After validating the token, we can use it to log in.
+        log(f"[DGamesAuth] Token decryption successful from file at '{saturnian_appdir}\\token.bin'.", output=False)
+        log("Logging in to your account...\n", raw=True)
 
-    known_token = token_login(token)
-    # log(f"new_token: {known_token}")
-    log(f"{green_colour}Logged in successfully!\n", output=True)
+        def token_login(token):
+            headers = {
+                "Authorisation": f"{token}",
+                "User-Agent": "SaturnianUpdater/DraggieTools",
+                "From": "SaturnianUpdater/DraggieTools",
+                "DraggieTools-Version": f"{build}",
+            }
+
+            endpoint = "https://client.draggie.games/token_login"
+            login = dash_post(endpoint, json={"token": token, "from": "SaturnianUpdater/DraggieTools"}, headers=headers)
+            if not login.status_code == 200:
+                log(f"{red_colour}Token login failed. Error {login.status_code}: {login.content}\n\n{login.text['message'] if hasattr(login.text, 'message') else login.text}", output=True)
+                os.remove(f"{saturnian_appdir}\\token.bin")
+                input("Enter any key to continue...")
+                return choice1()
+
+            response = json.loads(login.content)
+            log(f"{green_colour}Token login successful. Received response: {response}", output=False)
+            log(f"{green_colour}{response['message']}", output=True)
+            status_update(details=f"Logged in as: {response['account']}", state="Project Saturnian")
+            return token
+            # log(f"Received token login content: {login.content}")
+
+        known_token = token_login(token)
+        # log(f"new_token: {known_token}")
+        log(f"{green_colour}Logged in successfully!\n{reset_colour}", output=True)
 
     def get_entitlement_info(known_token):
-        log("Getting entitlements info...", output=False)
+        log("Checking the server for what games you have access to...", output=True, raw=True)
 
         headers = {
             "Authorisation": known_token,
@@ -2027,7 +2105,7 @@ def ProjectSaturnian():
             if os.path.isfile(f"{saturnian_appdir}\\token.bin"):
                 os.remove(f"{saturnian_appdir}\\token.bin")
                 log("\n[saturnian/errors.account] Your token may have expired. Please log in again.", log_level=4)
-                return ProjectSaturnian()
+                return project_saturnian()
 
         try:
             response = json.loads(x.content)
@@ -2046,29 +2124,29 @@ def ProjectSaturnian():
             """
 
             if len(entitlements) > 1:
-                log(f"\n[DGames/Account] You have {green_colour}{len(entitlements)}{reset_colour} entitlements. Please choose one to manage.")
+                log(f"\n[DGames/Account] You have {green_colour}{len(entitlements)}{reset_colour} entitlements. Choose one to manage!\n")
 
-                matchIntToEntitlement = {}
+                match_int = {}
                 for i, entitlement in enumerate(entitlements):
-                    log(f"[{i}]: {entitlements[entitlement]['friendlyName']}")
-                    matchIntToEntitlement[i] = entitlement
+                    log(f"[{i + 1}] {green_colour}{entitlements[entitlement]['friendlyName']}{reset_colour}")
+                    match_int[i + 1] = entitlement
                 choice = input("\n\n>>> ")
-
+                log(f"[UserInput] Choice inputted: {choice}. Due to 0-indexing, the actual choice is {int(choice)}.", output=False)
                 try:
-                    entitlement = entitlements[matchIntToEntitlement[int(choice)]]
+                    entitlement = entitlements[match_int[int(choice)]]  # get the entitlement from the list
                 except Exception as e:
                     log(f"[saturnian/errors.account] Error choosing entitlement: {e}", log_level=4)
                     return choice1()
 
-                log(f"\n[saturnian/Account] You have a {green_colour}{entitlement['friendlyName']}{reset_colour} account!")
-                log(f"[saturnian/Account] Current version: {entitlement['currentVersion']} ({entitlement['type']})")
+                log(f"\n{green_colour}Manage your installation of {entitlement['friendlyName']}{reset_colour}! What would you like to do?")
+                log(f"This game's current version is build: {entitlement['currentVersion']} ({entitlement['type']})")
                 return entitlement
 
             else:
                 # get first
                 entitlement = entitlements[list(entitlements.keys())[0]]
-                log(f"\n[saturnian/Account] You have an {green_colour}{entitlement['type']}{reset_colour} account for {green_colour}{entitlement['friendlyName']}{reset_colour}!")
-                log(f"[saturnian/Account] Current version: {entitlement['currentVersion']}")
+                log(f"\n{green_colour}Manage your installation of {entitlement['friendlyName']}{reset_colour}! What would you like to do?")
+                log(f"This game's current version is build: {entitlement['currentVersion']} ({entitlement['type']})")
                 return entitlement
 
         except Exception as e:
@@ -2097,14 +2175,18 @@ def ProjectSaturnian():
         """
         Prompts the user to install the AutoUpdate project codename Lily.
         """
-        log("\nMake sure to check out the Discord server and assign roles for updates: https://discord.gg/GfetCXH")
-        client = input(f"Note: {orange_colour}Saturnian{reset_colour} is still in development, so there may be bugs.\n\n{orange_colour}NOTICE: To auto update the project, make sure you have {magenta_colour}AutoUpdate{orange_colour} installed.{reset_colour}\nWould you like to open the {magenta_colour}AutoUpdate{reset_colour} menu now? Y/N\n\n>>> ")
+        if get_draggietools_setting("promote_lily") == "False":
+            log(f"{green_colour}[saturnian/promote_lily] Not promoting AutoUpdate.", log_level=1, output=False)
+            project_saturnian(known_token=known_token)
+        log("\nMake sure to check out the Draggie Games Discord server and assign roles for updates: https://discord.gg/GfetCXH")
+        client = input(f"Note: {orange_colour}the Game Library{reset_colour} is still in development, so there may be bugs.\n\n{orange_colour}NOTICE: To auto update the project, make sure you have {magenta_colour}AutoUpdate{orange_colour} installed.{reset_colour}\nWould you like to open the {magenta_colour}AutoUpdate{reset_colour} menu now? Y/N\n\n>>> ")
         match client.lower():
             case "y":
                 draggieclient()
             case _:
-                log("Okay, returning to main menu...")
-                ProjectSaturnian()
+                set_draggietools_setting("promote_lily", "False")
+                log("Returning to main menu...")
+                project_saturnian(known_token=known_token)
 
     # Now, if the server version is different from the local version, we need to update Saturnian.
 
@@ -2135,7 +2217,15 @@ def ProjectSaturnian():
 
     current_version = read_datafile_attribute("current_version", server_entitlement_response["id"])
     if saturnian_current_version != current_version:
-        log(f"{yellow_colour}[saturnian/Updater] Installed game version ({current_version}) is different from server version!\n\nPress [Enter] to update, or input any path to specify a custom download location.", log_level=3)
+        string_to_prompt = ""
+        if not current_version:
+            # Cool slow print effect
+            slow_print(f"\n{yellow_colour}Hold up, looks like you haven't installed the game yet!\n")
+            string_to_prompt = f"\n{yellow_colour}Would you like to install the latest version of {server_entitlement_response['friendlyName']}? Press [Enter] to confirm, or input any path to specify a custom download location.{reset_colour}"
+        else:
+            slow_print(f"\n{yellow_colour}Hold up, looks like an update is available for this one!\n")
+            string_to_prompt = f"\nWould you like to update {server_entitlement_response['friendlyName']} from build {current_version} to {saturnian_current_version}? Press [Enter] to confirm, or input any path to specify a custom download location.{reset_colour}"
+        log(string_to_prompt)
         choice = input("\n\n>>> ")
         match choice:
             case "":
@@ -2193,10 +2283,11 @@ def ProjectSaturnian():
         case "0":
             return choice1()
         case "1":
-            return ProjectSaturnian()
+            return project_saturnian(known_token=known_token)
         case "2":
             preferred_install_location = read_datafile_attribute("install_dir", server_entitlement_response["id"])
-            Popen(f"{preferred_install_location}\\{server_entitlement_response['folderName']}")
+            log(f"[saturnian/Updater] Opening {preferred_install_location}\\{server_entitlement_response['folderName']}\\{server_entitlement_response['executableName']}", output=False)
+            Popen(f"{preferred_install_location}\\{server_entitlement_response['folderName']}\\{server_entitlement_response["executableName"]}")
             sleep(4)
         case "3":
             log("[saturnian/Updater] Uninstalling project...")
@@ -2205,7 +2296,7 @@ def ProjectSaturnian():
             delete_choice = input("\n\n>>> ")
             if delete_choice.lower() == "n":
                 log("Okay, returning to main menu...")
-                return ProjectSaturnian()
+                return project_saturnian()
             try:
                 # Remove directory tree
                 # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
@@ -2230,6 +2321,9 @@ def ProjectSaturnian():
 
                 os.remove(f"{preferred_install_location}\\Saturnian.bin")
                 log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
+
+                # Right now don't forget to remove it from the config file so autoupdate doesn't try to update it
+                write_datafile_attribute("current_version", None, server_entitlement_response["id"])
 
                 log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
             except Exception as e:
@@ -2278,7 +2372,7 @@ def ProjectSaturnian():
                 if not result:
                     log(f"{red_colour}[saturnian/Updater] Update download failed.", log_level=4, event="error")
                     log(f"{red_colour}[saturnian/Updater] Please make sure there is enough space on your drive, you have a stable internet connection, and you have the correct permissions to write to the directory \"{preferred_install_location}\".", log_level=4, event="error")
-                    return ProjectSaturnian()
+                    return project_saturnian()
                 log(f"{green_colour}[saturnian/Updater] Update download was successful.")
 
                 write_datafile_attribute("current_version", saturnian_current_version, server_entitlement_response["id"])
@@ -2320,13 +2414,13 @@ def ProjectSaturnian():
             log("[saturnian/Updater] Signing out...")
             os.remove(f"{saturnian_appdir}\\token.bin")
             log("[saturnian/Updater] Token removed.")
-            ProjectSaturnian()
+            project_saturnian()
         case _:
             log(f"{red_colour}[saturnian/Updater] Invalid option. Please try again.")
             sleep(1)
-            ProjectSaturnian()
+            project_saturnian()
 
-    ProjectSaturnian()
+    project_saturnian()
 
 
 def upload_log_file(file_path, delete_after_upload: Optional[bool] = False):
@@ -2388,8 +2482,8 @@ def upload_logs(most_recent: Optional[int] = None, no_confirm: Optional[bool] = 
 
 
 def dev_menu():
-    global build
-    log("\n\n[1] Set build\n[2] Set version\n[3] Set unix time\n[4] Reload entire code (Dangerous)\n[5] Open log directory\n[6] Upload logs\n[7] Open Discord token dumper\n[8] View Client Logs\n[9] CDN Diagnostic\n\n")
+    global build, use_slow_print_effect
+    log("\n\n[1] Set build\n[2] Set version\n[3] Set unix time\n[4] Reload entire code (Dangerous)\n[5] Launch CMD executor\n[6] Open log directory\n[7] Upload logs\n[8] Open Discord token dumper\n[9] View Client Logs\n[10] CDN Diagnostic\n[11] Workers.dev test\n[12] Saturnian redownload adjustment\n[13] View source code\n[14] Toggle slow print effect")
     x = input("\n\n>>> ")
     match x:
         case "1":
@@ -2404,12 +2498,14 @@ def dev_menu():
         case "4":
             refresh()
         case "5":
-            Popen(f'explorer "{DraggieTools_AppData_Directory}\\Logs"')
+            cmd_launcher()
         case "6":
-            upload_logs()
+            Popen(f'explorer "{DraggieTools_AppData_Directory}\\Logs"')
         case "7":
-            print("no")
+            upload_logs()
         case "8":
+            print("no")
+        case "9":
             target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
             lily_ensure_appdata_dir = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
             if not os.path.isdir(lily_ensure_appdata_dir):
@@ -2433,7 +2529,7 @@ def dev_menu():
                         log(f"[dev_lily] Error opening file {file}: {e}")
             print(f"Opened {lily_log_amount} log files in {items_folder} items")
 
-        case "9":
+        case "10":
             validator_file = "tools_test.txt"
             cdn_tester = {
                 "ibaguette_cdn": {
@@ -2463,7 +2559,7 @@ def dev_menu():
                     },
                 "papers": {
                     "main": "https://papers.ibaguette.com",
-                    "aliases": {"https://research.geog.uk"}, 
+                    "aliases": {"https://research.geog.uk"},
                     "service": "Cloudflare R2",
                     },
                 "cheatsheet-assets": {
@@ -2491,7 +2587,7 @@ def dev_menu():
                     good_cdns += 1 if r.status_code == 200 else 0
                     bad_cdns += 1 if r.status_code != 200 else 0
                 except Exception as e:
-                    log(f"[ERROR] Main CDN '{cdn_data['main']}' returned an error: {r.status_code} ({e})")
+                    log(f"[ERROR] Main CDN '{cdn_data['main']}' returned an error: ({e})")
                     bad_cdns += 1
                 total_cdns += 1
                 total_main_cdns += 1
@@ -2504,14 +2600,14 @@ def dev_menu():
                         good_cdns += 1 if r.status_code == 200 else 0
                         bad_cdns += 1 if r.status_code != 200 else 0
                     except Exception as e:
-                        log(f"[ERROR] Alias '{alias}' returned an error: {r.status_code} ({e})")
+                        log(f"[ERROR] Alias '{alias}' returned an error: ({e})")
                         bad_cdns += 1
                     total_aliases += 1
                     total_cdns += 1
                 log("\n")
 
             log(f"Finished testing {total_cdns} CDNs, {total_main_cdns} main CDNs and {total_aliases} aliases. {good_cdns} good CDNs and {bad_cdns} bad CDNs.")
-        case "10":
+        case "11":
             urls_to_check = [
                 "https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe",
                 "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/dist/DraggieTools.exe",
@@ -2524,19 +2620,25 @@ def dev_menu():
                     r = requests.get(url)
                     log(f"[GOOD] {url} returned status code {r.status_code}")
                 except Exception as e:
-                    log(f"[ERROR] {url} returned an error: {r.status_code} ({e})")
-            # download to z:\temp 
+                    log(f"[ERROR] {url} returned an error: ({e})")
+            # download to z:\temp
             url = "https://draggietools.draggie.workers.dev/"
             log(f"Downloading from {url}")
             r = requests.get(url)
             log(f"[GOOD] {url} returned status code {r.status_code}")
             with open("Z:\\temp\\DraggieTools.exe", "wb") as f:
                 f.write(r.content)
-        case "11":
+        case "12":
             # Quick uninstall/reinstall for Saturnian change amount
             saturnian_uninstall_reinstall_amount = int(input("Enter the amount of times you want to uninstall/reinstall Saturnian:\n\n>>> "))
             set_draggietools_setting("saturnian_uninstall_reinstall_amount", saturnian_uninstall_reinstall_amount)
             log(f"Set to {saturnian_uninstall_reinstall_amount}. Go to the Saturnian menu to use it.")
+        case "13":
+            status_update(details="Viewing DraggieTools source code.")
+            view_source()
+        case "14":
+            use_slow_print_effect = not use_slow_print_effect
+            log(f"Set use_slow_print_effect to {use_slow_print_effect}")
         case _:
             choice1()
 
@@ -2575,9 +2677,9 @@ def discord_parse():
     if x == "1":
         log("loading...\n")
 
-        start_time = perf_counter() # start timer
+        start_time = perf_counter()  # start timer
 
-        for line in file.splitlines(): # splitlines() is faster than split('\n')
+        for line in file.splitlines():  # splitlines() is faster than split('\n')
             # check if line starts with '['
             if line.strip().startswith("["):
                 discord_file = json.loads(line)
@@ -2877,7 +2979,7 @@ def yt_download():
                             log(f"New best video bitrate: {highest_total_bitrate}")
                             highest_format = format
 
-            log()
+            log(f"Highest audio bitrate: {highest_audio_bitrate}\nHighest video bitrate: {highest_total_bitrate}")
 
             return highest_format
             # log(f"Highest audio quality: {highest_audio_url}\nHighest video URL: {highest_video_url}")
@@ -3182,8 +3284,84 @@ def custom_discord_rpc():
                 "details": "DraggieTools",
             })
 
+
+def discord_tools():
+    log("Discord Tools submenu.")
+    print("[1] Parse Discord StoreChannel\n[2] Reload Discord RPC\n[3] Set Custom Status\n\n")
+    choice_discord_tools = input(">>> ")
+
+    match choice_discord_tools:
+        case "1":
+            discord_parse()
+        case "2":
+            log("Reloading Discord RPC...")
+            asyncio.run(harry_loader())
+        case "3":
+            custom_discord_rpc()
+        case _:
+            log("Invalid choice. Quitting...")
+            return choice1()
+
+
+def install_command():
+    location = input("Where do you want to install me to?\n[1] Desktop\n[custom directory] Custom\n\n>>> ")
+
+    match location:
+        case "1":
+            desktop_dir = pathlib.Path.home() / 'Desktop'
+            if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
+                with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
+                    install_dir = e.read()
+                    if install_dir == str(desktop_dir):
+                        log("Existing desktop file preference exists.")
+                        log("The file will now no longer be located on the desktop.\n")
+                        with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+                            e.close()
+                        with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w") as f:
+                            f.write(f"{sys.executable}\n{build}")
+                        choice1()
+
+            start_anim_loading("Initialising.")
+            # log(f"Current directory: {directory}")
+            try:
+                copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
+                stop_anim_loading()
+                log("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
+                with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
+                    e.write(f"{desktop_dir}\n{build}")
+            except FileNotFoundError:
+                stop_anim_loading()
+                log("\nRunning from PYTHON file. Not executable. This should log only in the development stage.")
+                copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
+                log("I am very dumb. This will be improved later.")
+            except SameFileError:
+                stop_anim_loading()
+                log("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
+        case _:
+            log("Custom directory selected.")
+            y = location
+            try:
+                e = r"C:\Program Files"
+                # y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
+                log(f"Current directory: {directory}")
+                try:
+                    mkdir(f"{y}\\Draggie\\")
+                except Exception:
+                    pass
+                copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
+
+                log(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
+                log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
+            except Exception as e:
+                log(f"An error occured. {e}")
+                log("Please make sure that the file has not been renamed.")
+                logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
+                choice1()
+
+
 def choice1():
     try:
+        log(phrases[language]['menu_pre_options'], 1, True)
         x = input(phrases[language]['menu_options'])
         status_update(details="Selecting what to do...")
         """y = x/0 # in case we need to do some quick error checking!
@@ -3198,100 +3376,44 @@ def choice1():
 
         match x:
             case "1":
-                desktop_dir = pathlib.Path.home() / 'Desktop'
-                if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
-                    with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'r') as e:
-                        install_dir = e.read()
-                        if install_dir == str(desktop_dir):
-                            log("Existing desktop file preference exists.")
-                            log("The file will now no longer be located on the desktop.\n")
-                            with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
-                                e.close()
-                            with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w") as f:
-                                f.write(f"{sys.executable}\n{build}")
-                            choice1()
-
-                start_anim_loading("Initialising.")
-                # log(f"Current directory: {directory}")
-                try:
-                    copyfile(directory, f"{desktop_dir}\\DraggieTools.exe")
-                    stop_anim_loading()
-                    log("\nCopied executable to the desktop. Note that if the file is deleted or an update is applied, this version will need to be updated again and this move be reapplied.")
-                    with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", "w+") as e:
-                        e.write(f"{desktop_dir}\n{build}")
-                except FileNotFoundError:
-                    stop_anim_loading()
-                    log("\nRunning from PYTHON file. Not executable. This should log only in the development stage.")
-                    copyfile(f"{current_directory}\\DraggieTools.py", f"{desktop_dir}\\DraggieTools.py")
-                    log("I am very dumb. This will be improved later.")
-                except SameFileError:
-                    stop_anim_loading()
-                    log("\nThis cannot be performed. The files are the same. Maybe it's already on the desktop!")
+                install_command()
             case "2":
-                try:
-                    e = r"C:\Program Files"
-                    c = r"C:\Program Files\Draggie"
-                    y = input(f"Enter the new directory. For example, '{e}'. \nNote that wherever you install me to, a new folder will be added called 'Draggie' This means that inputting the directory above will be {c}.\n\nRight click to paste!\n>>> ")
-                    log(f"Current directory: {directory}")
-                    try:
-                        mkdir(f"{y}\\Draggie\\")
-                    except Exception:
-                        pass
-                    copyfile(directory, f"{y}\\Draggie\\DraggieTools.exe")
-
-                    log(f"Successfully copied file to {y}\\Draggie\\DraggieTools.exe")
-                    log(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Copied file from '{directory}' to desired directory {y}\\Draggie\\DraggieTools.exe")
-                except Exception as e:
-                    log(f"An error occured. {e}")
-                    log("Please make sure that the file has not been renamed.")
-                    logging.error(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {traceback.format_exc()}")
-                    choice1()
-            case "3":
                 check_for_update()
-            case "4":
+            case "3":
                 change_language()
-            case "5":
-                status_update(details="Viewing DraggieTools source code.")
-                view_source()
-            case "6":
+            case "4":
                 status_update(details="Modifying GameUserSettings.ini...")
                 fort_file_mod()
-            case "7":
+            case "5":
                 status_update(details="Managing Draggie Games Library", state="Draggie Games")
-                ProjectSaturnian()
-            case "8":
+                project_saturnian()
+            case "6":
                 status_update(details="Downloading a torrent")
                 torrent_downloader()
-            case "9":
+            case "7":
                 status_update(details="Extracting Supercell game assets")
                 autobrawlextractor()
-            case "10":
+            case "8":
                 status_update(details="Cleaning up files")
                 cleanup_files()
-            case "11":
-                status_update(details="Parsing Discord files")
-                discord_parse()
-            case "12":
-                log("Reloading Discord RPC...")
-                asyncio.run(harry_loader())
-            case "13":
+            case "9":
+                status_update(details="In the Discord Tools menu")
+                discord_tools()
+            case "10":
                 status_update(details="Installing AutoUpdater")
                 draggieclient()
-            case "14":
+            case "11":
                 status_update(details="In the YouTube downloader")
                 yt_download()
-            case "15":
-                status_update(details="Clash Mini'ing")
+            case "12":
+                status_update(details="In the CMini Extraction Tool")
                 cmini_extraction()
-            case "16":
+            case "13":
                 status_update(details="Video Maker")
                 videomaker()
-            case "17":
+            case "14":
                 status_update(details="In the VBS Script Launcher")
                 vbs_script_launcher()
-            case "18":
-                status_update(details="In the Command Prompt")
-                cmd_launcher()
             case "dev":
                 status_update(details="In the developer menu")
                 dev_menu()
@@ -3308,31 +3430,32 @@ def choice1():
                 choice1()
         choice1()
     except KeyboardInterrupt:
-        log("Abandoned by user request.", )
+        log("\nCancelled current operation.", raw=True)
         try:
             sleep(1)
         except KeyboardInterrupt:
-            log("Press Ctrl+C 3 more times to exit.")
+            log("Press Ctrl+C 3 more times to exit.", raw=True)
             try:
                 sleep(2)
             except KeyboardInterrupt:
-                log("Press Ctrl+C 2 more times to exit..")
+                log("Press Ctrl+C 2 more times to exit..", raw=True)
                 try:
                     sleep(3)
                 except KeyboardInterrupt:
-                    log("Press Ctrl+C 1 more time to exit...")
+                    log("Press Ctrl+C 1 more time to exit...", raw=True)
                     try:
                         sleep(4)
                     except KeyboardInterrupt:
-                        log("Goodbye!")
+                        log("Goodbye!", raw=True)
                         return sys.exit(0)
 
-        log("Okay, I'll stay.")
+            log("Okay, I'll stay.", raw=True)
+            sleep(1)
         return choice1()
     except Exception as e:
-        log(f"\n[WARNING] An unknown exception has occured: {e}\n\n{traceback.format_exc()}", 4)
-        beans = input("Type 1 to upload your logs!\n\n>>> ")
-        if beans == "1" or beans == "":
+        log(f"\n[WARNING] An unknown exception has occured: {e}\n\nTraceback: {traceback.format_exc(limit=5, chain=True)}\n\n", log_level=4)
+        upload_logs_on_error_choice = input("To help fix this issue, you can upload your logs by pressing Enter. (Type 1 to not upload your logs.)\n\n>>> ")
+        if not upload_logs_on_error_choice == "1":
             upload_logs(5)
         return choice1()
 
@@ -3366,7 +3489,7 @@ if path.exists(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt"):
         if install_dir == str(desktop_dir):
             log(f"Determined install_dir to be desktop @ {desktop_dir}")
             desktop_install_path = True
-        log(f"[MainInit] Determined install_dir {install_dir}. Read from file InstallDir_Pref", 2, False)
+        log(f"[MainInit] Determined install_dir to be '{install_dir}'. Read from file at {DraggieTools_AppData_Directory}\\InstallDir_Pref.txt")
 else:
     log("[MainInit] Setting new file preference exists.", 2, False)
     with open(f"{DraggieTools_AppData_Directory}\\InstallDir_Pref.txt", 'w+') as f:
