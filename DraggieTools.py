@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 87
-version = "0.9.1"
-build_date = 1705783488
+build = 88
+version = "0.9.2"
+build_date = 1705855306
 username = getpass.getuser()
 current_exe_path = sys.executable
 use_slow_print_effect = False
@@ -1960,6 +1960,9 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
     def write_datafile_attribute(attribute, value, entitlement):
         """
         Writes the value of the attribute to the datafile.
+        :param attribute: The attribute to write to. This will be the key in the JSON file.
+        :param value: The value to write to the attribute - the JSON value.
+        :param entitlement: The
         """
         try:
             with open(entitlements_json, "r") as f:
@@ -1973,7 +1976,6 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
         except Exception as e:
             log(f"[saturnian/datafile] Error writing attribute {attribute} to datafile: {e}", log_level=4)
 
-
     if not known_token:
         log("Authenticating with the Draggie Games Accounts server...") 
 
@@ -1983,9 +1985,6 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
             with open(entitlements_json, "w") as f:
                 first_info = {
                     "default": {
-                        "current_version": None, "tier": None, "install_dir": saturnian_appdir
-                    },
-                    "saturnian_beta_tester": {
                         "current_version": None, "tier": None, "install_dir": saturnian_appdir
                     }
                 }
@@ -2116,7 +2115,7 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
             # print(entitlements)
 
             """
-            Entitlements example:
+            Entitlements example from server:
             {
                 'saturnian_alpha_tester': {'currentVersion': '14', 'downloadUrl': 'https://saturnian-co.../build.zip', 'type': 'alpha', 'friendlyName': 'Saturnian Alpha Tester', 'folderName': 'SaturnianGame'},
                 'saturnian_beta_tester': {'currentVersion': '0', 'downloadUrl': 'n/a', 'type': 'beta', 'friendlyName': 'Saturnian Beta Tester', 'folderName': 'SaturnianGame'},
@@ -2227,14 +2226,22 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
             string_to_prompt = f"\nWould you like to update {server_entitlement_response['friendlyName']} from build {current_version} to {saturnian_current_version}? Press [Enter] to confirm, or input any path to specify a custom download location.{reset_colour}"
         log(string_to_prompt)
         choice = input("\n\n>>> ")
+        entitlement_installation_directory = ""
         match choice:
             case "":
                 log("[saturnian/Updater] Downloading build...")
+                entitlement_installation_directory = read_datafile_attribute("install_dir", server_entitlement_response["id"])
+                if entitlement_installation_directory is None:
+                    # set default
+                    entitlement_installation_directory = saturnian_appdir
             case "0":
                 return choice1()
             case _:
                 log(f"[saturnian/Updater] Downloading build to {choice}...")
-                write_datafile_attribute("install_dir", choice, server_entitlement_response["id"])
+                entitlement_installation_directory = choice
+
+        log(f"[saturnian/Updater] Writing install_dir attribute, with value {entitlement_installation_directory} and entitlement {server_entitlement_response['id']}")
+        write_datafile_attribute("install_dir", entitlement_installation_directory, server_entitlement_response["id"])
 
         log(f"[saturnian/Updater] Downloading build version {saturnian_current_version}...")
         result = download_saturnian_build()
@@ -2246,9 +2253,17 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
         write_datafile_attribute("tier", server_entitlement_response["type"], server_entitlement_response["id"])
         promote_project_lily()
 
+    log(f"[saturnian/Updater] [debug] attempting to read install_dir from datafile. server entitlement response id: {server_entitlement_response['id']}")
     preferred_install_location = read_datafile_attribute("install_dir", server_entitlement_response["id"])
 
+    if not preferred_install_location:
+        # reset to default
+        preferred_install_location = saturnian_appdir
+        log(f"[saturnian/Updater] [debug] preferred_install_location is None, resetting to default: {preferred_install_location}", output=False)
+        write_datafile_attribute("install_dir", preferred_install_location, server_entitlement_response["id"])
+
     # folder_structure_to_find_exe_in = (f"{preferred_install_location}\\{server_entitlement_response['folderName']}")
+    log(f"[saturnian/Updater] Checking for executable in {preferred_install_location}\\{server_entitlement_response['folderName']}")
     folder_structure_to_find_exe_in = os.path.join(preferred_install_location, server_entitlement_response['folderName'])
 
     exe_found = False

@@ -1,0 +1,4 @@
+[ProjectSaturnian]
+- Added a check to prevent entitlement handling if the returned value of the install_dir from the datafile is empty.
+- If the value of the install_dir is empty, it will just use the more stable default path.
+- Improved documentation
