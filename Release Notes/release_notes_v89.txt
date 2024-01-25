@@ -1,0 +1,11 @@
+- Minor control flow tweaks
+
+[ProjectSaturnian]
+- New option to allow user to install a shortcut onto the desktop
+- More improvements for entitlements and game management
+- Wording tweaks for clarity
+- Reduce spaghetti code
+- Added colours to options
+
+[DraggieGamesClient]
+- Updated string for new file name compatibility

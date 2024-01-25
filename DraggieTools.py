@@ -6,9 +6,9 @@ import getpass
 import sys
 import time
 
-build = 88
-version = "0.9.2"
-build_date = 1705855306
+build = 89
+version = "0.9.3"
+build_date = 1706200215
 username = getpass.getuser()
 current_exe_path = sys.executable
 use_slow_print_effect = False
@@ -157,6 +157,9 @@ import requests
 
 print_loading_message("io")
 import io
+
+print_loading_message("win32com.client")
+import win32com.client
 
 # Codename Guide:
 """
@@ -1305,10 +1308,16 @@ def check_for_update():
         log(f"Unable to overwrite older version. {e}", 4)
 
     try:
-        current_build_version = int((dash_get('https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/build.txt')).text)
+        build_url = "https://raw.githubusercontent.com/Draggie306/DraggieTools/main/build.txt"
+        current_build_version = int((dash_get(build_url)).text)
     except Exception as e:
-        log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
-        current_build_version = build
+        try:
+            log(f"[check_for_update] Unable to check for update. Retrying with jsdelivr. {e}", 3, False)
+            build_url = "https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/build.txt"
+            current_build_version = int((dash_get(build_url)).text)
+        except Exception as e:
+            log(f"\nUnable to check for update. {e}\n\nIt looks like the GitHub update servers might be blocked by your network! I'll still work, but some features might be limited.", 4)
+            current_build_version = build
     if build < current_build_version: # if build is less than current version - so there's an update available.
         release_notes = str((dash_get(f"https://cdn.jsdelivr.net/gh/Draggie306/DraggieTools@latest/Release%20Notes/release_notes_v{current_build_version}.txt")).text)
         log(f"\n{phrases[language]['update_available']} {phrases[language]['on_version']} {version} {phrases[language]['which_build']} {build}.\n{phrases[language]['newest_version_build']} {current_build_version}\n\n", event="success")
@@ -1977,7 +1986,7 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
             log(f"[saturnian/datafile] Error writing attribute {attribute} to datafile: {e}", log_level=4)
 
     if not known_token:
-        log("Authenticating with the Draggie Games Accounts server...") 
+        log("Authenticating with the Draggie Games Accounts server...")
 
         if not os.path.isfile(entitlements_json):
             log("[saturnian] No data file found. Creating one now...", log_level=3)
@@ -1998,7 +2007,7 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
             log(f"[DraggieGamesAccounts] {magenta_colour}If you do not have an account, you can create one at:{cyan_colour} https://alpha.draggiegames.com/register{reset_colour}", log_level=3)
             log(f"\n\n{yellow_colour}Please enter your Draggie Games login credentials below.{reset_colour}", log_level=3)
             email = input(f"\n{yellow_colour}Email: {reset_colour}")
-            password = getpass.getpass(f"{yellow_colour}Password (hidden): {reset_colour}")
+            password = getpass.getpass(f"{yellow_colour}Password (note: no text will show. right-click to paste): {reset_colour}")
             log(f"{blue_colour}Logging in...")
             login = dash_post("https://client.draggie.games/login", json={"email": email, "password": password, "from": "SaturnianUpdater/DraggieTools"})
 
@@ -2056,7 +2065,7 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
 
         # After validating the token, we can use it to log in.
         log(f"[DGamesAuth] Token decryption successful from file at '{saturnian_appdir}\\token.bin'.", output=False)
-        log("Logging in to your account...\n", raw=True)
+        log(f"{blue_colour}Logging in to your account...\n", raw=True)
 
         def token_login(token):
             headers = {
@@ -2123,18 +2132,19 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
             """
 
             if len(entitlements) > 1:
-                log(f"\n[DGames/Account] You have {green_colour}{len(entitlements)}{reset_colour} entitlements. Choose one to manage!\n")
+                log(f"\n\nYou have {green_colour}{len(entitlements)}{reset_colour} entitlements. Choose one to manage, or input [0] to go back.\n")
 
                 match_int = {}
                 for i, entitlement in enumerate(entitlements):
-                    log(f"[{i + 1}] {green_colour}{entitlements[entitlement]['friendlyName']}{reset_colour}")
+                    log(f"{green_colour}[{i + 1}] {entitlements[entitlement]['friendlyName']}{reset_colour}")
                     match_int[i + 1] = entitlement
                 choice = input("\n\n>>> ")
                 log(f"[UserInput] Choice inputted: {choice}. Due to 0-indexing, the actual choice is {int(choice)}.", output=False)
                 try:
                     entitlement = entitlements[match_int[int(choice)]]  # get the entitlement from the list
                 except Exception as e:
-                    log(f"[saturnian/errors.account] Error choosing entitlement: {e}", log_level=4)
+                    log("Going back!", log_level=1, output=True)
+                    log(e, log_level=4, output=False)
                     return choice1()
 
                 log(f"\n{green_colour}Manage your installation of {entitlement['friendlyName']}{reset_colour}! What would you like to do?")
@@ -2293,61 +2303,84 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
                 except Exception as e:
                     return log(f"[saturnian/errors] Error in buildType downloading Saturnian build: {e}", log_level=4, event="error")
 
-    to_open = input(f"\n\n{cyan_colour}Manage your installation of the game!{reset_colour}\n\n[0] Back to main menu\n[1] Back to Draggie Games menu\n[2] Open the game\n[3] Uninstall the project\n[4] Open the game folder\n[5] Quick uninstall/reinstall\n[6] Change installation directory\n[7] Sign out\n\n>>> ")
+    to_open = input(f"\n\n{cyan_colour}Manage your installation of the game!{reset_colour}\n\n[0] Go back\n{green_colour}[1] Open the game{reset_colour}\n{red_colour}[2] Uninstall{reset_colour}\n[3] Open local install folder\n[4] Quick uninstall & reinstall\n[5] Change installation directory\n{green_colour}[6] Create Desktop Shortcut{reset_colour}\n\n[s] Sign out\n\n>>> ")
     match to_open.lower():
         case "0":
-            return choice1()
-        case "1":
             return project_saturnian(known_token=known_token)
-        case "2":
+        case "6":
+            # Create desktop shortcut
+            log(f"[saturnian/Updater] Creating desktop shortcut for {server_entitlement_response['friendlyName']}...")
+            try:
+                # Logic copied from DraggieGamesClient v69.
+                shell = win32com.client.Dispatch("WScript.Shell")
+                desktop_dir = os.path.join(pathlib.Path.home(), 'Desktop')
+                log(f"[saturnian/DesktopShortcut] Desktop directory: {desktop_dir}", output=False, log_level=1)
+                shortcut = shell.CreateShortCut(f"{desktop_dir}\\{server_entitlement_response['friendlyName']}.lnk")
+
+                target_path = os.path.join(preferred_install_location, server_entitlement_response['folderName'], server_entitlement_response['executableName'])
+                log(f"[saturnian/DesktopShortcut] Target path: {target_path}", output=False, log_level=1)
+                working_directory = os.path.join(preferred_install_location, server_entitlement_response['folderName'])
+                log(f"[saturnian/DesktopShortcut] Working directory: {working_directory}", output=False, log_level=1)
+
+                shortcut.Targetpath = target_path
+                shortcut.WorkingDirectory = working_directory
+
+                shortcut.save()
+                log(f"{green_colour}A desktop shortcut has been created successfully! You can now launch the game from there.{reset_colour}\nNote that if you do not install the AutoUpdate project or launch it from here, game updates may not be automatically downloaded.\n\n", output=True, raw=True)
+                sleep(4)
+            except Exception as e:
+                log(f"{red_colour}[saturnian/Updater] Error creating desktop shortcut: {e}\n\nPlease upload this log to the developers!", log_level=4, event="error")
+                return sleep(1)
+        case "1":
             preferred_install_location = read_datafile_attribute("install_dir", server_entitlement_response["id"])
             log(f"[saturnian/Updater] Opening {preferred_install_location}\\{server_entitlement_response['folderName']}\\{server_entitlement_response['executableName']}", output=False)
             Popen(f"{preferred_install_location}\\{server_entitlement_response['folderName']}\\{server_entitlement_response["executableName"]}")
             sleep(4)
-        case "3":
+        case "2":
             log("[saturnian/Updater] Uninstalling project...")
             log(f"\nNOTE: By continuing, you will delete ALL files in the directory \"{preferred_install_location}\\{server_entitlement_response['folderName']}\". Any files you may have added to this directory will be deleted.")
             log(f"\n{yellow_colour}Are you sure you want to continue? (y/n){reset_colour}")
             delete_choice = input("\n\n>>> ")
-            if delete_choice.lower() == "n":
+            if delete_choice.lower() == "y":
+                try:
+                    # Remove directory tree
+                    # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
+                    dir_path = f"{preferred_install_location}\\{server_entitlement_response['folderName']}"
+
+                    # walk through all files and directories
+                    for root, dirs, files in os.walk(dir_path, topdown=False):
+                        for name in files:
+                            #  full file path construct anddelete
+                            file_path = os.path.join(root, name)
+                            os.remove(file_path)
+                            log(f"{green_colour}[saturnian/Updater] Removed {file_path}", log_level=2, output=True)
+                        for name in dirs:
+                            # full dir path construct and delete
+                            dir_to_remove = os.path.join(root, name)
+                            os.rmdir(dir_to_remove)
+                            log(f"{green_colour}[saturnian/Updater] Removed directory {dir_to_remove}", log_level=2, output=True)
+
+                    # remove root directory
+                    os.rmdir(dir_path)
+                    log(f"{green_colour}[saturnian/Updater] Removed root @ {dir_path}", log_level=2, output=True)
+
+                    os.remove(f"{preferred_install_location}\\Saturnian.bin")
+                    log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
+
+                    # Right now don't forget to remove it from the config file so autoupdate doesn't try to update it
+                    write_datafile_attribute("current_version", None, server_entitlement_response["id"])
+
+                    log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
+                except Exception as e:
+                    log(f"\n[saturnian/errors] An issue occurred when fully uninstalling Saturnian:\n> {e}", log_level=4, event="error")
+                    return sleep(1)
+            else:
                 log("Okay, returning to main menu...")
                 return project_saturnian()
-            try:
-                # Remove directory tree
-                # shutil.rmtree(f"{preferred_install_location}\\SaturnianGame")
-                dir_path = f"{preferred_install_location}\\{server_entitlement_response['folderName']}"
-
-                # walk through all files and directories
-                for root, dirs, files in os.walk(dir_path, topdown=False):
-                    for name in files:
-                        #  full file path construct anddelete
-                        file_path = os.path.join(root, name)
-                        os.remove(file_path)
-                        log(f"{green_colour}[saturnian/Updater] Removed {file_path}", log_level=2, output=True)
-                    for name in dirs:
-                        # full dir path construct and delete
-                        dir_to_remove = os.path.join(root, name)
-                        os.rmdir(dir_to_remove)
-                        log(f"{green_colour}[saturnian/Updater] Removed directory {dir_to_remove}", log_level=2, output=True)
-
-                # remove root directory
-                os.rmdir(dir_path)
-                log(f"{green_colour}[saturnian/Updater] Removed root @ {dir_path}", log_level=2, output=True)
-
-                os.remove(f"{preferred_install_location}\\Saturnian.bin")
-                log(f"{green_colour}[saturnian/Updater] Removed SaturnianGame binary download", log_level=2, output=True)
-
-                # Right now don't forget to remove it from the config file so autoupdate doesn't try to update it
-                write_datafile_attribute("current_version", None, server_entitlement_response["id"])
-
-                log(f"\n{green_colour}[saturnian/Updater] Saturnian uninstalled successfully.")
-            except Exception as e:
-                log(f"\n[saturnian/errors] An issue occurred when fully uninstalling Saturnian:\n> {e}", log_level=4, event="error")
-                return sleep(1)
-        case "4":
+        case "3":
             preferred_install_location = read_datafile_attribute("install_dir")
             Popen(f'explorer /select,"{preferred_install_location}\\{server_entitlement_response["folderName"]}"')
-        case "5":
+        case "4":
             def uninstall_reinstall():
                 log("[saturnian/Updater] Uninstalling Saturnian...")
                 try:
@@ -2404,7 +2437,7 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
                 amount_to_change -= 1
                 log(f"Still have {amount_to_change} more to go..." if amount_to_change > 0 else "Done!")
 
-        case "6":
+        case "5":
             log("[saturnian/Updater] Changing installation directory...")
             start_time = time()
             try:
@@ -2425,7 +2458,7 @@ def project_saturnian(state: Optional[str] = None, details: Optional[str] = None
                 sleep(2)
             except Exception as e:
                 return log(f"[saturnian/errors] Error changing installation directory: {e}\n{traceback.format_exc()}", log_level=4, event="error")
-        case "7":
+        case "s":
             log("[saturnian/Updater] Signing out...")
             os.remove(f"{saturnian_appdir}\\token.bin")
             log("[saturnian/Updater] Token removed.")
@@ -3084,12 +3117,12 @@ def yt_download():
 
 
 def draggieclient():
-    # Project Lily: aka DraggieClient
+    # Project Lily: aka DraggieGamesClient
     status_update(details="Installing software", state="Project Lily")
     lily_initial_choice = input("\nWhat do you want to do?\n[0] Go back\n[1] Install\n[2] Uninstall\n[3] View Logs\n[4] Manage Settings\n\n>>> ")
 
     try:
-        target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+        target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\DraggieGamesClient.exe")
         lily_ensure_appdata_dir = (f"{environ_dir}\\AppData\\Local\\Draggie\\Client")
         lily_ensure_appdata_dir_via_expanded = (f"{os.path.expanduser('~')}\\AppData\\Local\\Draggie\\Client")
     except Exception as e:
@@ -3122,29 +3155,29 @@ def draggieclient():
             except Exception as e:
                 log(f"[ProjectLily] An error occured: {e}: {traceback.format_exc()}", log_level=4)
         case "2":
-            startup_path = os.path.join(winshell.startup(), "Client.lnk")
+            startup_path = os.path.join(winshell.startup(), "DraggieGamesClient.lnk")
             if os.path.exists(startup_path):
                 os.remove(startup_path)
             try:
-                os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
+                os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\DraggieGamesClient.exe"))
             except Exception as e:
-                log(f"[ProjectLily] Unable to remove client.exe - it is likely that it is running: {e}", log_level=3)
+                log(f"[ProjectLily] Unable to remove DraggieGamesClient.exe - it is likely that it is running: {e}", log_level=3)
 
             for proc in psutil.process_iter():
                 try:
-                    target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe")
+                    target_path = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\DraggieGamesClient.exe")
                     process = psutil.Process(proc.pid)
-                    procname = "client.exe"
+                    procname = "DraggieGamesClient.exe"
                     if proc.name() == procname:
                         process_exe = process.exe()
-                        log(f"Found client.exe running at {process_exe}\nAttempting to kill process...")
+                        log(f"Found DraggieGamesClient.exe running at {process_exe}\nAttempting to kill process...")
                         if process_exe.lower() == target_path:
                             proc.kill()
                             log(f"{green_colour}Client has been killed.")
-                        os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\client.exe"))
-                        log(f"{green_colour}[ProjectLily] Client has been uninstalled and removed from startup successfully.")
+                        os.remove(os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\DraggieGamesClient.exe"))
+                        log(f"{green_colour}[ProjectLily] DraggieGamesClient has been uninstalled and removed from startup successfully.")
                 except Exception as e:
-                    log(f"[ProjectLily] Unable to kill and completely remove client.exe: {e}", log_level=3)
+                    log(f"[ProjectLily] Unable to kill and completely remove DraggieGamesClient.exe: {e}", log_level=3)
         case "3":
             log_subdir = os.path.expanduser("~\\AppData\\Local\\Draggie\\Client\\Logs")
             if not os.path.exists(log_subdir):
@@ -3376,7 +3409,7 @@ def install_command():
 
 def choice1():
     try:
-        log(phrases[language]['menu_pre_options'], 1, True)
+        print(f"{reset_colour}{phrases[language]['menu_pre_options']}")
         x = input(phrases[language]['menu_options'])
         status_update(details="Selecting what to do...")
         """y = x/0 # in case we need to do some quick error checking!
