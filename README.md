@@ -2,6 +2,8 @@
 
 [![pypresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=discord&logoWidth=20)](https://github.com/qwertyquerty/pypresence)
 
+[![wakatime](https://wakatime.com/badge/user/018c55e4-8c24-4c7a-b81f-a20c9b916c07/project/018c5a24-78e1-4bc5-8e5b-e22ca5904b66.svg)](https://wakatime.com/badge/user/018c55e4-8c24-4c7a-b81f-a20c9b916c07/project/018c5a24-78e1-4bc5-8e5b-e22ca5904b66)
+
 This is a set of useful tools packaged into a quick and easy CLI which helps me do things, and also may be useful for anyone else! You can either download the Python source file and run yourself with the required imports, or go to /dist/DraggieTools.exe and download the executable, no imports required.
 
 ### [Click me to download!](https://github.com/Draggie306/DraggieTools/raw/main/dist/DraggieTools.exe)
